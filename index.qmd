@@ -1,0 +1,5 @@
+---
+title: "Template Course"
+---
+
+Dummy text to test sync
