@@ -132,4 +132,94 @@ export const utils = {
     }
     return color;
   }
+
 };
+
+/**
+ * 📊 Lit un tableau Markdown compilé et le transforme en tableau d'objets JS.
+ * (La première ligne du tableau sert de clés/propriétés).
+ */
+export function parseTableData(selector) {
+  const table = document.querySelector(selector);
+  if (!table) return [];
+  
+  const headers = Array.from(table.querySelectorAll("th")).map(th => th.textContent.trim());
+  const rows = Array.from(table.querySelectorAll("tbody tr"));
+  
+  return rows.map(row => {
+    const cells = Array.from(row.querySelectorAll("td")).map(td => td.innerHTML.trim());
+    let rowData = {};
+    headers.forEach((h, i) => rowData[h] = cells[i]);
+    return rowData;
+  });
+}
+
+/**
+ * 🧩 Moteur de Template : Remplace les ${var} et gère l'affichage.
+ */
+export function renderTemplate(selector, data = {}, isVisible = true) {
+  const container = document.querySelector(selector);
+  if (!container) return;
+  
+  // On sauvegarde le template original au premier appel
+  if (!container.dataset.tpl) {
+    container.dataset.tpl = container.innerHTML;
+  }
+  
+  if (!isVisible) {
+    container.style.display = 'none';
+    return;
+  }
+  
+  // On repart toujours du template vierge avec ses ${variables}
+  let html = container.dataset.tpl;
+  
+  // Remplacement dynamique
+  for (const [key, value] of Object.entries(data)) {
+    // Échappe la clé et remplace toutes les occurrences
+    html = html.replace(new RegExp(`\\$\\{${key}\\}`, 'g'), value);
+  }
+  
+  container.innerHTML = html;
+  container.style.display = 'block';
+}
+
+/**
+ * 🧩 Affiche dynamiquement le panneau de feedback basé sur le Markdown
+ */
+export function renderFeedbackUI(panelSelector, state, listData = []) {
+  const panel = document.querySelector(panelSelector);
+  if (!panel) return;
+
+  // 1. Gérer l'affichage global et cacher toutes les cartes
+  panel.style.display = state.status === "hidden" ? "none" : "block";
+  panel.querySelectorAll('.feedback-card').forEach(card => card.style.display = "none");
+
+  if (state.status === "hidden") return;
+
+  // 2. Afficher la carte active et remplacer les variables ${score} / ${total}
+  const activeCard = panel.querySelector(`.feedback-${state.status}`);
+  if (activeCard) {
+    activeCard.style.display = "block";
+    // Sauvegarde du HTML original pour permettre de multiples remplacements
+    if (!activeCard.dataset.tpl) activeCard.dataset.tpl = activeCard.innerHTML;
+    
+    activeCard.innerHTML = activeCard.dataset.tpl
+      .replace(/\$\{score\}/g, state.score)
+      .replace(/\$\{total\}/g, state.total);
+  }
+
+  // 3. Remplir la liste détaillée à partir du <template>
+  const ul = panel.querySelector('.feedback-details');
+  const tpl = panel.querySelector('template.feedback-item-tpl');
+  if (ul && tpl) {
+    ul.innerHTML = "";
+    listData.forEach(data => {
+      let html = tpl.innerHTML;
+      for (const [key, value] of Object.entries(data)) {
+        html = html.replace(new RegExp(`\\$\\{${key}\\}`, 'g'), value);
+      }
+      ul.insertAdjacentHTML('beforeend', html);
+    });
+  }
+}

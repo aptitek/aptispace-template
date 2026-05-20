@@ -1,8 +1,15 @@
+## Nature variable
 
 ::: {.grid}
+```{ojs}
+//| echo: false
+// 📦 Imports centralisés pour tout le bloc
+import { renderWordCloud3D } from "./assets/js/networks.js"
+import { createBar, createLine, createFunnel } from "./assets/js/plots.js"
+```
 
 ::: {.g-col-12 .g-col-md-6}
-::: {.card .card-window .h-100}
+::: {.card .h-100}
 ::: {.card-header}
 Nominale [Qualitative]{.badge .bg-info .float-end}
 :::
@@ -11,14 +18,23 @@ Catégories ou étiquettes sans aucun ordre de grandeur ni hiérarchie naturelle
 
 **Exemples :** Couleur des yeux, Pays, Genre.
 
-::: {#plot-nominale .d-flex .justify-content-center .align-items-center .mt-4 .fw-bold style="height: 180px;"}
+::: {#plot-nominale style="height: 180px;"}
+```{ojs}
+//| echo: false
+
+motsNominal = ["Rouge", "France", "Standard", "69003", "Bleu", "Genre", "Directeur", "Italie", "Vert"]
+
+renderNominale = {
+  renderWordCloud3D('plot-nominale', motsNominal, { radius: 80 }) //TODO: if not specified use current div instead of fixed id
+}
+```
 :::
 :::
 :::
 :::
 
 ::: {.g-col-12 .g-col-md-6}
-::: {.card .card-window .h-100}
+::: {.card .h-100}
 ::: {.card-header}
 Ordinale [Qualitative]{.badge .bg-info .float-end}
 :::
@@ -28,13 +44,25 @@ Catégories textuelles dotées d'une hiérarchie stricte et d'une logique de ran
 **Exemples :** Niveau (S/M/L), Mention bac, Satisfaction.
 
 ::: {#plot-ordinale style="height: 180px;"}
+```{ojs}
+//| echo: false
+renderOrdinale = {
+  createFunnel("plot-ordinale", {
+    text: ["Rang 1 (Inférieur)", "Rang 2 (Moyen)", "Rang 3 (Supérieur)"],
+    values: [50, 30, 20]
+  }, {
+    // Utilisation directe des tokens CSS du thème
+    colors: ["var(--sol-blue)", "var(--sol-cyan)", "var(--sol-yellow)"] 
+  });
+}
+```
 :::
 :::
 :::
 :::
 
 ::: {.g-col-12 .g-col-md-6}
-::: {.card .card-window .h-100}
+::: {.card .h-100}
 ::: {.card-header}
 Discrète [Quantitative]{.badge .bg-success .float-end}
 :::
@@ -43,17 +71,28 @@ Valeurs numériques entières dénombrables. On compte des unités distinctes et
 
 **Exemples :** Nombre d'enfants, clics web, transactions.
 
-::: {#plot-discrete style="height: 150px;"}
-:::
-::: {.d-flex .justify-content-center .mt-2}
-${btnDiscrete}
+::: {#plot-discrete style="height: 180px;"}
+```{ojs}
+//| echo: false
+dataDiscrete = {
+  let vals = Array.from({length: 5}, () => 10 + Math.floor(Math.random() * 80));
+  return { x: ["0", "1", "2", "3", "4+"], y: vals };
+}
+
+renderDiscrete = {
+  createBar("plot-discrete", dataDiscrete, "", {
+    marker: { color: "var(--sol-green)" }, // Variable dynamique
+    layout: { margin: { t: 10, b: 20, l: 30, r: 10 }, paper_bgcolor: 'transparent', plot_bgcolor: 'transparent' }
+  });
+}
+```
 :::
 :::
 :::
 :::
 
 ::: {.g-col-12 .g-col-md-6}
-::: {.card .card-window .h-100}
+::: {.card .h-100}
 ::: {.card-header}
 Continue [Quantitative]{.badge .bg-success .float-end}
 :::
@@ -63,66 +102,8 @@ Valeurs décimales mesurables sur une échelle infinie. Il existe un nombre infi
 **Exemples :** Température en °C, Salaire exact, Latitude.
 
 ::: {#plot-continuous style="height: 180px;"}
-:::
-:::
-:::
-:::
-
-:::
-
 ```{ojs}
 //| echo: false
-import { createBar, createLine } from "./assets/js/plots.js"
-import { renderWordCloud3D } from "./assets/js/networks.js" // ⬅️ Nouvel import
-
-// ==========================================
-// 1. Nominale : Nuage de mots 3D
-// ==========================================
-motsNominal = ["Rouge", "France", "Standard", "A+", "Bleu", "Genre", "Directeur", "Italie", "Vert"]
-
-renderNominale = {
-  renderWordCloud3D('#plot-nominale', motsNominal, { radius: 80 })
-}
-
-// ==========================================
-// 2. Ordinale : Pyramide (Plotly FunnelArea)
-// ==========================================
-renderOrdinale = {
-  Plotly.newPlot("plot-ordinale", [{
-    type: 'funnelarea',
-    text: ["Rang 1 (Inférieur)", "Rang 2 (Moyen)", "Rang 3 (Supérieur)"],
-    values: [50, 30, 20],
-    marker: { colors: ["#268bd2", "#2aa198", "#b58900"] },
-    textinfo: "text",
-    hoverinfo: "text"
-  }], {
-    margin: { t: 10, b: 10, l: 10, r: 10 },
-    paper_bgcolor: 'transparent',
-    showlegend: false
-  }, { displayModeBar: false })
-}
-
-// ==========================================
-// 3. Discrète : Bar Chart interactif
-// ==========================================
-viewof btnDiscrete = Inputs.button("🎲 Lancer simulation", { class: "btn btn-light" })
-
-dataDiscrete = {
-  btnDiscrete; // Crée la dépendance réactive : re-calcule au clic !
-  let vals = Array.from({length: 5}, () => 10 + Math.floor(Math.random() * 80));
-  return { x: ["0", "1", "2", "3", "4+"], y: vals };
-}
-
-renderDiscrete = {
-  createBar("plot-discrete", dataDiscrete, "", {
-    marker: { color: "#859900" },
-    layout: { margin: { t: 10, b: 20, l: 30, r: 10 }, paper_bgcolor: 'transparent', plot_bgcolor: 'transparent' }
-  });
-}
-
-// ==========================================
-// 4. Continue : Courbe de Gauss avec Tracker
-// ==========================================
 dataContinuous = {
   let x = [], y = [];
   for(let i = 15; i <= 135; i += 2) {
@@ -135,14 +116,148 @@ dataContinuous = {
 
 renderContinuous = {
   createLine("plot-continuous", dataContinuous, "", {
-    line: { shape: "spline", color: "#268bd2", width: 3 },
-    marker: { size: 0 }, // Cache les points pour un effet continu lisse
+    line: { shape: "spline", color: "var(--sol-blue)", width: 3 }, // Variable dynamique
+    //FIXME: Markers showing
+    marker: { size: 0 },
     layout: { 
       margin: { t: 10, b: 20, l: 30, r: 10 },
       paper_bgcolor: 'transparent', 
       plot_bgcolor: 'transparent',
-      hovermode: "x unified" // Magie : trace la ligne verticale et affiche les données au survol automatiquement !
+      hovermode: "x unified" 
     }
   });
 }
+```
+:::
+:::
+:::
+:::
+
+:::
+
+
+## Cablage
+
+::: {.card .card-window .mb-4}
+```{ojs}
+//| echo: false
+import { parseTableData, renderFeedbackUI } from "./assets/js/core.js"
+import { CablingManager } from "./assets/js/networks.js"
+
+```
+
+::: {.card-header}
+🔌 Panneau de brassage des indices
+:::
+::: {.card-body}
+
+::: {#cabling-data style="display: none;"}
+
+| id | label | match | feedback |
+| --- | --- | --- | --- |
+| postal | Code postal (ex: 75001) | nominale | Le code postal est nominal. Son traitement mathématique n'a aucun sens. |
+| salaire | Salaire annuel en euros | continue | Le salaire s'exprime sur une échelle infinie de valeurs mesurables. |
+| mention | Mention au bac (Bien, etc.) | ordinale | Catégories textuelles mais dotées d'une hiérarchie stricte. |
+| fraud | Transactions frauduleuses | discrete | On dénombre des unités entières distinctes. |
+| 
+
+:::
+
+Reliez chaque pièce à conviction de gauche à sa catégorie de données logique de droite.
+
+::: {#cabling-canvas .w-100 .my-3 style="height: 380px;"}
+:::
+
+::: {.d-flex .gap-2 .justify-content-center}
+
+```{ojs}
+//| echo: false
+viewof btnValidate = Inputs.button("🔌 Synchroniser & Valider", { class: "btn btn-primary" })
+viewof btnReset    = Inputs.button("🧹 Débrancher Tout", { class: "btn btn-light" })
+
+```
+
+:::
+
+::: {#cabling-feedback-panel style="display: none;" .mt-4}
+
+::: {.card .border-warning .bg-warning-subtle .feedback-card .feedback-incomplete}
+::: {.card-body}
+⚠️ **Signal brouillé — Brassage incomplet**
+
+L'analyse ne peut pas démarrer. Reliez **toutes** les fiches (${score}/${total}).
+:::
+:::
+
+::: {.card .border-success .bg-success-subtle .feedback-card .feedback-validated}
+::: {.card-body}
+✅ **Diagnostic Validé (Score : ${score}/${total})**
+
+Excellent travail ! Le signal est pur.
+:::
+:::
+
+::: {.card .border-danger .bg-danger-subtle .feedback-card .feedback-error}
+::: {.card-body}
+❌ **Conflit de Signal (Score : ${score}/${total})**
+
+Des courts-circuits subsistent. Analysez la nature des variables.
+:::
+:::
+
+:::
+:::
+
+```{ojs}
+//| echo: false
+
+// A. Données dynamiques
+leftItems = parseTableData("#cabling-data table")
+// Génère rightItems automatiquement à partir des valeurs uniques de 'match'
+rightItems = [...new Set(leftItems.map(item => item.match))].map(id => ({
+  id: id,
+  label: id.charAt(0).toUpperCase() + id.slice(1) 
+}))
+
+// B. Initialisation du moteur déporté
+engine = {
+  const m = new CablingManager("#cabling-canvas", leftItems, rightItems, (state) => {
+    // Rend le panneau invisible si on modifie un câble après validation
+    if(state.score < leftItems.length) renderFeedbackUI("#cabling-feedback-panel", { status: "hidden" });
+  });
+  invalidation.then(() => m.destroy());
+  return m;
+}
+
+// C. Interactivité et rendu HTML
+uiLogic = {
+  btnValidate; btnReset;
+
+  let state = { status: "hidden" };
+  if (btnValidate) state = engine.validate();
+  if (btnReset) state = engine.reset();
+
+  // Si on est en état de validation, on prépare les données pour la liste <li>
+  let listData = [];
+  if (state.status === "validated") {
+    const isPerfect = state.score === leftItems.length;
+    state.status = isPerfect ? "validated" : "error"; // Aiguillage vers la carte rouge ou verte
+    
+    listData = leftItems.map(item => {
+      const isCorrect = state.connections[item.id] === item.match;
+      const rMatch = rightItems.find(r => r.id === state.connections[item.id]);
+      return {
+        label: item.label,
+        rightLabel: rMatch ? rMatch.label : "?",
+        badgeClass: isCorrect ? "text-success" : "text-danger",
+        badgeText: isCorrect ? "OK" : "Erreur",
+        feedback: isCorrect ? item.feedback : "Incohérence détectée."
+      };
+    });
+  }
+
+  // Déclenche l'injection HTML dans le Markdown
+  renderFeedbackUI("#cabling-feedback-panel", state, listData);
+}
+
 ```

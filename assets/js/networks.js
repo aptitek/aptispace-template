@@ -35,14 +35,16 @@ export function renderGraph(container, graphData, is3D = false) {
  * ☁️ Nuage de Mots 3D interactif
  */
 export function renderWordCloud3D(containerSelector, words, options = {}) {
-  const container = document.querySelector(containerSelector);
+  const container = document.querySelector('#' + containerSelector);
   if (!container) {
-    console.warn(`Conteneur ${containerSelector} introuvable pour le WordCloud.`);
+    console.warn(`Conteneur #${containerSelector} introuvable pour le WordCloud.`);
     return null;
   }
 
   // Sécurité OJS : vider le conteneur avant de re-rendre pour éviter les doublons
-  container.innerHTML = ""; 
+  container.innerHTML = "";
+
+  //TODO: Add colors
 
   // Options par défaut fusionnées avec les options personnalisées
   const finalOptions = {
@@ -376,6 +378,92 @@ export function renderCablingGraph(container, {
       graph._destructor && graph._destructor();
     },
   };
+}
+
+// À ajouter dans networks.js (en dessous de renderCablingGraph)
+
+export class CablingManager {
+  constructor(containerId, leftItems, rightItems, onStateUpdate) {
+    this.container = document.querySelector(containerId);
+    this.leftItems = leftItems;
+    this.rightItems = rightItems;
+    this.onStateUpdate = onStateUpdate;
+    
+    this.connections = {};
+    this.activeLeft = null;
+    this.validated = false;
+
+    if (this.container) {
+      this.graph = renderCablingGraph(this.container, { leftItems, rightItems });
+      this.graph.onNodeClick(node => this.handleClick(node));
+    }
+  }
+
+  handleClick(node) {
+    if (this.validated) return;
+
+    if (node.group === "left") {
+      if (this.activeLeft === node.id) {
+        this.activeLeft = null;
+      } else {
+        const srcId = node._srcId;
+        if (this.connections[srcId]) delete this.connections[srcId];
+        this.activeLeft = node.id;
+      }
+      this.graph.setActiveLeft(this.activeLeft);
+    } else if (node.group === "right" && this.activeLeft) {
+      const leftId = this.activeLeft.replace("L_", "");
+      this.connections[leftId] = node._srcId;
+      this.activeLeft = null;
+      this.graph.setActiveLeft(null);
+    }
+    
+    this.syncLinks();
+    this.onStateUpdate(this.getState()); // Déclenche la réactivité OJS
+  }
+
+  syncLinks() {
+    const links = Object.entries(this.connections).map(([lid, rid]) => ({
+      source: `L_${lid}`, target: `R_${rid}`, 
+      colorIndex: this.leftItems.findIndex(it => it.id === lid)
+    }));
+    this.graph.setLinks(links);
+  }
+
+  validate() {
+    if (Object.keys(this.connections).length < this.leftItems.length) {
+      return { status: "incomplete", ...this.getState() };
+    }
+    
+    this.validated = true;
+    const vMap = new Map();
+    this.leftItems.forEach(item => {
+      vMap.set(`L_${item.id}→R_${this.connections[item.id]}`, 
+               this.connections[item.id] === item.match ? "correct" : "incorrect");
+    });
+    this.graph.setValidation(vMap);
+    return { status: "validated", ...this.getState() };
+  }
+
+  reset() {
+    this.connections = {};
+    this.activeLeft = null;
+    this.validated = false;
+    this.graph.setActiveLeft(null);
+    this.graph.setValidation(null);
+    this.syncLinks();
+    return { status: "hidden", ...this.getState() };
+  }
+
+  getState() {
+    let score = 0;
+    this.leftItems.forEach(it => { if (this.connections[it.id] === it.match) score++; });
+    return { score, total: this.leftItems.length, connections: this.connections };
+  }
+
+  destroy() {
+    if (this.graph && this.graph.destroy) this.graph.destroy();
+  }
 }
 
 // ── Canvas helpers ────────────────────────────────
