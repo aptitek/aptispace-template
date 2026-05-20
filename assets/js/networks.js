@@ -94,8 +94,8 @@ export function renderCablingGraph(container, {
   const PAD_Y = 40;
   const W = userWidth || container.offsetWidth || 600;
   const H = userHeight || (maxRows * ROW_H + PAD_Y * 2);
-  const LEFT_X = -W / 2 + 160;
-  const RIGHT_X = W / 2 - 160;
+  const LEFT_X = -200;
+  const RIGHT_X = 200;
 
   const posY = (i, total) => -((total - 1) * ROW_H) / 2 + i * ROW_H;
 
@@ -337,6 +337,12 @@ export function renderCablingGraph(container, {
     .onNodeClick(node => {
       if (_onNodeClick) _onNodeClick(node);
     });
+
+  // Auto-scale to fit the layout perfectly within the container width
+  const virtualWidth = 600; // Left pill left edge is -300, right pill right edge is 300
+  const margin = 24; // 24px padding on each side
+  const desiredZoom = (W - 2 * margin) / virtualWidth;
+  graph.zoom(desiredZoom).centerAt(0, 0);
 
   // ── Animation loop for dash offset ─────────────
   let animFrame;

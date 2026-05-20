@@ -134,18 +134,14 @@ export const utils = {
   }
 
 };
-
 /**
  * 📊 Lit un tableau Markdown compilé et le transforme en tableau d'objets JS.
- * (La première ligne du tableau sert de clés/propriétés).
  */
 export function parseTableData(selector) {
   const table = document.querySelector(selector);
   if (!table) return [];
-  
   const headers = Array.from(table.querySelectorAll("th")).map(th => th.textContent.trim());
   const rows = Array.from(table.querySelectorAll("tbody tr"));
-  
   return rows.map(row => {
     const cells = Array.from(row.querySelectorAll("td")).map(td => td.innerHTML.trim());
     let rowData = {};
@@ -154,72 +150,77 @@ export function parseTableData(selector) {
   });
 }
 
+// =====================================================================
+// 🧩 MOTEUR DE TEMPLATES GÉNÉRIQUE
+// =====================================================================
+
 /**
- * 🧩 Moteur de Template : Remplace les ${var} et gère l'affichage.
+ * Fonction interne : Remplace les {{variables}} par leurs valeurs
  */
-export function renderTemplate(selector, data = {}, isVisible = true) {
-  const container = document.querySelector(selector);
-  if (!container) return;
-  
-  // On sauvegarde le template original au premier appel
-  if (!container.dataset.tpl) {
-    container.dataset.tpl = container.innerHTML;
-  }
-  
-  if (!isVisible) {
-    container.style.display = 'none';
-    return;
-  }
-  
-  // On repart toujours du template vierge avec ses ${variables}
-  let html = container.dataset.tpl;
-  
-  // Remplacement dynamique
+function applyTemplate(htmlString, data) {
+  let html = htmlString;
   for (const [key, value] of Object.entries(data)) {
-    // Échappe la clé et remplace toutes les occurrences
-    html = html.replace(new RegExp(`\\$\\{${key}\\}`, 'g'), value);
+    html = html.replace(new RegExp(`\\{\\{${key}\\}\\}`, 'g'), value);
   }
-  
-  container.innerHTML = html;
-  container.style.display = 'block';
+  return html;
 }
 
 /**
- * 🧩 Affiche dynamiquement le panneau de feedback basé sur le Markdown
+ * Moteur 1 : Remplit un bloc unique (Ex: une carte de score)
+ */
+export function renderTemplate(elementOrSelector, data = {}) {
+  const container = typeof elementOrSelector === 'string' 
+    ? document.querySelector(elementOrSelector) 
+    : elementOrSelector;
+    
+  if (!container) return;
+
+  if (!container.dataset.tpl) container.dataset.tpl = container.innerHTML;
+  container.innerHTML = applyTemplate(container.dataset.tpl, data);
+}
+
+/**
+ * Moteur 2 : Génère une liste d'éléments à partir d'un modèle (Ex: puces de résultats)
+ */
+export function renderListTemplate(containerSelector, templateSelector, listData = []) {
+  const container = document.querySelector(containerSelector);
+  const tplElement = document.querySelector(templateSelector);
+  
+  if (!container || !tplElement) return;
+
+  if (!tplElement.dataset.tpl) tplElement.dataset.tpl = tplElement.innerHTML;
+  
+  container.innerHTML = ""; // On vide la liste
+  
+  listData.forEach(data => {
+    container.insertAdjacentHTML('beforeend', applyTemplate(tplElement.dataset.tpl, data));
+  });
+}
+
+// =====================================================================
+// 🎯 LOGIQUE SPÉCIFIQUE AU FEEDBACK DE CÂBLAGE
+// =====================================================================
+
+/**
+ * Orchestrateur : Utilise nos moteurs génériques pour cet exercice
  */
 export function renderFeedbackUI(panelSelector, state, listData = []) {
   const panel = document.querySelector(panelSelector);
   if (!panel) return;
 
-  // 1. Gérer l'affichage global et cacher toutes les cartes
+  // 1. Affichage global du panneau
   panel.style.display = state.status === "hidden" ? "none" : "block";
   panel.querySelectorAll('.feedback-card').forEach(card => card.style.display = "none");
 
   if (state.status === "hidden") return;
 
-  // 2. Afficher la carte active et remplacer les variables ${score} / ${total}
+  // 2. Affichage dynamique de la carte active via le Moteur 1
   const activeCard = panel.querySelector(`.feedback-${state.status}`);
   if (activeCard) {
     activeCard.style.display = "block";
-    // Sauvegarde du HTML original pour permettre de multiples remplacements
-    if (!activeCard.dataset.tpl) activeCard.dataset.tpl = activeCard.innerHTML;
-    
-    activeCard.innerHTML = activeCard.dataset.tpl
-      .replace(/\$\{score\}/g, state.score)
-      .replace(/\$\{total\}/g, state.total);
+    renderTemplate(activeCard, { score: state.score, total: state.total });
   }
 
-  // 3. Remplir la liste détaillée à partir du <template>
-  const ul = panel.querySelector('.feedback-details');
-  const tpl = panel.querySelector('template.feedback-item-tpl');
-  if (ul && tpl) {
-    ul.innerHTML = "";
-    listData.forEach(data => {
-      let html = tpl.innerHTML;
-      for (const [key, value] of Object.entries(data)) {
-        html = html.replace(new RegExp(`\\$\\{${key}\\}`, 'g'), value);
-      }
-      ul.insertAdjacentHTML('beforeend', html);
-    });
-  }
+  // 3. Affichage dynamique de la liste via le Moteur 2
+  renderListTemplate(`${panelSelector} .feedback-details`, `${panelSelector} .feedback-item-template`, listData);
 }
