@@ -114,31 +114,34 @@ export function renderCablingGraph(container, {
   ];
 
   // ── Mutable state exposed to the caller ────────
-  let links = [];           // [{source, target, colorIndex}]
-  let validation = null;    // null | Map<linkKey, "correct"|"incorrect">
+  let links = [];           
+  let validation = null;    
   let hoverNode = null;
-  let activeLeft = null;    // node id of the left socket being wired
-  let _onNodeClick = null;
-  let dashOffset = 0;       // for animated dashes
+  let activeNode = null;    // <-- Remplacé (permet de sélectionner à gauche ou à droite)
+  let _onNodeAction = null; // <-- Remplacé (gère les clics ET les drops)
+  let dashOffset = 0;
 
   // ── Force-graph instance ────────────────────────
   const graph = ForceGraph()(container)
-    .width(W)
-    .height(H)
-    .graphData({ nodes, links })
-    .backgroundColor(SOL.base03)
-    // Disable all physics & user navigation — pure exercise layout
-    .cooldownTicks(0)
-    .enableZoomInteraction(false)
-    .enablePanInteraction(false)
-    .enableNodeDrag(false)
-    // ── Node painting ────────────────────────────
-    .nodeCanvasObject((node, ctx) => {
-      const isLeft = node.group === "left";
-      const isHover = hoverNode === node.id;
-      const isActive = activeLeft === node.id;
-      const x = node.x;
-      const y = node.y;
+      .width(W)
+      .height(H)
+      .graphData({ nodes, links })
+      .backgroundColor(SOL.base03)
+      .cooldownTicks(0)
+      .enableZoomInteraction(false)
+      .enablePanInteraction(false)
+      .enableNodeDrag(false)
+      
+      // ── Node painting ────────────────────────────
+      .nodeCanvasObject((node, ctx) => {
+        // 🔴 AJOUT CRUCIAL : On ne dessine pas le faux nœud, ce qui évite le crash !
+        if (node.group === "cursor") return; 
+
+        const isLeft = node.group === "left";
+        const isHover = hoverNode === node.id;
+        const isActive = activeNode === node.id; // (Assurez-vous d'avoir bien mis activeNode ici)
+        const x = node.x;
+        const y = node.y;
 
       // Socket circle
       const r = 11;
@@ -217,14 +220,17 @@ export function renderCablingGraph(container, {
       }
     })
     .nodePointerAreaPaint((node, color, ctx) => {
-      // Enlarged hit area covering both pill and socket
-      const isLeft = node.group === "left";
-      const socketX = isLeft ? node.x + 120 : node.x - 120;
-      const minX = Math.min(node.x - 100, socketX - 14);
-      const maxX = Math.max(node.x + 100, socketX + 14);
-      ctx.fillStyle = color;
-      ctx.fillRect(minX, node.y - 22, maxX - minX, 44);
-    })
+        // 🔴 AJOUT CRUCIAL : Le faux nœud ne doit pas bloquer les clics
+        if (node.group === "cursor") return; 
+
+        // Enlarged hit area covering both pill and socket
+        const isLeft = node.group === "left";
+        const socketX = isLeft ? node.x + 120 : node.x - 120;
+        const minX = Math.min(node.x - 100, socketX - 14);
+        const maxX = Math.max(node.x + 100, socketX + 14);
+        ctx.fillStyle = color;
+        ctx.fillRect(minX, node.y - 22, maxX - minX, 44);
+      })
     // ── Link painting ─────────────────────────────
     .linkCanvasObject((link, ctx) => {
       const src = link.source;
@@ -336,9 +342,6 @@ export function renderCablingGraph(container, {
       hoverNode = node ? node.id : null;
       container.style.cursor = node ? "pointer" : "default";
     })
-    .onNodeClick(node => {
-      if (_onNodeClick) _onNodeClick(node);
-    });
 
   // Auto-scale to fit the layout perfectly within the container width
   const virtualWidth = 600; // Left pill left edge is -300, right pill right edge is 300
@@ -356,7 +359,6 @@ export function renderCablingGraph(container, {
   let startY = 0;
   let hasDragged = false;
 
-  // Helper to find node under pointer (x, y are graph coordinates)
   const findNodeAtCoords = (gx, gy, groupFilter) => {
     return nodes.find(node => {
       if (groupFilter && node.group !== groupFilter) return false;
@@ -372,25 +374,19 @@ export function renderCablingGraph(container, {
 
   if (canvas) {
     canvas.addEventListener("pointerdown", (e) => {
-      if (validation) return; // Prevent interaction if validated
+      if (validation) return; 
       
-      const rect = canvas.getBoundingClientRect();
-      const px = e.clientX - rect.left;
-      const py = e.clientY - rect.top;
+      // Utilisation de offsetX/Y pour éviter les bugs de décalage liés au CSS
+      const gc = graph.screen2GraphCoords(e.offsetX, e.offsetY);
       
-      // Convert screen coords to graph coords
-      const gc = graph.screen2GraphCoords(px, py);
-      
-      // We only start dragging if clicked on a left node
-      const clickedNode = findNodeAtCoords(gc.x, gc.y, "left");
+      // On autorise la sélection depuis la gauche OU la droite
+      const clickedNode = findNodeAtCoords(gc.x, gc.y); 
       if (clickedNode) {
         e.preventDefault();
-        
-        startX = e.clientX;
-        startY = e.clientY;
+        startX = e.offsetX;
+        startY = e.offsetY;
         hasDragged = false;
         dragStartNode = clickedNode;
-        
         canvas.setPointerCapture(e.pointerId);
       }
     });
@@ -399,99 +395,79 @@ export function renderCablingGraph(container, {
       if (!dragStartNode) return;
       e.preventDefault();
       
-      const rect = canvas.getBoundingClientRect();
-      const px = e.clientX - rect.left;
-      const py = e.clientY - rect.top;
-      const gc = graph.screen2GraphCoords(px, py);
+      const gc = graph.screen2GraphCoords(e.offsetX, e.offsetY);
       
       if (!hasDragged) {
-        const dist = Math.hypot(e.clientX - startX, e.clientY - startY);
-        if (dist > 5) {
+        const dist = Math.hypot(e.offsetX - startX, e.offsetY - startY);
+        if (dist > 5) { // Seuil pour différencier un clic d'un drag
           hasDragged = true;
           
-          // Initialize dummy cursor node and dragging link
           dummyNode = {
-            id: "TEMP_CURSOR",
-            group: "cursor",
-            x: gc.x,
-            y: gc.y,
-            fx: gc.x,
-            fy: gc.y
+            id: "TEMP_CURSOR", group: "cursor",
+            x: gc.x, y: gc.y, fx: gc.x, fy: gc.y
           };
           
           dragLink = {
             source: dragStartNode,
             target: dummyNode,
             isDragging: true,
-            colorIndex: leftItems.findIndex(it => it.id === dragStartNode._srcId)
+            colorIndex: dragStartNode.group === "left" 
+              ? leftItems.findIndex(it => it.id === dragStartNode._srcId)
+              : rightItems.findIndex(it => it.id === dragStartNode._srcId)
           };
         }
       }
       
       if (hasDragged && dummyNode) {
-        // Update dummy node coordinates
-        dummyNode.x = gc.x;
-        dummyNode.y = gc.y;
-        dummyNode.fx = gc.x;
-        dummyNode.fy = gc.y;
+        dummyNode.x = gc.x; dummyNode.y = gc.y; dummyNode.fx = gc.x; dummyNode.fy = gc.y;
         
-        // Update graph data with temporary drag elements
         graph.graphData({
           nodes: [...nodes, dummyNode],
           links: [...links, dragLink]
         });
         
-        // Visual hover highlight on target nodes
-        const hoveredRight = findNodeAtCoords(gc.x, gc.y, "right");
-        hoverNode = hoveredRight ? hoveredRight.id : null;
-        container.style.cursor = hoveredRight ? "pointer" : "default";
+        const targetGroup = dragStartNode.group === "left" ? "right" : "left";
+        const hoverTarget = findNodeAtCoords(gc.x, gc.y, targetGroup);
+        hoverNode = hoverTarget ? hoverTarget.id : null;
+        container.style.cursor = hoverTarget ? "pointer" : "grabbing";
       }
     });
 
     canvas.addEventListener("pointerup", (e) => {
       if (!dragStartNode) return;
       e.preventDefault();
-      
       canvas.releasePointerCapture(e.pointerId);
       
-      const rect = canvas.getBoundingClientRect();
-      const px = e.clientX - rect.left;
-      const py = e.clientY - rect.top;
-      const gc = graph.screen2GraphCoords(px, py);
-      
+      const gc = graph.screen2GraphCoords(e.offsetX, e.offsetY);
       const finalDragStart = dragStartNode;
       const wasDragged = hasDragged;
       
-      // Clean up drag variables
       dragStartNode = null;
       dummyNode = null;
       dragLink = null;
       hasDragged = false;
       
-      // Restore clean graph data
+      // On restaure l'état visuel propre avant d'appliquer la logique métier
       graph.graphData({ nodes, links });
       
       if (wasDragged) {
-        // Find if dropped over a right node
-        const releasedRight = findNodeAtCoords(gc.x, gc.y, "right");
-        if (releasedRight && _onNodeClick) {
-          // Simulate the two-click sequence: select left, then connect to right
-          // CablingManager.handleClick manages all state (activeLeft, connections, sync)
-          _onNodeClick(finalDragStart);
-          _onNodeClick(releasedRight);
+        const targetGroup = finalDragStart.group === "left" ? "right" : "left";
+        const droppedNode = findNodeAtCoords(gc.x, gc.y, targetGroup);
+        if (droppedNode && _onNodeAction) {
+          _onNodeAction({ type: 'CONNECT_DRAG', source: finalDragStart, target: droppedNode });
         }
-        // If dropped in void: just clean up; no state change needed
-        // (dragStartNode was never committed via _onNodeClick, so CablingManager state is clean)
+      } else {
+        if (_onNodeAction) {
+          _onNodeAction({ type: 'TOGGLE_SELECT', node: finalDragStart });
+        }
       }
+      container.style.cursor = "default";
     });
 
     canvas.addEventListener("pointercancel", (e) => {
       if (dragStartNode) {
         canvas.releasePointerCapture(e.pointerId);
-        dragStartNode = null;
-        dummyNode = null;
-        dragLink = null;
-        hasDragged = false;
+        dragStartNode = null; dummyNode = null; dragLink = null; hasDragged = false;
         graph.graphData({ nodes, links });
       }
     });
@@ -522,13 +498,11 @@ export function renderCablingGraph(container, {
     },
 
     /** Set which left node is being actively wired */
-    setActiveLeft(nodeId) {
-      activeLeft = nodeId;
+    setActiveNode(nodeId) {
+      activeNode = nodeId;
     },
-
-    /** Register a click handler: fn(node) */
-    onNodeClick(fn) {
-      _onNodeClick = fn;
+    onNodeAction(fn) {
+      _onNodeAction = fn;
     },
 
     /** Cleanup */
@@ -548,37 +522,75 @@ export class CablingManager {
     this.rightItems = rightItems;
     this.onStateUpdate = onStateUpdate;
     
-    this.connections = {};
-    this.activeLeft = null;
+    this.connections = {}; // Mappe ID Gauche -> ID Droite
+    this.activeNode = null;
     this.validated = false;
 
     if (this.container) {
       this.graph = renderCablingGraph(this.container, { leftItems, rightItems });
-      this.graph.onNodeClick(node => this.handleClick(node));
+      this.graph.onNodeAction(action => this.handleAction(action));
     }
   }
 
-  handleClick(node) {
+  handleAction(action) {
     if (this.validated) return;
 
-    if (node.group === "left") {
-      if (this.activeLeft === node.id) {
-        this.activeLeft = null;
+    if (action.type === 'TOGGLE_SELECT') {
+      const node = action.node;
+
+      if (this.activeNode && this.activeNode.id === node.id) {
+        // "Select again unplugs all cables connected to that item"
+        this.unplugNode(node);
+        this.activeNode = null;
+      } else if (this.activeNode) {
+        // Un nœud était sélectionné et on clique sur un autre -> Tentative de connexion
+        this.tryConnect(this.activeNode, node);
       } else {
-        const srcId = node._srcId;
-        if (this.connections[srcId]) delete this.connections[srcId];
-        this.activeLeft = node.id;
+        // Aucun nœud sélectionné -> On le sélectionne
+        this.activeNode = node;
       }
-      this.graph.setActiveLeft(this.activeLeft);
-    } else if (node.group === "right" && this.activeLeft) {
-      const leftId = this.activeLeft.replace("L_", "");
-      this.connections[leftId] = node._srcId;
-      this.activeLeft = null;
-      this.graph.setActiveLeft(null);
+    } else if (action.type === 'CONNECT_DRAG') {
+      // Connexion directe via drag-and-drop
+      this.tryConnect(action.source, action.target);
     }
     
+    this.graph.setActiveNode(this.activeNode ? this.activeNode.id : null);
     this.syncLinks();
-    this.onStateUpdate(this.getState()); // Déclenche la réactivité OJS
+    this.onStateUpdate(this.getState());
+  }
+
+  tryConnect(nodeA, nodeB) {
+    if (nodeA.group === nodeB.group) {
+      // Impossible de relier deux nœuds du même côté, on déplace juste la sélection
+      this.activeNode = nodeB;
+      return;
+    }
+    
+    const leftNode = nodeA.group === "left" ? nodeA : nodeB;
+    const rightNode = nodeA.group === "right" ? nodeA : nodeB;
+
+    const leftId = leftNode._srcId;
+    const rightId = rightNode._srcId;
+
+    // Débranchement des anciens câbles attachés à ces deux connecteurs spécifiques (1-to-1 strict)
+    delete this.connections[leftId];
+    for (const [l, r] of Object.entries(this.connections)) {
+      if (r === rightId) delete this.connections[l];
+    }
+
+    // Création de la connexion et remise à zéro de la sélection
+    this.connections[leftId] = rightId;
+    this.activeNode = null;
+  }
+
+  unplugNode(node) {
+    if (node.group === "left") {
+      delete this.connections[node._srcId];
+    } else {
+      for (const [l, r] of Object.entries(this.connections)) {
+        if (r === node._srcId) delete this.connections[l];
+      }
+    }
   }
 
   syncLinks() {
@@ -606,9 +618,9 @@ export class CablingManager {
 
   reset() {
     this.connections = {};
-    this.activeLeft = null;
+    this.activeNode = null;
     this.validated = false;
-    this.graph.setActiveLeft(null);
+    this.graph.setActiveNode(null);
     this.graph.setValidation(null);
     this.syncLinks();
     return { status: "hidden", ...this.getState() };
