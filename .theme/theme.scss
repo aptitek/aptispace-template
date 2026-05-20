@@ -146,6 +146,22 @@ div.sidebar-item-container .sidebar-item-text.sidebar-link.active {
 }
 
 // ==========================================
+// 5.5 PREMIUM UI TOUCHES
+// ==========================================
+
+// Custom Scrollbars
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba($sol-base1, 0.4);
+    border-radius: 10px;
+    &:hover { background: rgba($sol-base1, 0.8); }
+}
+
+// ==========================================
 // 6. MERMAID SOLARIZED STYLING & HORIZONTAL CENTERING (Premium Card Style)
 // ==========================================
 
