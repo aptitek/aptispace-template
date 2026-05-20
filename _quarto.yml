@@ -12,8 +12,8 @@ project:
 
 filters:
   - filetree
-  - card
   - timeline
+  - live
 
 website:
   title: "Template"

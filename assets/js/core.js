@@ -109,5 +109,27 @@ export const utils = {
   formatNumber: (num, decimals = 3) => typeof num === 'number' ? num.toLocaleString(undefined, { maximumFractionDigits: decimals }) : num,
 
   // Tronque une chaîne avec la méthode standard slice
-  truncateText: (str, maxLength = 50) => typeof str === 'string' && str.length > maxLength ? str.slice(0, maxLength) + "…" : str
+  truncateText: (str, maxLength = 50) => typeof str === 'string' && str.length > maxLength ? str.slice(0, maxLength) + "…" : str,
+
+  /**
+   * 🎨 Utilitaire d'opacité couleur (Convertit Hex ou RGB en RGBA)
+   * Centralisé ici pour être partagé par le Canvas (networks) et l'UI globale.
+   */
+  rgba: (color, alpha) => {
+    if (!color) return color;
+    if (color.includes('rgb')) {
+      const matches = color.match(/\d+/g);
+      if (matches && matches.length >= 3) {
+        return `rgba(${matches[0]}, ${matches[1]}, ${matches[2]}, ${alpha})`;
+      }
+    }
+    const hex = color.replace('#', '').trim();
+    if (hex.length === 6) {
+      const r = parseInt(hex.substring(0, 2), 16);
+      const g = parseInt(hex.substring(2, 4), 16);
+      const b = parseInt(hex.substring(4, 6), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+    return color;
+  }
 };

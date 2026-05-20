@@ -1,0 +1,148 @@
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .card-window .h-100}
+::: {.card-header}
+Nominale [Qualitative]{.badge .bg-info .float-end}
+:::
+::: {.card-body}
+Catégories ou étiquettes sans aucun ordre de grandeur ni hiérarchie naturelle. Les chiffres ne servent que de codes d'identification.
+
+**Exemples :** Couleur des yeux, Pays, Genre.
+
+::: {#plot-nominale .d-flex .justify-content-center .align-items-center .mt-4 .fw-bold style="height: 180px;"}
+:::
+:::
+:::
+:::
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .card-window .h-100}
+::: {.card-header}
+Ordinale [Qualitative]{.badge .bg-info .float-end}
+:::
+::: {.card-body}
+Catégories textuelles dotées d'une hiérarchie stricte et d'une logique de rang. La distance mathématique entre rangs n'est pas mesurable.
+
+**Exemples :** Niveau (S/M/L), Mention bac, Satisfaction.
+
+::: {#plot-ordinale style="height: 180px;"}
+:::
+:::
+:::
+:::
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .card-window .h-100}
+::: {.card-header}
+Discrète [Quantitative]{.badge .bg-success .float-end}
+:::
+::: {.card-body}
+Valeurs numériques entières dénombrables. On compte des unités distinctes et complètes (pas de demi-mesure possible).
+
+**Exemples :** Nombre d'enfants, clics web, transactions.
+
+::: {#plot-discrete style="height: 150px;"}
+:::
+::: {.d-flex .justify-content-center .mt-2}
+${btnDiscrete}
+:::
+:::
+:::
+:::
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .card-window .h-100}
+::: {.card-header}
+Continue [Quantitative]{.badge .bg-success .float-end}
+:::
+::: {.card-body}
+Valeurs décimales mesurables sur une échelle infinie. Il existe un nombre infini de possibilités réelles entre deux mesures.
+
+**Exemples :** Température en °C, Salaire exact, Latitude.
+
+::: {#plot-continuous style="height: 180px;"}
+:::
+:::
+:::
+:::
+
+:::
+
+```{ojs}
+//| echo: false
+import { createBar, createLine } from "./assets/js/plots.js"
+import { renderWordCloud3D } from "./assets/js/networks.js" // ⬅️ Nouvel import
+
+// ==========================================
+// 1. Nominale : Nuage de mots 3D
+// ==========================================
+motsNominal = ["Rouge", "France", "Standard", "A+", "Bleu", "Genre", "Directeur", "Italie", "Vert"]
+
+renderNominale = {
+  renderWordCloud3D('#plot-nominale', motsNominal, { radius: 80 })
+}
+
+// ==========================================
+// 2. Ordinale : Pyramide (Plotly FunnelArea)
+// ==========================================
+renderOrdinale = {
+  Plotly.newPlot("plot-ordinale", [{
+    type: 'funnelarea',
+    text: ["Rang 1 (Inférieur)", "Rang 2 (Moyen)", "Rang 3 (Supérieur)"],
+    values: [50, 30, 20],
+    marker: { colors: ["#268bd2", "#2aa198", "#b58900"] },
+    textinfo: "text",
+    hoverinfo: "text"
+  }], {
+    margin: { t: 10, b: 10, l: 10, r: 10 },
+    paper_bgcolor: 'transparent',
+    showlegend: false
+  }, { displayModeBar: false })
+}
+
+// ==========================================
+// 3. Discrète : Bar Chart interactif
+// ==========================================
+viewof btnDiscrete = Inputs.button("🎲 Lancer simulation", { class: "btn btn-light" })
+
+dataDiscrete = {
+  btnDiscrete; // Crée la dépendance réactive : re-calcule au clic !
+  let vals = Array.from({length: 5}, () => 10 + Math.floor(Math.random() * 80));
+  return { x: ["0", "1", "2", "3", "4+"], y: vals };
+}
+
+renderDiscrete = {
+  createBar("plot-discrete", dataDiscrete, "", {
+    marker: { color: "#859900" },
+    layout: { margin: { t: 10, b: 20, l: 30, r: 10 }, paper_bgcolor: 'transparent', plot_bgcolor: 'transparent' }
+  });
+}
+
+// ==========================================
+// 4. Continue : Courbe de Gauss avec Tracker
+// ==========================================
+dataContinuous = {
+  let x = [], y = [];
+  for(let i = 15; i <= 135; i += 2) {
+    x.push(i);
+    let dx = (i - 75) / 20;
+    y.push(85 * Math.exp(-0.5 * dx * dx));
+  }
+  return { x, y };
+}
+
+renderContinuous = {
+  createLine("plot-continuous", dataContinuous, "", {
+    line: { shape: "spline", color: "#268bd2", width: 3 },
+    marker: { size: 0 }, // Cache les points pour un effet continu lisse
+    layout: { 
+      margin: { t: 10, b: 20, l: 30, r: 10 },
+      paper_bgcolor: 'transparent', 
+      plot_bgcolor: 'transparent',
+      hovermode: "x unified" // Magie : trace la ligne verticale et affiche les données au survol automatiquement !
+    }
+  });
+}
+```
