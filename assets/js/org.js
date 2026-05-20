@@ -2,7 +2,11 @@
 // org.js - Les Organismes (Simulateurs Pédagogiques) (DRY/KISS)
 // ==========================================
 import { theme, utils } from "./core.js";
-import * as mol from "./mol.js";
+const mol = {
+  get dataRow() { return (typeof window !== 'undefined' ? window.ui?.dataRow : null); },
+  get metricCard() { return (typeof window !== 'undefined' ? window.ui?.metricCard : null); },
+  get terminalConsole() { return (typeof window !== 'undefined' ? window.ui?.terminalConsole : null); }
+};
 
 /**
  * 🕵️‍♂️ Inspecteur de DataFrame
