@@ -352,10 +352,12 @@ export function initTabIcons(tabsetSelector) {
  */
 export function createTabsetWatcher(tabsetSelector, labelMap, onChange) {
   function syncActive() {
+    // Icons are inline HTML in the heading, so they're already in the nav-link.
+    // initTabIcons() is kept as a JS-only fallback for runtime-generated tabsets.
     const active = document.querySelector(`${tabsetSelector} .nav-link.active`);
     if (!active) return;
 
-    // textContent strips <i> (no text content) — trim handles the trailing space
+    // textContent strips <i> elements (no text) — trim cleans whitespace
     const label = active.textContent.trim();
     const val = labelMap[label];
     if (val !== undefined) onChange(val);
