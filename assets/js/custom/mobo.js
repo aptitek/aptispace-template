@@ -65,9 +65,15 @@ export function renderMobo(hardwareState) {
   const busRamChipset = container.querySelector("#bus-ram-chipset");
   const busChipsetCpu = container.querySelector("#bus-chipset-cpu");
   const busCpuInternal = container.querySelector("#bus-cpu-internal");
+  const busCpuInternalL2L1 = container.querySelector("#bus-cpu-internal-6");
+  const busCpuInternalL1Reg = container.querySelector("#bus-cpu-internal-6-5");
+  const busRamCpu = container.querySelector("#bus-ram-cpu");
 
   // Reset des bus
-  [busSsdChipset, busChipsetRam, busRamChipset, busChipsetCpu, busCpuInternal].forEach(bus => {
+  [
+    busSsdChipset, busChipsetRam, busRamChipset, busChipsetCpu, 
+    busCpuInternal, busCpuInternalL2L1, busCpuInternalL1Reg, busRamCpu
+  ].forEach(bus => {
     if (bus) bus.classList.remove("is-flowing");
   });
 
@@ -79,8 +85,13 @@ export function renderMobo(hardwareState) {
   else if (hardwareState === "l3") {
     if (busRamChipset) busRamChipset.classList.add("is-flowing");
     if (busChipsetCpu) busChipsetCpu.classList.add("is-flowing");
+    if (busRamCpu) busRamCpu.classList.add("is-flowing");
   } 
-  else if (hardwareState === "l2_l1" || hardwareState === "cpu_reg") {
+  else if (hardwareState === "l2_l1") {
     if (busCpuInternal) busCpuInternal.classList.add("is-flowing");
+    if (busCpuInternalL2L1) busCpuInternalL2L1.classList.add("is-flowing");
+  } 
+  else if (hardwareState === "cpu_reg") {
+    if (busCpuInternalL1Reg) busCpuInternalL1Reg.classList.add("is-flowing");
   }
 }
