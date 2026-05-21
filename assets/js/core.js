@@ -281,8 +281,91 @@ export function renderFeedbackUI(panelSelector, state, listData = []) {
       feedbackEl.className = 'text-muted small ps-3 mt-1';
       feedbackEl.textContent = `└─ ${item.feedback}`;
       itemEl.appendChild(feedbackEl);
-
       detailsContainer.appendChild(itemEl);
     });
   }
+}
+
+// =====================================================================
+// 🗂️ PANEL-TABSET UTILITIES
+// =====================================================================
+
+/**
+ * JS fallback: injects Bootstrap Icons into panel-tabset nav-links at runtime.
+ *
+ * NOTE: With the `bi-icons.lua` Quarto filter active, icons are injected at
+ * compile time and this function becomes a no-op (it bails early when it
+ * finds an existing `i.bi`). Keep it for runtime-generated tabsets or
+ * environments where the Lua filter is not available.
+ *
+ * @param {string} tabsetSelector  CSS selector for the panel-tabset root.
+ */
+export function initTabIcons(tabsetSelector) {
+  const panes = document.querySelectorAll(`${tabsetSelector} .tab-pane`);
+  const links = document.querySelectorAll(`${tabsetSelector} .nav-link`);
+
+  panes.forEach((pane, i) => {
+    const link = links[i];
+    if (!link || link.querySelector("i.bi")) return; // already present (Lua filter)
+
+    const source = pane.classList.length
+      ? pane
+      : pane.querySelector("h2, h3, h4");
+    if (!source) return;
+
+    const biClass = Array.from(source.classList).find(c => c.startsWith("bi-"));
+    if (!biClass) return;
+
+    const icon = document.createElement("i");
+    icon.className = `bi ${biClass}`;
+    icon.style.marginRight = "5px";
+    link.prepend(icon);
+  });
+}
+
+/**
+ * Sets up a fully-managed Quarto panel-tabset reactive watcher.
+ *
+ * — Maps the active tab's plain-text label to a value via `labelMap`.
+ * — Calls `onChange(value)` immediately on init and on every tab click.
+ * — Observes Bootstrap's `.active` class mutations (no polling).
+ * — Returns `{ destroy() }` for OJS `invalidation` cleanup.
+ *
+ * Icons are handled by the `bi-icons.lua` Quarto filter at compile time
+ * (## Heading {.bi-icon-name}). The label map keys should be the plain
+ * text labels without icons, since `<i>` elements have no text content.
+ *
+ * Usage in OJS:
+ * ```js
+ * const w = createTabsetWatcher(
+ *   ".my-tabset",
+ *   { "Label A": "val_a", "Label B": "val_b" },
+ *   (val) => { mutable myVar = val; }
+ * );
+ * invalidation.then(() => w.destroy());
+ * ```
+ *
+ * @param {string}   tabsetSelector  CSS selector for the panel-tabset root.
+ * @param {Object}   labelMap        Plain-text tab label → value mapping.
+ * @param {Function} onChange        Called with the mapped value on tab change.
+ * @returns {{ destroy: Function }}
+ */
+export function createTabsetWatcher(tabsetSelector, labelMap, onChange) {
+  function syncActive() {
+    const active = document.querySelector(`${tabsetSelector} .nav-link.active`);
+    if (!active) return;
+
+    // textContent strips <i> (no text content) — trim handles the trailing space
+    const label = active.textContent.trim();
+    const val = labelMap[label];
+    if (val !== undefined) onChange(val);
+  }
+
+  syncActive();
+
+  const nav = document.querySelector(`${tabsetSelector} .nav-tabs`);
+  const observer = nav ? new MutationObserver(syncActive) : null;
+  if (observer) observer.observe(nav, { subtree: true, attributeFilter: ["class"] });
+
+  return { destroy: () => observer?.disconnect() };
 }

@@ -257,6 +257,90 @@
 }
 
 /* ==========================================================================
+   PANEL-TABSET NESTED INSIDE .card-window
+   — Strips the standalone chrome; the card provides border/shadow/radius.
+   — Tab bar sits flush against the card-header bottom border.
+   — Tab pane shows only a compact hint line (no extra padding block).
+   ========================================================================== */
+
+.card-window > .panel-tabset {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin-bottom: 0 !important;
+    background-color: transparent !important;
+}
+
+/* The nav-tabs row inherits the same header background but without traffic-light
+   dots (the parent .card-header already has them). */
+.card-window > .panel-tabset .nav-tabs {
+    height: 32px !important;
+    padding: 0 12px !important;
+
+    /* — Overflow: single-line horizontal scroll, no wrap — */
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+
+    /* Hide scrollbar on all browsers while keeping scroll behaviour */
+    scrollbar-width: none !important;          /* Firefox */
+    -ms-overflow-style: none !important;       /* IE/Edge legacy */
+
+    /* Fade-out gradient on the right edge hints at hidden tabs */
+    -webkit-mask-image: linear-gradient(
+        to right,
+        black calc(100% - 32px),
+        transparent 100%
+    ) !important;
+    mask-image: linear-gradient(
+        to right,
+        black calc(100% - 32px),
+        transparent 100%
+    ) !important;
+}
+
+/* Hide Webkit scrollbar thumb/track */
+.card-window > .panel-tabset .nav-tabs::-webkit-scrollbar {
+    display: none !important;
+}
+
+.card-window > .panel-tabset .nav-tabs::before {
+    display: none !important;  /* No double traffic-light dots */
+}
+
+/* Remove the bi-file-earmark-code icon injected by the global nav-link::before rule */
+.card-window > .panel-tabset .nav-tabs .nav-link::before {
+    display: none !important;
+}
+
+/* Nav items must not shrink so each tab keeps its natural width */
+.card-window > .panel-tabset .nav-tabs .nav-item {
+    flex-shrink: 0 !important;
+}
+
+/* Compact pane: small top padding, italic muted hint text */
+.card-window > .panel-tabset .tab-content {
+    background-color: transparent !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+}
+
+.card-window > .panel-tabset .tab-content .tab-pane {
+    padding: 6px 16px 8px !important;
+    font-size: 0.8rem !important;
+    color: var(--card-window-tab-inactive-color, #93a1a1) !important;
+    font-style: italic !important;
+    border-bottom: 1px solid var(--card-window-header-border, rgba(88, 110, 117, 0.08)) !important;
+}
+
+.card-window > .panel-tabset .tab-content .tab-pane p {
+    margin: 0 !important;
+}
+
+
+
+
+/* ==========================================================================
    PREMIUM BOOTSTRAP-CONSISTENT CSS ANIMATION UTILITIES
    ========================================================================== */
 
@@ -873,7 +957,6 @@
         transform: translateY(0);
     }
 }
-
 
 
 

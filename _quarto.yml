@@ -11,6 +11,7 @@ project:
     - "**/_*.qmd"
 
 filters:
+  - aptitek/bi-icons
   - filetree
   - timeline
   - live

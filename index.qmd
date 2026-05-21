@@ -343,37 +343,69 @@ uiLogic = {
 ::: {.card-header}
 💾 Simulateur d'Encodage Physique
 :::
+
+```{ojs}
+//| echo: false
+import { renderTemplate, renderListTemplate, createTabsetWatcher } from "./assets/js/core.js"
+
+// Reactive value — driven by the tab watcher below
+mutable dataType = "int32"
+
+// Icon injection + MutationObserver + value sync — all handled by core.js
+_ramTabWatcher = {
+  const w = createTabsetWatcher(
+    ".ram-tabset",
+    { "Booléen": "bool", "int8": "int8", "int32": "int32", "float64": "float64", "Texte": "string" },
+    (val) => { mutable dataType = val; }
+  );
+  invalidation.then(() => w.destroy());
+  return html`<span style="display:none"></span>`;
+}
+```
+
+
+
+::: {.panel-tabset .ram-tabset}
+
+## Booléen {.bi-toggles}
+
+*Type `bool` — 1 bit logique, 1 octet physique.*
+
+## int8 {.bi-1-circle}
+
+*Type `int8` — entier sur 8 bits (1 octet), valeurs 0–255.*
+
+## int32 {.bi-hash}
+
+*Type `int32` — entier standard sur 32 bits (4 octets).*
+
+## float64 {.bi-infinity}
+
+*Type `float64` — virgule flottante double précision (8 octets, IEEE 754).*
+
+## Texte {.bi-fonts}
+
+*Type `string` — 1 octet par caractère ASCII (UTF-8 simple).*
+
+:::
+
 ::: {.card-body}
 Découvrez comment l'ordinateur traduit vos données lisibles en langage machine (Hexadécimal / Binaire) et l'espace physique qu'elles occupent dans les puces de RAM.
 
 ::: {.grid .mt-3}
 
 ::: {.g-col-12 .g-col-md-4}
-**1. Saisie de la donnée** *(Modifiez la valeur ou le type)*
+**Saisie de la valeur** *(Modifiez la valeur ci-dessous)*
 
 ```{ojs}
 //| echo: false
-import { renderTemplate, renderListTemplate } from "./assets/js/core.js"
-
-viewof dataType = Inputs.radio(
-  new Map([
-    ["Booléen (Vrai/Faux)", "bool"],
-    ["Entier Court (8 bits)", "int8"],
-    ["Entier Standard (32 bits)", "int32"],
-    ["Flottant (Décimale - 64 bits)", "float64"],
-    ["Texte / Chaîne", "string"]
-  ]),
-  { value: "int32" }
-)
-
 viewof rawInput = Inputs.text({ value: "42", placeholder: "Entrez une valeur..." })
-
 ```
 
 :::
 
 ::: {.g-col-12 .g-col-md-8}
-**2. Représentation Physique (Cases Mémoire)** *Survolez les octets pour voir leur valeur en binaire pur (Zéros et Uns).*
+**Représentation Physique (Cases Mémoire)** *Survolez les octets pour voir leur valeur en binaire pur.*
 
 ::: {#ram-bytes-container .d-flex .flex-wrap .mb-3 .p-3 .rounded style="background-color: var(--sol-base2); min-height: 120px;"}
 :::
@@ -399,6 +431,10 @@ viewof rawInput = Inputs.text({ value: "42", placeholder: "Entrez une valeur..."
 
 :::
 :::
+
+
+
+
 
 
 ```{ojs}
