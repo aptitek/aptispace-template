@@ -32,7 +32,9 @@ renderNominale = {
 ::: {.concept-details}
 Catégories ou étiquettes sans aucun ordre de grandeur ni hiérarchie naturelle. Les chiffres ne servent que de codes d'identification.
 
+::: {.callout-example}
 **Exemples :** Couleur des yeux, Pays, Genre.
+:::
 :::
 :::
 :::
@@ -65,7 +67,9 @@ renderOrdinale = {
 ::: {.concept-details}
 Catégories textuelles dotées d'une hiérarchie stricte et d'une logique de rang. La distance mathématique entre rangs n'est pas mesurable.
 
+::: {.callout-example}
 **Exemples :** Niveau (S/M/L), Mention bac, Satisfaction.
+:::
 :::
 :::
 :::
@@ -97,7 +101,9 @@ renderDiscrete = {
 ::: {.concept-details}
 Valeurs numériques entières dénombrables. On compte des unités distinctes et complètes (pas de demi-mesure possible).
 
+::: {.callout-example}
 **Exemples :** Nombre d'enfants, clics web, transactions.
+:::
 :::
 :::
 :::
@@ -140,7 +146,9 @@ renderContinuous = {
 ::: {.concept-details}
 Valeurs décimales mesurables sur une échelle infinie. Il existe un nombre infini de possibilités réelles entre deux mesures.
 
+::: {.callout-example}
 **Exemples :** Température en °C, Salaire exact, Latitude.
+:::
 :::
 :::
 :::

@@ -49,17 +49,20 @@
     position: relative !important;
     text-align: center !important;
     font-family: var(--font-code, monospace) !important;
-    font-size: 0.8rem !important;
     font-weight: 700 !important;
     letter-spacing: 0.05em !important;
 }
 
 /* Strip margins and paddings on any nested wrappers (like Quarto paragraphs or headings) to let flex alignment work perfectly */
-.card-window .card-header > *,
+.card.card-window .card-header > *,
 .card-window-header > * {
     margin: 0 !important;
     padding: 0 !important;
     line-height: 1 !important;
+    width: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 .card-window .card-header::before,
@@ -698,6 +701,7 @@
     border-bottom: 1px solid var(--card-header-border) !important;
     color: var(--body-color) !important;
     font-weight: 700 !important;
+    font-size: 0.8rem !important;
 }
 
 /* Strip default margins/paddings from nested children inside standard card headers and convert them to flex containers for perfect vertical alignment of text and badges */
@@ -753,6 +757,22 @@
         display: flex !important;
         flex-direction: column !important;
         gap: 8px !important;
+    }
+}
+
+/* --- Custom examples callout style --- */
+.callout-example {
+    border-left: 3px solid var(--sol-green) !important;
+    background-color: rgba(133, 153, 0, 0.08) !important;
+    padding: 8px 12px !important;
+    border-radius: 4px !important;
+    margin-top: 6px !important;
+    margin-bottom: 0 !important;
+    font-size: 0.85em !important;
+    line-height: 1.4 !important;
+    
+    strong {
+        color: var(--sol-green) !important;
     }
 }
 
