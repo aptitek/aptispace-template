@@ -776,5 +776,104 @@
     }
 }
 
+/* --- PREMIUM INTEGRATED TERMINAL ENGINE --- */
+.terminal {
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    position: relative !important;
+    background-color: var(--sol-base03) !important;
+    border: 1px solid rgba(88, 110, 117, 0.25) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35) !important;
+    font-family: var(--font-code, monospace) !important;
+    transition: all 0.3s ease !important;
+
+    .card-header {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        height: 38px !important;
+        padding: 0 16px !important;
+        user-select: none !important;
+        background-color: #0b4352 !important; /* Lighter base02 (standard base02 is #073642) */
+        border-bottom: 1px solid rgba(88, 110, 117, 0.15) !important;
+        position: relative !important;
+        text-align: center !important;
+        font-size: 0.8rem !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.05em !important;
+        color: var(--sol-base1) !important;
+
+        /* Window controls style dot pseudo elements */
+        &::before {
+            content: "" !important;
+            position: absolute !important;
+            left: 16px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            width: 8px !important;
+            height: 8px !important;
+            background-color: #dc322f !important; /* red controls */
+            border-radius: 50% !important;
+            box-shadow: 14px 0 0 #b58900, 28px 0 0 #859900 !important; /* yellow, green controls */
+            opacity: 0.85 !important;
+        }
+
+        > * {
+            margin: 0 !important;
+            padding: 0 !important;
+            line-height: 1 !important;
+            width: auto !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+    }
+
+    .card-body {
+        background-color: var(--sol-base03) !important;
+        color: var(--sol-base0) !important;
+        padding: 20px !important;
+        min-height: 120px !important;
+    }
+}
+
+/* --- CUSTOM TERMINAL LINE STYLING & ANIMATIONS --- */
+/* Border separator only appears when the details container has content */
+.feedback-details:not(:empty) {
+    border-top: 1px solid var(--sol-base01) !important;
+    padding-top: 12px !important;
+    margin-top: 4px !important;
+}
+
+.terminal-line {
+    display: block;
+    margin-bottom: 8px !important;
+    line-height: 1.5 !important;
+    opacity: 1 !important;
+    animation: terminal-line-fade 0.3s ease-out forwards;
+    
+    &.text-success {
+        color: var(--sol-green) !important;
+    }
+    &.text-warning {
+        color: var(--sol-yellow) !important;
+    }
+    &.text-danger {
+        color: var(--sol-red) !important;
+    }
+}
+
+@keyframes terminal-line-fade {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
 
 

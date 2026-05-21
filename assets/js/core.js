@@ -248,7 +248,7 @@ export function renderFeedbackUI(panelSelector, state, listData = []) {
     
     listData.forEach(item => {
       const itemEl = document.createElement('div');
-      itemEl.className = 'feedback-item mb-2';
+      itemEl.className = 'feedback-item terminal-line mb-2';
 
       // Shell prompt prefix: >
       const prefix = document.createElement('span');

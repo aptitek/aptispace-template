@@ -251,26 +251,26 @@ viewof powerOn = createLever("#power-lever", invalidation)
 ```
 
 
-::: {#cabling-feedback-panel .card .card-window .mt-4 style="display: none;"}
+::: {#cabling-feedback-panel .terminal .mt-4 style="display: none;"}
 
 ::: {.card-header}
 :::
 
-::: {.card-body style="background: var(--sol-base03) !important; color: var(--sol-base0) !important; font-family: var(--font-code, monospace) !important; padding: 20px !important; min-height: 120px !important;"}
+::: {.card-body}
 
-::: {.feedback-card .feedback-incomplete .text-warning .fw-bold .mb-3}
+::: {.feedback-card .feedback-incomplete .terminal-line .text-warning .fw-bold .mb-3}
 [!] SIGNAL BROUILLÉ : Brassage incomplet. L'analyse ne peut pas démarrer ({{score}}/{{total}} connectés).
 :::
 
-::: {.feedback-card .feedback-validated .text-success .fw-bold .mb-3}
+::: {.feedback-card .feedback-validated .terminal-line .text-success .fw-bold .mb-3}
 [+] DIAGNOSTIC VALIDÉ : Excellent travail, le signal est pur ({{score}}/{{total}} corrects).
 :::
 
-::: {.feedback-card .feedback-error .text-danger .fw-bold .mb-3}
+::: {.feedback-card .feedback-error .terminal-line .text-danger .fw-bold .mb-3}
 [-] CONFLIT DE SIGNAL : Des courts-circuits subsistent. Analysez la nature des variables ({{score}}/{{total}} corrects).
 :::
 
-::: {.feedback-details .reveal-lines .border-top .pt-3}
+::: {.feedback-details .reveal-lines}
 :::
 
 :::
