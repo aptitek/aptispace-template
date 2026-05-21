@@ -351,14 +351,48 @@ export function initTabIcons(tabsetSelector) {
  * @returns {{ destroy: Function }}
  */
 export function createTabsetWatcher(tabsetSelector, labelMap, onChange) {
+  const tabset = document.querySelector(tabsetSelector);
+  if (tabset) {
+    const links = tabset.querySelectorAll(".nav-link");
+    const panes = tabset.querySelectorAll(".tab-pane");
+
+    links.forEach((link, i) => {
+      // 1. Nettoie les caractères de remplacement invalides (diamonds / \uFFFD)
+      if (link.innerHTML) {
+        link.innerHTML = link.innerHTML.replace(/\uFFFD/g, "").trim();
+      }
+
+      // 2. Détecte la classe d'icône depuis le panneau ou son titre
+      const pane = panes[i];
+      if (!pane) return;
+
+      let biClass = Array.from(pane.classList).find(c => c.startsWith("bi-"));
+      if (!biClass) {
+        const header = pane.querySelector("h1, h2, h3, h4, h5, h6");
+        if (header) {
+          biClass = Array.from(header.classList).find(c => c.startsWith("bi-"));
+        }
+      }
+
+      // 3. Injecte l'icône Bootstrap propre comme enfant direct pour hériter des styles actifs
+      if (biClass) {
+        link.querySelectorAll("i.bi").forEach(icon => icon.remove()); // évite les doublons
+
+        const icon = document.createElement("i");
+        icon.className = `bi ${biClass}`;
+        icon.style.marginRight = "6px";
+        icon.style.transition = "color 0.15s ease";
+        link.prepend(icon);
+      }
+    });
+  }
+
   function syncActive() {
-    // Icons are inline HTML in the heading, so they're already in the nav-link.
-    // initTabIcons() is kept as a JS-only fallback for runtime-generated tabsets.
     const active = document.querySelector(`${tabsetSelector} .nav-link.active`);
     if (!active) return;
 
-    // textContent strips <i> elements (no text) — trim cleans whitespace
-    const label = active.textContent.trim();
+    // textContent extrait le texte net sans balise <i> — nettoyage final
+    const label = active.textContent.replace(/\uFFFD/g, "").trim();
     const val = labelMap[label];
     if (val !== undefined) onChange(val);
   }

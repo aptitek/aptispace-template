@@ -350,7 +350,8 @@ uiLogic = {
 
 ```{ojs}
 //| echo: false
-import { renderTemplate, renderListTemplate, createTabsetWatcher } from "./assets/js/core.js"
+import { renderTemplate, renderListTemplate } from "./assets/js/core.js"
+import { createTabsetWatcher } from "./assets/js/custom/card.js"
 
 // Reactive value — driven by the tab watcher below
 mutable dataType = "int32"
@@ -369,7 +370,7 @@ _ramTabWatcher = {
 
 ::: {.panel-tabset .ram-tabset}
 
-## []{.bi-toggles} bool
+## bool {.bi-toggles}
 
 ::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
 ::: {.card-body .p-0 .pb-2}
@@ -382,7 +383,7 @@ _ramTabWatcher = {
 :::
 :::
 
-## []{.bi-1-circle} int8
+## int8 {.bi-1-circle}
 
 ::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
 ::: {.card-body .p-0 .pb-2}
@@ -395,7 +396,7 @@ _ramTabWatcher = {
 :::
 :::
 
-## []{.bi-hash} int32
+## int32 {.bi-hash}
 
 ::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
 ::: {.card-body .p-0 .pb-2}
@@ -408,7 +409,7 @@ _ramTabWatcher = {
 :::
 :::
 
-## []{.bi-infinity} float64
+## float64 {.bi-infinity}
 
 ::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
 ::: {.card-body .p-0 .pb-2}
@@ -422,7 +423,7 @@ _ramTabWatcher = {
 :::
 :::
 
-## []{.bi-fonts} string
+## string {.bi-fonts}
 
 ::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
 ::: {.card-body .p-0 .pb-2}
@@ -494,38 +495,39 @@ updateRamUI = renderRam(ramData)
 ::: {.card-header}
 🖥️ Simulateur de flux d'exécution
 :::
+::: {.panel-tabset .mobo-tabset}
+
+## Au repos {.bi-moon-stars}
+
+::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
+::: {.card-body .p-0 .pb-2}
+**Au repos**, les données de votre projet (votre fichier CSV, vos scripts) dorment paisiblement sur le Disque Dur (SSD). Le CPU et la RAM sont en attente.
+:::
+:::
+
+## Chargement {.bi-folder-symlink}
+
+::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
+::: {.card-body .p-0 .pb-2}
+**Lecture du fichier :** Le système d'exploitation copie les données du Disque lent vers la RAM (Mémoire Vive), qui est ultra-rapide mais volatile. C'est ce qui se passe quand vous tapez `pd.read_csv()`.
+:::
+:::
+
+## Entraînement {.bi-cpu}
+
+::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
+::: {.card-body .p-0 .pb-2}
+**Exécution :** Le CPU récupère les données dans la RAM par petits paquets, effectue ses calculs mathématiques (additions, multiplications de matrices), et renvoie les résultats dans la RAM.
+:::
+:::
+
+:::
+
 ::: {.card-body}
-
-Sélectionnez une étape du cycle de vie d'un programme pour observer le transit physique des données à l'intérieur de l'ordinateur.
-
-::: {.grid .mt-3}
-
-::: {.g-col-12 .g-col-md-5}
-
-```{ojs}
-//| echo: false
-viewof hardwareState = Inputs.radio(
-  new Map([
-    ["💤 0. Ordinateur au repos", "idle"],
-    ["📂 1. Chargement du dataset", "loading"],
-    ["🧠 2. Entraînement du Modèle", "processing"]
-  ]), 
-  { value: "idle", label: "État système :" }
-)
-
-```
-
-::: {#mobo-data .d-none}
-| id | text |
-|---|---|
-| idle | **Au repos**, les données de votre projet (votre fichier CSV, vos scripts) dorment paisiblement sur le Disque Dur (SSD). Le CPU et la RAM sont en attente. |
-| loading | **Lecture du fichier :** Le système d'exploitation copie les données du Disque lent vers la RAM (Mémoire Vive), qui est ultra-rapide mais volatile. C'est ce qui se passe quand vous tapez `pd.read_csv()`. |
-| processing | **Exécution :** Le CPU récupère les données dans la RAM par petits paquets, effectue ses calculs mathématiques (additions, multiplications de matrices), et renvoie les résultats dans la RAM. |
+::: {.d-flex .justify-content-center .align-items-center .mt-2}
+::: {.motherboard-view #motherboard-view .w-100}
+![](assets/ui/motherboard.svg){.background}
 :::
-
-::: {.callout-note .mt-4}
-::: {#mobo-explanation}
-{{text}}
 :::
 :::
 
@@ -533,55 +535,31 @@ viewof hardwareState = Inputs.radio(
 
 ```{ojs}
 //| echo: false
+import { initMoboSvg, renderMobo } from "./assets/js/custom/mobo.js";
 
-// 1. Chargement et formatage des données pédagogiques
-moboData = parseTableData("#mobo-data table")
-// Astuce JS : Convertit le tableau d'objets en un dictionnaire simple { "idle": "...", "loading": "..." }
-moboExplanations = Object.fromEntries(moboData.map(row => [row.id, row.text]))
-```
+// 1. Initialisation dynamique de la carte mère vectorielle (Inline SVG)
+initMobo = initMoboSvg("#motherboard-view")
 
-::: {.g-col-12 .g-col-md-7 .d-flex .justify-content-center}
+// 2. Détecteur réactif du Tabset de la carte mère (géré via card.js)
+mutable hardwareState = "idle"
 
-:::
-:::
-:::
+_moboTabWatcher = {
+  const w = createTabsetWatcher(
+    ".mobo-tabset",
+    { "Au repos": "idle", "Chargement": "loading", "Entraînement": "processing" },
+    (val) => { mutable hardwareState = val; }
+  );
+  invalidation.then(() => w.destroy());
+  return html`<span style="display:none"></span>`;
+}
 
-```{ojs}
-//| echo: false
+// 3. Déclenchement réactif des animations de flux physiques
 updateMotherboardUI = {
-  hardwareState; // Dépendance réactive
-
-  // A. Mise à jour du texte via le template générique
-  renderTemplate("#mobo-explanation", { 
-    text: moboExplanations[hardwareState] || "Sélectionnez un état." 
-  });
-
-  // B. Sélection des éléments SVG
-  const disk = document.querySelector("#part-disk rect");
-  const ram  = document.querySelector("#part-ram rect");
-  const cpu  = document.querySelector("#part-cpu rect");
-  const bus1 = document.querySelector("#bus-disk-ram");
-  const bus2 = document.querySelector("#bus-ram-cpu");
-
-  if(!disk || !ram || !cpu) return;
-
-  // C. Reset total des classes SVG
-  [disk, ram, cpu].forEach(el => el.className.baseVal = "mobo-part");
-  [bus1, bus2].forEach(el => el.className.baseVal = "mobo-bus");
-
-  // D. Application des états d'animation CSS
-  if (hardwareState === "loading") {
-    disk.className.baseVal += " is-active-disk";
-    ram.className.baseVal  += " is-active-ram";
-    bus1.className.baseVal += " is-flowing";
-  } 
-  else if (hardwareState === "processing") {
-    ram.className.baseVal  += " is-active-ram";
-    cpu.className.baseVal  += " is-active-cpu";
-    bus2.className.baseVal += " is-flowing";
-  }
+  initMobo; // Attente inlining SVG
+  renderMobo(hardwareState);
 }
 ```
+
 
 ## Hiérarchie Mémoire (Simulateur de Cache)
 

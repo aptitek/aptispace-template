@@ -3,6 +3,17 @@
    SIMULATEUR CARTE MÈRE (Animations SVG)
    ========================================================================== */
 
+/* Motherboard View Container and Canvas Layout */
+.motherboard-view {
+    position: relative;
+    width: 100%;
+    max-width: 580px;
+    height: 290px;
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
 /* Style de base des composants et des câbles */
 .mobo-part {
     fill: var(--sol-base03);

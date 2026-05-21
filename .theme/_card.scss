@@ -263,7 +263,7 @@
    — Tab pane shows only a compact hint line (no extra padding block).
    ========================================================================== */
 
-.card-window > .panel-tabset {
+.card-window .panel-tabset {
     border: none !important;
     border-radius: 0 !important;
     box-shadow: none !important;
@@ -273,7 +273,7 @@
 
 /* The nav-tabs row inherits the same header background but without traffic-light
    dots (the parent .card-header already has them). */
-.card-window > .panel-tabset .nav-tabs {
+.card-window .panel-tabset .nav-tabs {
     height: 32px !important;
     padding: 0 12px !important;
 
@@ -300,32 +300,32 @@
 }
 
 /* Hide Webkit scrollbar thumb/track */
-.card-window > .panel-tabset .nav-tabs::-webkit-scrollbar {
+.card-window .panel-tabset .nav-tabs::-webkit-scrollbar {
     display: none !important;
 }
 
-.card-window > .panel-tabset .nav-tabs::before {
+.card-window .panel-tabset .nav-tabs::before {
     display: none !important;  /* No double traffic-light dots */
 }
 
 /* Remove the bi-file-earmark-code icon injected by the global nav-link::before rule */
-.card-window > .panel-tabset .nav-tabs .nav-link::before {
+.card-window .panel-tabset .nav-tabs .nav-link::before {
     display: none !important;
 }
 
 /* Nav items must not shrink so each tab keeps its natural width */
-.card-window > .panel-tabset .nav-tabs .nav-item {
+.card-window .panel-tabset .nav-tabs .nav-item {
     flex-shrink: 0 !important;
 }
 
 /* Compact pane: small top padding, italic muted hint text */
-.card-window > .panel-tabset .tab-content {
+.card-window .panel-tabset .tab-content {
     background-color: transparent !important;
     border-radius: 0 !important;
     padding: 0 !important;
 }
 
-.card-window > .panel-tabset .tab-content .tab-pane {
+.card-window .panel-tabset .tab-content .tab-pane {
     padding: 6px 16px 8px !important;
     font-size: 0.8rem !important;
     color: var(--card-window-tab-inactive-color, #93a1a1) !important;
@@ -333,7 +333,7 @@
     border-bottom: 1px solid var(--card-window-header-border, rgba(88, 110, 117, 0.08)) !important;
 }
 
-.card-window > .panel-tabset .tab-content .tab-pane p {
+.card-window .panel-tabset .tab-content .tab-pane p {
     margin: 0 !important;
 }
 
