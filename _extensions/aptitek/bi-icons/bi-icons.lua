@@ -52,9 +52,38 @@ end
 
 
 -- ── Span handler ───────────────────────────────────────────────────────────────
--- Handles: [text]{.bi-icon}  and  []{.bi-icon}  (empty span = icon only)
--- Empty spans return the icon RawInline directly, skipping the <span> wrapper.
+-- Handles:
+--   1. [42]{#rawInput .search-bar .bi-keyboard placeholder="..."}  (generic search bar)
+--   2. [text]{.bi-icon}  and  []{.bi-icon}  (generic icon/badge elements)
 function Span(el)
+  -- Case 1: Generic search/input component
+  local is_search_bar = false
+  for _, cls in ipairs(el.classes) do
+    if cls == "search-bar" then
+      is_search_bar = true
+      break
+    end
+  end
+
+  if is_search_bar then
+    local bi_class, remaining = extract_bi_class(el.classes)
+    local val = pandoc.utils.stringify(el.content)
+    local placeholder = el.attributes["placeholder"] or ""
+    local id = el.identifier or ""
+
+    local icon_html = ""
+    if bi_class then
+      icon_html = '<i class="bi ' .. bi_class .. '" aria-hidden="true"></i>'
+    end
+
+    local html = string.format(
+      '<span class="search-bar">%s<input type="text" id="%s" value="%s" placeholder="%s" autocomplete="off" spellcheck="false" /></span>',
+      icon_html, id, val, placeholder
+    )
+    return pandoc.RawInline("html", html)
+  end
+
+  -- Case 2: Generic icon/badge styling
   local bi_class, remaining = extract_bi_class(el.classes)
   if not bi_class then return el end
 

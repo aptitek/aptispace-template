@@ -355,7 +355,7 @@ mutable dataType = "int32"
 _ramTabWatcher = {
   const w = createTabsetWatcher(
     ".ram-tabset",
-    { "Booléen": "bool", "int8": "int8", "int32": "int32", "float64": "float64", "Texte": "string" },
+    { "bool": "bool", "int8": "int8", "int32": "int32", "float64": "float64", "string": "string" },
     (val) => { mutable dataType = val; }
   );
   invalidation.then(() => w.destroy());
@@ -389,22 +389,19 @@ _ramTabWatcher = {
 
 :::
 
+::: {.card-control-row}
+[42]{#rawInput .search-bar .bi-keyboard placeholder="Entrez une valeur…"}
+:::
+
 ::: {.card-body}
-
-::: {.grid .mt-3}
-
-::: {.g-col-12 .g-col-md-4}
-**Saisie de la valeur** *(Modifiez la valeur ci-dessous)*
 
 ```{ojs}
 //| echo: false
-viewof rawInput = Inputs.text({ value: "42", placeholder: "Entrez une valeur..." })
+viewof rawInput = {
+  const el = document.querySelector("#rawInput");
+  return el;
+}
 ```
-
-:::
-
-::: {.g-col-12 .g-col-md-8}
-**Représentation Physique (Cases Mémoire)** *Survolez les octets pour voir leur valeur en binaire pur.*
 
 ::: {#ram-bytes-container .d-flex .flex-wrap .mb-3 .p-3 .rounded style="background-color: var(--sol-base2); min-height: 120px;"}
 :::
@@ -419,9 +416,6 @@ viewof rawInput = Inputs.text({ value: "42", placeholder: "Entrez une valeur..."
 :::
 :::
 
-:::
-:::
-
 ::: {#ram-explanation-container}
 ::: {.callout-note .py-2 .mb-0 style="font-size: 0.9em;"}
 {{text}}
@@ -429,9 +423,8 @@ viewof rawInput = Inputs.text({ value: "42", placeholder: "Entrez une valeur..."
 :::
 
 :::
+
 :::
-
-
 
 
 

@@ -960,3 +960,112 @@
 
 
 
+/* ==========================================================================
+   GENERIC SEARCH / INPUT BAR
+   ========================================================================== */
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    height: 42px;
+    border-radius: 21px;          /* Pill shape */
+    border: 1.5px solid var(--card-window-header-border, rgba(88, 110, 117, 0.18));
+    background: var(--sol-base2, #eee8d5);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+
+    /* Left icon (injected by Lua filter when using [input]{.search-bar .bi-icon}) */
+    > i.bi {
+        font-size: 1.05rem;
+        color: var(--sol-base01, #586e75);
+        flex-shrink: 0;
+        pointer-events: none;
+        transition: color 0.2s ease;
+    }
+
+    /* The native <input> */
+    > input {
+        flex: 1;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-family: var(--font-code, monospace);
+        font-size: 0.95rem;
+        color: var(--sol-base00, #657b83);
+        min-width: 0;
+
+        &::placeholder {
+            color: var(--sol-base1, #93a1a1);
+            font-style: italic;
+        }
+    }
+
+    /* Focus state */
+    &:focus-within {
+        border-color: var(--sol-blue, #268bd2);
+        box-shadow: 0 0 0 3px rgba(38, 139, 210, 0.15);
+
+        > i.bi {
+            color: var(--sol-blue, #268bd2);
+        }
+    }
+}/* ==========================================================================
+   GENERIC CARD CONTROL ROW (Sub-Header)
+   ========================================================================== */
+
+.card-window > .card-control-row {
+    padding: 0 !important;
+    background-color: var(--card-window-bg) !important;
+    display: flex !important;
+    align-items: center !important;
+    height: 34px !important;       /* Compact like a browser tool/address bar */
+    overflow: hidden !important;
+
+
+    /* Handle intermediate paragraphs injected by Pandoc */
+    p {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+}
+
+/* Make the search pill flat and edge-to-edge when inside the control row */
+.card-window > .card-control-row .search-bar {
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    padding: 0 16px !important;    /* Align perfectly with card margins */
+    gap: 10px !important;
+    box-shadow: none !important;
+    display: flex !important;
+    align-items: center !important;
+
+    > i.bi {
+        font-size: 0.95rem !important;
+        color: var(--sol-base1, #93a1a1) !important;
+    }
+
+    > input {
+        font-size: 0.85rem !important;
+        height: 100% !important;
+        color: var(--sol-base00, #657b83) !important;
+    }
+
+    &:focus-within {
+        background-color: rgba(38, 139, 210, 0.03) !important; /* Row-wide focus highlight */
+        
+        > i.bi {
+            color: var(--sol-blue, #268bd2) !important;
+        }
+    }
+}
+
+
