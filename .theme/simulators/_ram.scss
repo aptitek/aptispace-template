@@ -6,14 +6,83 @@
     font-family: var(--font-code) !important;
 }
 
+/* Motherboard RAM Slot Container */
+#ram-bytes-container {
+    position: relative;
+    height: 120px !important;
+    background: url("assets/ui/ram-bar.svg") no-repeat center !important;
+    background-size: 100% 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 16px !important;
+    padding: 0 45px !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin-bottom: 1.5rem !important;
+}
+
+/* TSOP Surface Mount Microchips */
 .ram-byte-box {
-    width: 55px;
-    height: 55px;
-    background-color: var(--sol-base03) !important;
+    position: relative;
+    width: 60px;
+    height: 44px;
+    background: linear-gradient(135deg, #1b2021 0%, #0d1011 100%) !important;
+    border: 1px solid rgba(88, 110, 117, 0.4) !important;
+    border-radius: 3px !important;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.3em;
-    font-weight: bold;
+    font-size: 1.05em !important;
+    font-weight: 700;
+    color: var(--sol-cyan, #2aa198) !important;
+    box-shadow: 0 3px 6px rgba(var(--sol-base03-rgb), 0.4), 
+                inset 0 1px 1px rgba(var(--sol-base3-rgb), 0.08) !important;
     cursor: help;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 2;
+
+    /* Solder Pins/Legs (Top and Bottom) */
+    &::before {
+        content: "";
+        position: absolute;
+        width: 80%;
+        height: calc(100% + 8px);
+        left: 10%;
+        top: -4px;
+        border-top: 4px dashed var(--sol-yellow, #b58900);
+        border-bottom: 4px dashed var(--sol-yellow, #b58900);
+        pointer-events: none;
+        z-index: -1;
+        opacity: 0.85;
+        transition: opacity 0.2s ease;
+    }
+
+    /* Small circular chip orientation notch */
+    &::after {
+        content: "";
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        width: 4px;
+        height: 4px;
+        background-color: rgba(var(--sol-base3-rgb), 0.15);
+        border-radius: 50%;
+    }
+
+    /* Interactive Hover Highlight */
+    &:hover {
+        transform: translateY(-2px) scale(1.05);
+        border-color: var(--sol-cyan, #2aa198) !important;
+        color: var(--sol-yellow, #b58900) !important;
+        box-shadow: 0 6px 12px rgba(var(--sol-base03-rgb), 0.5), 
+                    0 0 8px rgba(var(--sol-cyan-rgb), 0.2), 
+                    inset 0 1px 1px rgba(var(--sol-base3-rgb), 0.15) !important;
+
+
+        &::before {
+            opacity: 1;
+            filter: drop-shadow(0 0 2px var(--sol-yellow));
+        }
+    }
 }
