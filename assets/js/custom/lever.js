@@ -62,7 +62,6 @@ export function createLever(selector, invalidation) {
 
   const housing = wrapper.querySelector('.lever-housing');
   const handle  = wrapper.querySelector('.lever-handle');
-  const label   = wrapper.querySelector('.lever-status');
 
   // Handle pixel positions — must match _lever.scss
   const TOP_ON  = 18;
@@ -80,9 +79,6 @@ export function createLever(selector, invalidation) {
   async function _applyState(on) {
     wrapper.value = on;
     housing.classList.toggle('is-on', on);
-    label.classList.toggle('is-on', on);
-    label.classList.toggle('is-off', !on);
-    label.textContent = on ? 'Circuit alimenté' : 'Circuit coupé';
     handle.style.top = ''; // release inline style → CSS spring transition takes over
     if (on) await _buildArc(housing);
     wrapper.dispatchEvent(new CustomEvent('input'));

@@ -23,7 +23,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 0;
+  padding: 6px 0;
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
 
   /* Notch indicators */
@@ -40,8 +40,8 @@
     border: 1px solid rgba(var(--sol-base1-rgb), 0.08);
     z-index: 0;
   }
-  &::before { top: 22px; }
-  &::after  { bottom: 22px; }
+  &::before { top: 32px; }
+  &::after  { bottom: 32px; }
 
   /* Powered glow */
   &.is-on {
@@ -80,6 +80,8 @@
 .lever-label-top {
   color: var(--sol-green);
   background: rgba(var(--sol-green-rgb), 0.1);
+  position: relative;
+  top: -6px; /* Shifts it visually 8px higher! */
 
   .is-on & {
     background: rgba(var(--sol-green-rgb), 0.2);
@@ -221,9 +223,11 @@
   }
 }
 
-/* Strip margin from Quarto's wrapping <p> below the housing */
+/* Strip margin from Quarto's wrapping <p> below the housing and center it horizontally */
 .lever-wrapper > p {
   margin: 0;
+  text-align: center;
+  width: 100%;
 }
 
 @keyframes lever-status-glow {

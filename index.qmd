@@ -1,22 +1,21 @@
 ## Nature variable
 
-::: {.grid}
 ```{ojs}
 //| echo: false
 // 📦 Imports centralisés pour tout le bloc
 import { createWordCloud } from "./assets/js/networks.js"
-import { createBar, createLine, createFunnel } from "./assets/js/plots.js"
+import { createBar, createLine, createFunnel, createPiramid } from "./assets/js/plots.js"
+import { getThemeColor } from "./assets/js/core.js"
 ```
 
+::: {.grid}
+
 ::: {.g-col-12 .g-col-md-6}
-::: {.card .h-100}
+::: {.card .card-concept .h-100}
 ::: {.card-header}
 Nominale [Qualitative]{.badge .bg-info .float-end}
 :::
 ::: {.card-body}
-Catégories ou étiquettes sans aucun ordre de grandeur ni hiérarchie naturelle. Les chiffres ne servent que de codes d'identification.
-
-**Exemples :** Couleur des yeux, Pays, Genre.
 
 ::: {#plot-nominale style="height: 180px;"}
 ```{ojs}
@@ -29,48 +28,55 @@ renderNominale = {
 }
 ```
 :::
+
+::: {.concept-details}
+Catégories ou étiquettes sans aucun ordre de grandeur ni hiérarchie naturelle. Les chiffres ne servent que de codes d'identification.
+
+**Exemples :** Couleur des yeux, Pays, Genre.
+:::
 :::
 :::
 :::
 
 ::: {.g-col-12 .g-col-md-6}
-::: {.card .h-100}
+::: {.card .card-concept .h-100}
 ::: {.card-header}
 Ordinale [Qualitative]{.badge .bg-info .float-end}
 :::
 ::: {.card-body}
-Catégories textuelles dotées d'une hiérarchie stricte et d'une logique de rang. La distance mathématique entre rangs n'est pas mesurable.
-
-**Exemples :** Niveau (S/M/L), Mention bac, Satisfaction.
-
 ::: {#plot-ordinale style="height: 180px;"}
 ```{ojs}
 //| echo: false
 renderOrdinale = {
-  createFunnel("plot-ordinale", {
-    text: ["Rang 1 (Inférieur)", "Rang 2 (Moyen)", "Rang 3 (Supérieur)"],
-    values: [50, 30, 20]
+  createPiramid("plot-ordinale", {
+    text: ["Rang 3", "Rang 2", "Rang 1"],
+    values: [20, 30, 50]
   }, {
-    // Utilisation directe des tokens CSS du thème
-    colors: ["var(--sol-blue)", "var(--sol-cyan)", "var(--sol-yellow)"] 
+    colors: [
+      getThemeColor("--sol-yellow", "#b58900"),
+      getThemeColor("--sol-cyan", "#2aa198"),
+      getThemeColor("--sol-blue", "#268bd2")
+    ]
   });
 }
 ```
+:::
+
+::: {.concept-details}
+Catégories textuelles dotées d'une hiérarchie stricte et d'une logique de rang. La distance mathématique entre rangs n'est pas mesurable.
+
+**Exemples :** Niveau (S/M/L), Mention bac, Satisfaction.
 :::
 :::
 :::
 :::
 
 ::: {.g-col-12 .g-col-md-6}
-::: {.card .h-100}
+::: {.card .card-concept .h-100}
 ::: {.card-header}
 Discrète [Quantitative]{.badge .bg-success .float-end}
 :::
 ::: {.card-body}
-Valeurs numériques entières dénombrables. On compte des unités distinctes et complètes (pas de demi-mesure possible).
-
-**Exemples :** Nombre d'enfants, clics web, transactions.
-
 ::: {#plot-discrete style="height: 180px;"}
 ```{ojs}
 //| echo: false
@@ -81,26 +87,28 @@ dataDiscrete = {
 
 renderDiscrete = {
   createBar("plot-discrete", dataDiscrete, "", {
-    marker: { color: "var(--sol-green)" }, // Variable dynamique
+    marker: { color: getThemeColor("--sol-green", "#859900") }, // Variable dynamique
     layout: { margin: { t: 10, b: 20, l: 30, r: 10 }, paper_bgcolor: 'transparent', plot_bgcolor: 'transparent' }
   });
 }
 ```
+:::
+
+::: {.concept-details}
+Valeurs numériques entières dénombrables. On compte des unités distinctes et complètes (pas de demi-mesure possible).
+
+**Exemples :** Nombre d'enfants, clics web, transactions.
 :::
 :::
 :::
 :::
 
 ::: {.g-col-12 .g-col-md-6}
-::: {.card .h-100}
+::: {.card .card-concept .h-100}
 ::: {.card-header}
 Continue [Quantitative]{.badge .bg-success .float-end}
 :::
 ::: {.card-body}
-Valeurs décimales mesurables sur une échelle infinie. Il existe un nombre infini de possibilités réelles entre deux mesures.
-
-**Exemples :** Température en °C, Salaire exact, Latitude.
-
 ::: {#plot-continuous style="height: 180px;"}
 ```{ojs}
 //| echo: false
@@ -116,9 +124,9 @@ dataContinuous = {
 
 renderContinuous = {
   createLine("plot-continuous", dataContinuous, "", {
-    line: { shape: "spline", color: "var(--sol-blue)", width: 3 }, // Variable dynamique
-    //FIXME: Markers showing
-    marker: { size: 0 },
+    mode: "lines",
+    line: { shape: "spline", color: getThemeColor("--sol-blue", "#268bd2"), width: 3 },
+    markerSize: 0,
     layout: { 
       margin: { t: 10, b: 20, l: 30, r: 10 },
       paper_bgcolor: 'transparent', 
@@ -128,6 +136,11 @@ renderContinuous = {
   });
 }
 ```
+:::
+::: {.concept-details}
+Valeurs décimales mesurables sur une échelle infinie. Il existe un nombre infini de possibilités réelles entre deux mesures.
+
+**Exemples :** Température en °C, Salaire exact, Latitude.
 :::
 :::
 :::
@@ -200,7 +213,22 @@ Reliez chaque pièce à conviction de gauche à sa catégorie de données logiqu
 
 :::
 
-[Circuit coupé]{.lever-status .is-off}
+[Circuit alimenté]{#lever-status-on .lever-status .is-on style="display: none;"}
+[Circuit coupé]{#lever-status-off .lever-status .is-off}
+
+```{ojs}
+//| echo: false
+{
+  powerOn;
+  const elOn = document.querySelector("#lever-status-on");
+  const elOff = document.querySelector("#lever-status-off");
+  if (elOn && elOff) {
+    elOn.style.display = powerOn ? "inline-block" : "none";
+    elOff.style.display = powerOn ? "none" : "inline-block";
+  }
+  return html`<span style="display: none;"></span>`;
+}
+```
 
 :::
 
@@ -270,8 +298,8 @@ uiLogic = {
     // Levier ON  → valider le brassage
     state = engine.validate();
   } else {
-    // Levier OFF → tout réinitialiser et masquer les résultats
-    engine.reset();
+    // Levier OFF → masquer les résultats, enlever les étincelles et la validation (garder les câbles)
+    engine.clearValidation();
     renderFeedbackUI("#cabling-feedback-panel", { status: "hidden" });
     return;
   }
@@ -602,11 +630,11 @@ viewof requestedBlock = {
 //| echo: false
 
 // 1. Initialisation de l'état mémoire
-mutable cacheState = {
+mutable cacheState = ({
   l1: [], l2: [],
   hitsL1: 0, hitsL2: 0, misses: 0,
   logMessage: "En attente de la première requête..."
-}
+})
 mutable lastAction = null // Pour déclencher l'animation CSS
 
 // 2. Le Moteur de Cache (S'exécute à chaque clic sur un bouton)

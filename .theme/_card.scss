@@ -40,26 +40,41 @@
 .card-window-header {
     display: flex !important;
     align-items: center !important;
+    justify-content: center !important; /* Center text horizontally */
     height: 38px !important;
     padding: 0 16px !important;
     user-select: none !important;
     background-color: var(--card-window-header-bg) !important;
     border-bottom: 1px solid var(--card-window-header-border) !important;
     position: relative !important;
+    text-align: center !important;
+    font-family: var(--font-code, monospace) !important;
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+}
+
+/* Strip margins and paddings on any nested wrappers (like Quarto paragraphs or headings) to let flex alignment work perfectly */
+.card-window .card-header > *,
+.card-window-header > * {
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
 }
 
 .card-window .card-header::before,
 .card-window .nav-tabs::before,
 .card-window-header::before {
     content: "" !important;
-    display: inline-block !important;
-    flex-shrink: 0 !important;
+    position: absolute !important;
+    left: 16px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
     width: 8px !important;
     height: 8px !important;
     background-color: #dc322f !important; /* red controls */
     border-radius: 50% !important;
     box-shadow: 14px 0 0 #b58900, 28px 0 0 #859900 !important; /* yellow, green controls */
-    margin-right: 42px !important;
     opacity: 0.85 !important;
 }
 
@@ -641,6 +656,104 @@
     font-weight: bold !important;
     margin: 0 !important;
     line-height: 1.2 !important;
+}
+
+
+/* ==========================================================================
+   🧩 GLOBAL NATIVE BOOTSTRAP CARD RESKIN
+   ========================================================================== */
+
+.card {
+    background-color: var(--card-bg) !important;
+    border: 1px solid var(--card-border) !important;
+    box-shadow: var(--card-shadow) !important;
+    border-radius: 8px !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    overflow: hidden !important;
+}
+
+/* Gracefully map native Bootstrap style utility classes to Solarized equivalents */
+.card.border-info {
+    border-color: var(--sol-blue) !important;
+}
+.card.bg-light {
+    background-color: var(--sol-base2) !important;
+}
+
+.card:hover {
+    box-shadow: var(--card-shadow-hover) !important;
+    border-color: var(--card-border-hover) !important;
+}
+
+.card:hover.border-info {
+    border-color: var(--sol-blue) !important;
+}
+
+.card .card-header {
+    display: flex !important;
+    align-items: center !important;
+    height: 38px !important;
+    padding: 0 16px !important;
+    background-color: var(--card-header-bg) !important;
+    border-bottom: 1px solid var(--card-header-border) !important;
+    color: var(--body-color) !important;
+    font-weight: 700 !important;
+}
+
+/* Strip default margins/paddings from nested children inside standard card headers and convert them to flex containers for perfect vertical alignment of text and badges */
+.card .card-header > * {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+    width: 100% !important;
+}
+
+.card .card-body {
+    background-color: transparent !important;
+    color: var(--body-color) !important;
+    padding: 16px !important;
+}
+
+
+/* ==========================================================================
+   📊 VARIABLE CONCEPT CARDS: RESPONSIVE DOCK-LEFT DIAGRAMS
+   ========================================================================== */
+
+.card-concept .card-body {
+    display: flex !important;
+    flex-direction: column !important; /* Mobile first: stack vertically */
+    gap: 20px !important;
+    padding: 20px !important;
+}
+
+/* On desktop and wide screens where there's enough room */
+@media (min-width: 768px) {
+    .card-concept .card-body {
+        flex-direction: row !important; /* Dock side-by-side */
+        align-items: center !important; /* Perfect vertical alignment */
+        justify-content: flex-start !important;
+        gap: 24px !important;
+    }
+
+    /* Diagram plot container docked on the left */
+    .card-concept .card-body > div[id^="plot-"] {
+        flex: 0 0 160px !important; /* Fixed width for the diagram */
+        width: 160px !important;
+        height: 140px !important; /* Compact high-fidelity height */
+        margin: 0 !important;
+        overflow: hidden !important;
+    }
+
+    /* Text block taking the remaining space on the right */
+    .card-concept .card-body .concept-details {
+        flex: 1 1 auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
 }
 
 

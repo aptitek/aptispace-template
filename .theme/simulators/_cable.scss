@@ -42,12 +42,15 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  gap: 30px;
+  justify-content: center;
+  gap: 40px;
   width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  overflow: visible !important;
   
   #cabling-canvas {
-    flex: 1 1 500px;
+    flex: 1 1 auto;
     padding: 16px 0;
     box-sizing: border-box;
     overflow: visible !important;
@@ -90,10 +93,15 @@
   flex-direction: column;
   gap: 16px;
   flex: 0 0 auto;
-  width: 220px;
+  align-items: stretch;
 
-  &--left  { align-items: flex-end; }
-  &--right { align-items: flex-start; }
+  &--left {
+    width: 210px;
+  }
+
+  &--right {
+    width: 120px;
+  }
 }
 
 /* ── Pills (cabling items) ── */
@@ -108,7 +116,8 @@
   font-weight: 600;
   cursor: pointer;
   user-select: none;
-  max-width: 210px;
+  width: 100%;
+  box-sizing: border-box;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -203,7 +212,7 @@
 }
 
 /* ── Correct connection: green flowing electricity ── */
-#cabling-canvas .conn-correct path {
+#cabling-canvas .conn-correct path:not(.jtk-connector-outline) {
   stroke: var(--sol-green) !important;
   stroke-width: 4 !important;
   stroke-dasharray: 10 6;
@@ -216,7 +225,7 @@
 }
 
 /* ── Incorrect connection: red vibrating spark ── */
-#cabling-canvas .conn-incorrect path {
+#cabling-canvas .conn-incorrect path:not(.jtk-connector-outline) {
   stroke: var(--sol-red) !important;
   stroke-width: 3.5 !important;
   stroke-dasharray: 4 3;

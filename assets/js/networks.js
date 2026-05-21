@@ -122,9 +122,26 @@ export class CablingManager {
     // ── Instance jsPlumb ────────────────────────────
     this.jsp = newInstance({
       container: this.container,
-      connector: { type: "Bezier", options: { curviness: 70 } },
-      paintStyle: { stroke: "#2aa198", strokeWidth: 3 },
-      hoverPaintStyle: { stroke: "#b58900", strokeWidth: 4 },
+      connector: { 
+        type: "Bezier", 
+        options: { 
+          curviness: 80
+        } 
+      },
+      paintStyle: { 
+        stroke: "var(--sol-cyan)", 
+        strokeWidth: 4,
+        outlineStroke: "rgba(0,0,0,0.3)",
+        outlineWidth: 2
+      },
+      hoverPaintStyle: { 
+        stroke: "var(--sol-yellow)", 
+        strokeWidth: 5,
+        outlineStroke: "rgba(0,0,0,0.4)",
+        outlineWidth: 2
+      },
+      endpoint: "Dot",
+      endpointStyle: { fill: "var(--sol-base01)", radius: 6 }
     });
 
     // ── Endpoints jsPlumb ───────────────────────────
@@ -143,7 +160,7 @@ export class CablingManager {
       const el = this.container.querySelector(`[data-id="L_${it.id}"]`);
       if (!el) return;
       this.jsp.addEndpoint(el, {
-        anchor: "Right",
+        anchor: [ 1, 0.5, 1, 0.4 ],
         source: true,
         target: false,
         endpoint: { type: "Dot", options: { radius: 14 } },
@@ -159,7 +176,7 @@ export class CablingManager {
       const el = this.container.querySelector(`[data-id="R_${it.id}"]`);
       if (!el) return;
       this.jsp.addEndpoint(el, {
-        anchor: "Left",
+        anchor: [ 0, 0.5, -1, 0.4 ],
         source: false,
         target: true,
         endpoint: { type: "Dot", options: { radius: 14 } },
@@ -199,10 +216,20 @@ export class CablingManager {
 
       // Couleur par index de la pill gauche (classe CSS data-color pour ciblage)
       const ci = this.leftItems.findIndex(it => it.id === lid);
-      const colors = ["#2aa198","#d33682","#cb4b16","#6c71c4","#268bd2"];
+      const colors = ["var(--sol-cyan)", "var(--sol-magenta)", "var(--sol-orange)", "var(--sol-violet)", "var(--sol-blue)"];
       const stroke = colors[ci % colors.length];
-      connection.setPaintStyle({ stroke, strokeWidth: 3 });
-      connection.setHoverPaintStyle({ stroke: "#b58900", strokeWidth: 4 });
+      connection.setPaintStyle({ 
+        stroke, 
+        strokeWidth: 4,
+        outlineStroke: "rgba(0,0,0,0.3)",
+        outlineWidth: 2
+      });
+      connection.setHoverPaintStyle({ 
+        stroke: "var(--sol-yellow)", 
+        strokeWidth: 5,
+        outlineStroke: "rgba(0,0,0,0.4)",
+        outlineWidth: 2
+      });
 
       this._clearActive();
       this.onStateUpdate(this.getState());
@@ -251,6 +278,14 @@ export class CablingManager {
       const rightEl = group === "right" ? pill : this.activeNode.el;
       this._connectElements(leftEl, rightEl);
     });
+
+    // ── Resizing ────────────────────────────────────
+    this._resizeHandler = () => {
+      if (this.jsp) {
+        this.jsp.repaintEverything();
+      }
+    };
+    window.addEventListener("resize", this._resizeHandler);
   }
 
   // ── Helpers DOM ───────────────────────────────────────────────────────────
@@ -388,16 +423,45 @@ export class CablingManager {
 
   reset() {
     this.validated  = false;
-    this.connections = {};
-    this._connMap.clear();
     this._clearActive();
 
     if (this.jsp) {
-      // Supprimer les classes de validation avant de supprimer les connexions
-      this.jsp.getConnections().forEach(c => {
+      this._connMap.forEach(c => {
+        c.removeClass("conn-correct conn-incorrect");
+        try { this.jsp.deleteConnection(c); } catch {}
+      });
+    }
+
+    this.connections = {};
+    this._connMap.clear();
+
+    // Supprimer les étincelles
+    this._sparks.forEach(s => s.remove());
+    this._sparks = [];
+
+    // Restore pills
+    this.container.querySelectorAll(".cabling-pill").forEach(el => {
+      // Pour la version boutons (si style inline présent)
+      if (el.style.cursor) {
+        el.style.cursor      = "pointer";
+        el.style.borderColor = "#586e75";
+        el.style.color       = "#93a1a1";
+      }
+      // Pour la version levier (CSS-based)
+      el.classList.remove('is-active', 'is-validated');
+    });
+
+    return { status: "hidden", ...this.getState() };
+  }
+
+  clearValidation() {
+    this.validated  = false;
+    this._clearActive();
+
+    if (this.jsp) {
+      this._connMap.forEach(c => {
         c.removeClass("conn-correct conn-incorrect");
       });
-      this.jsp.deleteAllConnections();
     }
 
     // Supprimer les étincelles
@@ -406,6 +470,13 @@ export class CablingManager {
 
     // Restore pills
     this.container.querySelectorAll(".cabling-pill").forEach(el => {
+      // Pour la version boutons
+      if (el.style.cursor) {
+        el.style.cursor      = "pointer";
+        el.style.borderColor = "#586e75";
+        el.style.color       = "#93a1a1";
+      }
+      // Pour la version levier (CSS-based)
       el.classList.remove('is-active', 'is-validated');
     });
 
@@ -421,6 +492,9 @@ export class CablingManager {
   }
 
   destroy() {
+    if (this._resizeHandler) {
+      window.removeEventListener("resize", this._resizeHandler);
+    }
     if (this.jsp) {
       this.jsp.destroy();
       this.jsp = null;

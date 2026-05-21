@@ -54,7 +54,8 @@ export function createLine(divId, data, title = "Graphique", options = {}) {
       ...options.line
     },
     marker: {
-      size: options.markerSize || 6,
+      size: options.markerSize !== undefined ? options.markerSize : 6,
+      color: options.markerColor || (options.line ? options.line.color : undefined),
       ...options.marker
     },
     ...options.trace
@@ -136,3 +137,48 @@ export function createFunnel(divId, data, options = {}) {
 
   Plotly.newPlot(divId, [trace], layout, { displayModeBar: false, responsive: true, ...options.config });
 }
+
+/**
+ * 🔺 Pyramid Chart (Pyramide symétrique inversée)
+ */
+export function createPyramid(divId, data, options = {}) {
+  const trace = {
+    type: 'funnel',
+    y: data.text,
+    x: data.values,
+    text: data.text,
+    textposition: options.textposition || 'inside',
+    textinfo: options.textinfo || 'text',
+    hoverinfo: options.hoverinfo || 'text',
+    textfont: {
+      color: "white",
+      family: "Recursive, sans-serif",
+      ...options.textfont
+    },
+    marker: {
+      color: options.colors,
+      ...options.marker
+    },
+    ...options.trace
+  };
+
+  const layout = {
+    margin: { t: 5, b: 5, l: 5, r: 5 },
+    paper_bgcolor: 'transparent',
+    plot_bgcolor: 'transparent',
+    yaxis: { visible: false },
+    xaxis: { visible: false },
+    ...options.layout
+  };
+
+  const config = {
+    displayModeBar: false,
+    responsive: true,
+    ...options.config
+  };
+
+  Plotly.newPlot(divId, [trace], layout, config);
+}
+
+// Alias for spelling compatibility
+export const createPiramid = createPyramid;
