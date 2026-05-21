@@ -1,0 +1,265 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="100%" height="100%">
+  <rect width="800" height="400" rx="14" fill="#002b36" stroke="#586e75" stroke-width="2.5" />
+  
+  <g stroke="#2aa198" stroke-width="1.2" opacity="0.15" fill="none" pointer-events="none">
+    <path d="M 0 50 L 800 50 M 0 100 L 800 100 M 0 150 L 800 150 M 0 200 L 800 200 M 0 250 L 800 250 M 0 300 L 800 300 M 0 350 L 800 350" />
+    <path d="M 100 0 L 100 400 M 200 0 L 200 400 M 300 0 L 300 400 M 400 0 L 400 400 M 500 0 L 500 400 M 600 0 L 600 400 M 700 0 L 700 400" />
+    
+    <path d="M 30 40 L 90 100 L 180 100 M 90 100 L 90 220" />
+    <path d="M 770 360 L 710 300 L 600 300" />
+    <path d="M 220 380 L 250 350 L 390 350" />
+    <path d="M 400 220 L 430 190 L 520 190" />
+    <path d="M 160 30 L 190 60 L 290 60" />
+    
+    <path d="M 420 330 L 450 360 L 530 360" stroke-width="1.5" />
+    <path d="M 425 335 L 455 365 L 530 365" stroke-width="1.5" />
+    <path d="M 430 340 L 460 370 L 530 370" stroke-width="1.5" />
+    <path d="M 530 180 L 550 200 L 550 250" />
+    <path d="M 200 120 L 230 150 L 230 200" />
+    <path d="M 205 120 L 235 150 L 235 200" />
+    <path d="M 210 120 L 240 150 L 240 200" />
+  </g>
+
+  <g id="vrm-capacitors">
+    <g fill="#586e75" stroke="#93a1a1" stroke-width="1.2">
+      <rect x="525" y="60" width="18" height="20" rx="2" />
+      <rect x="525" y="90" width="18" height="20" rx="2" />
+      <rect x="525" y="120" width="18" height="20" rx="2" />
+      <rect x="525" y="150" width="18" height="20" rx="2" />
+      <rect x="525" y="180" width="18" height="20" rx="2" />
+      <rect x="525" y="210" width="18" height="20" rx="2" />
+      <rect x="525" y="240" width="18" height="20" rx="2" />
+      <rect x="525" y="270" width="18" height="20" rx="2" />
+    </g>
+    <g fill="#93a1a1" stroke="#073642" stroke-width="1">
+      <circle cx="510" cy="70" r="6" />
+      <circle cx="510" cy="100" r="6" />
+      <circle cx="510" cy="130" r="6" />
+      <circle cx="510" cy="160" r="6" />
+      <circle cx="510" cy="190" r="6" />
+      <circle cx="510" cy="220" r="6" />
+      <circle cx="510" cy="250" r="6" />
+      <circle cx="510" cy="280" r="6" />
+    </g>
+    <g fill="#b58900">
+      <rect x="270" y="230" width="8" height="4" />
+      <rect x="270" y="240" width="8" height="4" />
+      <rect x="285" y="230" width="4" height="8" />
+      <rect x="420" y="260" width="4" height="8" />
+      <rect x="420" y="275" width="4" height="8" />
+      <rect x="430" y="260" width="4" height="8" />
+      <rect x="150" y="80" width="8" height="4" />
+      <rect x="150" y="90" width="8" height="4" />
+    </g>
+  </g>
+
+  <g fill="#b58900" stroke="#073642" stroke-width="2" opacity="0.8">
+    <circle cx="30" cy="30" r="6" />
+    <circle cx="770" cy="30" r="6" />
+    <circle cx="30" cy="370" r="6" />
+    <circle cx="770" cy="370" r="6" />
+    <circle cx="400" cy="370" r="6" />
+    <circle cx="400" cy="30" r="6" />
+  </g>
+
+  <g fill="none" stroke="#2aa198" stroke-width="3" stroke-dasharray="10 5" opacity="0.8">
+    <path id="bus-ssd-chipset" d="M 140 275 L 260 275" />
+    <path id="bus-chipset-cpu" d="M 390 295 L 560 295" />
+    <path id="bus-ram-cpu" d="M 545 100 L 560 100" />
+  </g>
+
+  <g id="part-ssd" transform="translate(40, 30)">
+    <rect x="0" y="0" width="90" height="280" rx="8" fill="none" stroke="#586e75" stroke-width="1.5" />
+    
+    <rect x="10" y="240" width="70" height="15" rx="2" fill="#073642" stroke="#586e75" stroke-width="1.5" />
+    
+    <g transform="translate(15, 20)">
+      <rect width="60" height="225" rx="3" fill="#073642" stroke="#2aa198" stroke-width="1.8" />
+      
+      <line x1="8" y1="223" x2="52" y2="223" stroke="#b58900" stroke-width="4.5" stroke-dasharray="3 2" />
+      
+      <path d="M 20 0 A 10 10 0 0 1 40 0 Z" fill="#002b36" stroke="#2aa198" stroke-width="1.8" />
+      <circle cx="30" cy="0" r="8" fill="#b58900" />
+      <circle cx="30" cy="0" r="4.5" fill="#93a1a1" stroke="#586e75" stroke-width="1.5" />
+      
+      <rect x="10" y="25" width="40" height="40" rx="3" fill="#586e75" stroke="#cb4b16" stroke-width="2" />
+      <text x="30" y="48" fill="#fdf6e3" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle">CTRL</text>
+      
+      <rect x="12" y="75" width="36" height="20" rx="2" fill="#002b36" stroke="#93a1a1" stroke-width="1.2" />
+      <text x="30" y="89" fill="#93a1a1" font-family="monospace" font-size="8" text-anchor="middle">CACHE</text>
+
+      <rect x="10" y="105" width="40" height="50" rx="2" fill="#002b36" stroke="#93a1a1" stroke-width="1.2" />
+      <text x="30" y="134" fill="#93a1a1" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle">NAND0</text>
+      
+      <rect x="10" y="165" width="40" height="50" rx="2" fill="#002b36" stroke="#93a1a1" stroke-width="1.2" />
+      <text x="30" y="194" fill="#93a1a1" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle">NAND1</text>
+    </g>
+    
+    <text x="45" y="270" fill="#2aa198" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle">M.2 NVMe</text>
+  </g>
+
+  <g id="part-chipset" transform="translate(260, 220)">
+    <rect class="mobo-part" x="0" y="0" width="130" height="130" rx="12" fill="none" stroke="#586e75" stroke-width="1.5" />
+    
+    <g transform="translate(20, 20)">
+      <rect x="0" y="0" width="90" height="90" rx="8" fill="#cb4b16" stroke="#b58900" stroke-width="1.8" />
+      
+      <g stroke="#002b36" stroke-width="2.5">
+        <line x1="12" y1="10" x2="12" y2="80" />
+        <line x1="24" y1="10" x2="24" y2="80" />
+        <line x1="36" y1="10" x2="36" y2="80" />
+        <line x1="48" y1="10" x2="48" y2="80" />
+        <line x1="60" y1="10" x2="60" y2="80" />
+        <line x1="72" y1="10" x2="72" y2="80" />
+        <line x1="80" y1="10" x2="80" y2="80" />
+      </g>
+      
+      <rect x="10" y="30" width="70" height="30" rx="3.5" fill="#586e75" stroke="#93a1a1" stroke-width="1.2" />
+      <text x="45" y="49" fill="#fdf6e3" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">CHIPSET</text>
+    </g>
+  </g>
+
+  <g id="part-ram" transform="translate(325, 30)">
+    <rect class="mobo-part" x="0" y="0" width="220" height="170" rx="10" fill="none" stroke="#586e75" stroke-width="1.5" />
+    
+    <g transform="translate(10, 15)">
+      
+      <g transform="translate(0, 0)">
+        <rect width="200" height="24" rx="2" fill="#073642" stroke="#586e75" stroke-width="1.2" />
+        <line x1="10" y1="22" x2="190" y2="22" stroke="#b58900" stroke-width="3" stroke-dasharray="3 1.5" />
+        <g fill="#93a1a1">
+          <rect x="25" y="5" width="14" height="12" rx="1" />
+          <rect x="45" y="5" width="14" height="12" rx="1" />
+          <rect x="65" y="5" width="14" height="12" rx="1" />
+          <rect x="85" y="5" width="14" height="12" rx="1" />
+          <rect x="105" y="5" width="14" height="12" rx="1" />
+          <rect x="125" y="5" width="14" height="12" rx="1" />
+          <rect x="145" y="5" width="14" height="12" rx="1" />
+          <rect x="165" y="5" width="14" height="12" rx="1" />
+        </g>
+        <rect x="-4" y="4" width="6" height="16" fill="#586e75" rx="1.5" />
+        <rect x="198" y="4" width="6" height="16" fill="#586e75" rx="1.5" />
+      </g>
+      
+      <g transform="translate(0, 35)">
+        <rect width="200" height="24" rx="2" fill="#073642" stroke="#586e75" stroke-width="1.2" />
+        <line x1="10" y1="22" x2="190" y2="22" stroke="#b58900" stroke-width="3" stroke-dasharray="3 1.5" />
+        <g fill="#93a1a1">
+          <rect x="25" y="5" width="14" height="12" rx="1" />
+          <rect x="45" y="5" width="14" height="12" rx="1" />
+          <rect x="65" y="5" width="14" height="12" rx="1" />
+          <rect x="85" y="5" width="14" height="12" rx="1" />
+          <rect x="105" y="5" width="14" height="12" rx="1" />
+          <rect x="125" y="5" width="14" height="12" rx="1" />
+          <rect x="145" y="5" width="14" height="12" rx="1" />
+          <rect x="165" y="5" width="14" height="12" rx="1" />
+        </g>
+        <rect x="-4" y="4" width="6" height="16" fill="#586e75" rx="1.5" />
+        <rect x="198" y="4" width="6" height="16" fill="#586e75" rx="1.5" />
+      </g>
+      
+      <g transform="translate(0, 70)">
+        <rect width="200" height="24" rx="2" fill="#073642" stroke="#586e75" stroke-width="1.2" />
+        <line x1="10" y1="22" x2="190" y2="22" stroke="#b58900" stroke-width="3" stroke-dasharray="3 1.5" />
+        <g fill="#93a1a1">
+          <rect x="25" y="5" width="14" height="12" rx="1" />
+          <rect x="45" y="5" width="14" height="12" rx="1" />
+          <rect x="65" y="5" width="14" height="12" rx="1" />
+          <rect x="85" y="5" width="14" height="12" rx="1" />
+          <rect x="105" y="5" width="14" height="12" rx="1" />
+          <rect x="125" y="5" width="14" height="12" rx="1" />
+          <rect x="145" y="5" width="14" height="12" rx="1" />
+          <rect x="165" y="5" width="14" height="12" rx="1" />
+        </g>
+        <rect x="-4" y="4" width="6" height="16" fill="#586e75" rx="1.5" />
+        <rect x="198" y="4" width="6" height="16" fill="#586e75" rx="1.5" />
+      </g>
+      
+      <g transform="translate(0, 105)">
+        <rect width="200" height="24" rx="2" fill="#073642" stroke="#586e75" stroke-width="1.2" />
+        <line x1="10" y1="22" x2="190" y2="22" stroke="#b58900" stroke-width="3" stroke-dasharray="3 1.5" />
+        <g fill="#93a1a1">
+          <rect x="25" y="5" width="14" height="12" rx="1" />
+          <rect x="45" y="5" width="14" height="12" rx="1" />
+          <rect x="65" y="5" width="14" height="12" rx="1" />
+          <rect x="85" y="5" width="14" height="12" rx="1" />
+          <rect x="105" y="5" width="14" height="12" rx="1" />
+          <rect x="125" y="5" width="14" height="12" rx="1" />
+          <rect x="145" y="5" width="14" height="12" rx="1" />
+          <rect x="165" y="5" width="14" height="12" rx="1" />
+        </g>
+        <rect x="-4" y="4" width="6" height="16" fill="#586e75" rx="1.5" />
+        <rect x="198" y="4" width="6" height="16" fill="#586e75" rx="1.5" />
+      </g>
+      
+      <text x="100" y="150" fill="#93a1a1" font-family="monospace" font-size="12" font-weight="bold" text-anchor="middle">DDR4 DUAL-CHANNEL</text>
+    </g>
+  </g>
+
+  <g id="part-cpu" transform="translate(560, 45)">
+    <rect class="mobo-part" x="0" y="0" width="220" height="310" rx="14" fill="none" stroke="#586e75" stroke-width="1.5" />
+    
+    <g transform="translate(10, 10)">
+      
+      <rect x="0" y="0" width="200" height="290" rx="8" fill="#586e75" stroke="#93a1a1" stroke-width="2.5" />
+      
+      <rect x="8" y="8" width="184" height="274" fill="none" stroke="#b58900" stroke-width="6" stroke-dasharray="3 3" />
+      
+      <rect x="190" y="10" width="6" height="270" fill="#93a1a1" rx="2" />
+      <circle cx="193" cy="270" r="6" fill="#002b36" />
+      
+      <rect id="cpu-die" class="cpu-die" x="20" y="20" width="160" height="250" rx="6" fill="#073642" stroke="#2aa198" stroke-width="2" />
+      
+      <rect id="cpu-l3" class="cpu-l3-region" x="30" y="220" width="140" height="40" rx="3" fill="#002b36" stroke="#93a1a1" stroke-width="1.5" />
+      <text x="100" y="244" fill="#93a1a1" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">CACHE L3 (PARTAGÉ)</text>
+      
+      <g id="cpu-core-0" transform="translate(30, 30)">
+        <rect class="cpu-core" width="65" height="85" rx="3" fill="none" stroke="#586e75" stroke-width="1.5" />
+        <text x="32" y="15" fill="#93a1a1" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle">CORE 0</text>
+        
+        <rect x="5" y="25" width="25" height="30" rx="1.5" fill="#268bd2" opacity="0.8" />
+        <text x="17" y="44" fill="#fdf6e3" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle">REG</text>
+        
+        <rect x="35" y="25" width="25" height="30" rx="1.5" fill="#b58900" opacity="0.8" />
+        <text x="47" y="44" fill="#fdf6e3" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle">L1</text>
+        
+        <rect x="5" y="60" width="55" height="20" rx="1.5" fill="#2aa198" opacity="0.9" />
+        <text x="32" y="74" fill="#002b36" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle">CACHE L2</text>
+      </g>
+      
+      <g id="cpu-core-1" transform="translate(105, 30)">
+        <rect class="cpu-core" width="65" height="85" rx="3" fill="none" stroke="#586e75" stroke-width="1.5" />
+        <text x="32" y="15" fill="#93a1a1" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle">CORE 1</text>
+        <rect x="5" y="25" width="25" height="30" rx="1.5" fill="#268bd2" opacity="0.8" />
+        <text x="17" y="44" fill="#fdf6e3" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle">REG</text>
+        <rect x="35" y="25" width="25" height="30" rx="1.5" fill="#b58900" opacity="0.8" />
+        <text x="47" y="44" fill="#fdf6e3" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle">L1</text>
+        <rect x="5" y="60" width="55" height="20" rx="1.5" fill="#2aa198" opacity="0.9" />
+        <text x="32" y="74" fill="#002b36" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle">CACHE L2</text>
+      </g>
+      
+      <g id="cpu-core-2" transform="translate(30, 125)">
+        <rect class="cpu-core" width="65" height="85" rx="3" fill="none" stroke="#586e75" stroke-width="1.5" />
+        <text x="32" y="15" fill="#93a1a1" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle">CORE 2</text>
+        <rect x="5" y="25" width="25" height="30" rx="1.5" fill="#268bd2" opacity="0.8" />
+        <text x="17" y="44" fill="#fdf6e3" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle">REG</text>
+        <rect x="35" y="25" width="25" height="30" rx="1.5" fill="#b58900" opacity="0.8" />
+        <text x="47" y="44" fill="#fdf6e3" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle">L1</text>
+        <rect x="5" y="60" width="55" height="20" rx="1.5" fill="#2aa198" opacity="0.9" />
+        <text x="32" y="74" fill="#002b36" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle">CACHE L2</text>
+      </g>
+      
+      <g id="cpu-core-3" transform="translate(105, 125)">
+        <rect class="cpu-core" width="65" height="85" rx="3" fill="none" stroke="#586e75" stroke-width="1.5" />
+        <text x="32" y="15" fill="#93a1a1" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle">CORE 3</text>
+        <rect x="5" y="25" width="25" height="30" rx="1.5" fill="#268bd2" opacity="0.8" />
+        <text x="17" y="44" fill="#fdf6e3" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle">REG</text>
+        <rect x="35" y="25" width="25" height="30" rx="1.5" fill="#b58900" opacity="0.8" />
+        <text x="47" y="44" fill="#fdf6e3" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle">L1</text>
+        <rect x="5" y="60" width="55" height="20" rx="1.5" fill="#2aa198" opacity="0.9" />
+        <text x="32" y="74" fill="#002b36" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle">CACHE L2</text>
+      </g>
+
+    </g>
+  </g>
+</svg>

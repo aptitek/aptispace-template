@@ -370,7 +370,7 @@ _ramTabWatcher = {
 
 ::: {.panel-tabset .ram-tabset}
 
-## bool {.bi-toggles}
+## <i class="bi bi-toggles"></i> bool
 
 ::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
 ::: {.card-body .p-0 .pb-2}
@@ -383,7 +383,7 @@ _ramTabWatcher = {
 :::
 :::
 
-## int8 {.bi-1-circle}
+## <i class="bi bi-1-circle"></i> int8
 
 ::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
 ::: {.card-body .p-0 .pb-2}
@@ -396,7 +396,7 @@ _ramTabWatcher = {
 :::
 :::
 
-## int32 {.bi-hash}
+## <i class="bi bi-hash"></i> int32
 
 ::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
 ::: {.card-body .p-0 .pb-2}
@@ -409,7 +409,7 @@ _ramTabWatcher = {
 :::
 :::
 
-## float64 {.bi-infinity}
+## <i class="bi bi-infinity"></i> float64
 
 ::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
 ::: {.card-body .p-0 .pb-2}
@@ -423,7 +423,7 @@ _ramTabWatcher = {
 :::
 :::
 
-## string {.bi-fonts}
+## <i class="bi bi-fonts"></i> string
 
 ::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
 ::: {.card-body .p-0 .pb-2}
@@ -497,7 +497,7 @@ updateRamUI = renderRam(ramData)
 :::
 ::: {.panel-tabset .mobo-tabset}
 
-## SSD {.bi-hdd-network}
+## <i class="bi bi-hdd-network"></i> SSD
 
 ::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
 ::: {.card-body .p-0 .pb-2}
@@ -536,7 +536,7 @@ updateRamUI = renderRam(ramData)
 :::
 :::
 
-## RAM {.bi-memory}
+## <i class="bi bi-memory"></i> RAM
 
 ::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
 ::: {.card-body .p-0 .pb-2}
@@ -575,7 +575,7 @@ updateRamUI = renderRam(ramData)
 :::
 :::
 
-## Cache L3 {.bi-layers-half}
+## <i class="bi bi-layers-half"></i> Cache L3
 
 ::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
 ::: {.card-body .p-0 .pb-2}
@@ -614,7 +614,7 @@ updateRamUI = renderRam(ramData)
 :::
 :::
 
-## Caches L2 & L1 {.bi-lightning-charge}
+## <i class="bi bi-lightning-charge"></i> Caches L2 & L1
 
 ::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
 ::: {.card-body .p-0 .pb-2}
@@ -653,7 +653,7 @@ updateRamUI = renderRam(ramData)
 :::
 :::
 
-## Registres {.bi-cpu}
+## <i class="bi bi-cpu"></i> Registres
 
 ::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
 ::: {.card-body .p-0 .pb-2}
