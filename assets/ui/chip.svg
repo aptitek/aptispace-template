@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 44" width="60" height="44">
+  <defs>
+    <!-- Dark Matte Plastic Body Gradient -->
+    <linearGradient id="chip-base" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#242c2d" />
+      <stop offset="50%" stop-color="#181e1f" />
+      <stop offset="100%" stop-color="#0b0e0f" />
+    </linearGradient>
+
+    <!-- Metallic Leg Silver Gradient -->
+    <linearGradient id="silver-leg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7a8a8a" />
+      <stop offset="50%" stop-color="#b0bebe" />
+      <stop offset="100%" stop-color="#7a8a8a" />
+    </linearGradient>
+
+    <!-- Gold PCB Landing Pad Glow -->
+    <radialGradient id="gold-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#b58900" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#b58900" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- 1. Gold PCB Solder Pads (Layered underneath pins) -->
+  <!-- Top Pads -->
+  <rect x="9" y="-1" width="5" height="8" rx="0.5" fill="#b58900" opacity="0.45" />
+  <rect x="16" y="-1" width="5" height="8" rx="0.5" fill="#b58900" opacity="0.45" />
+  <rect x="23" y="-1" width="5" height="8" rx="0.5" fill="#b58900" opacity="0.45" />
+  <rect x="30" y="-1" width="5" height="8" rx="0.5" fill="#b58900" opacity="0.45" />
+  <rect x="37" y="-1" width="5" height="8" rx="0.5" fill="#b58900" opacity="0.45" />
+  <rect x="44" y="-1" width="5" height="8" rx="0.5" fill="#b58900" opacity="0.45" />
+
+  <!-- Bottom Pads -->
+  <rect x="9" y="37" width="5" height="8" rx="0.5" fill="#b58900" opacity="0.45" />
+  <rect x="16" y="37" width="5" height="8" rx="0.5" fill="#b58900" opacity="0.45" />
+  <rect x="23" y="37" width="5" height="8" rx="0.5" fill="#b58900" opacity="0.45" />
+  <rect x="30" y="37" width="5" height="8" rx="0.5" fill="#b58900" opacity="0.45" />
+  <rect x="37" y="37" width="5" height="8" rx="0.5" fill="#b58900" opacity="0.45" />
+  <rect x="44" y="37" width="5" height="8" rx="0.5" fill="#b58900" opacity="0.45" />
+
+  <!-- 2. Metallic SMT Leads (Pins) -->
+  <!-- Top Pins -->
+  <rect x="10" y="0" width="3" height="6" rx="0.5" fill="url(#silver-leg)" />
+  <rect x="17" y="0" width="3" height="6" rx="0.5" fill="url(#silver-leg)" />
+  <rect x="24" y="0" width="3" height="6" rx="0.5" fill="url(#silver-leg)" />
+  <rect x="31" y="0" width="3" height="6" rx="0.5" fill="url(#silver-leg)" />
+  <rect x="38" y="0" width="3" height="6" rx="0.5" fill="url(#silver-leg)" />
+  <rect x="45" y="0" width="3" height="6" rx="0.5" fill="url(#silver-leg)" />
+
+  <!-- Bottom Pins -->
+  <rect x="10" y="38" width="3" height="6" rx="0.5" fill="url(#silver-leg)" />
+  <rect x="17" y="38" width="3" height="6" rx="0.5" fill="url(#silver-leg)" />
+  <rect x="24" y="38" width="3" height="6" rx="0.5" fill="url(#silver-leg)" />
+  <rect x="31" y="38" width="3" height="6" rx="0.5" fill="url(#silver-leg)" />
+  <rect x="38" y="38" width="3" height="6" rx="0.5" fill="url(#silver-leg)" />
+  <rect x="45" y="38" width="3" height="6" rx="0.5" fill="url(#silver-leg)" />
+
+  <!-- 3. TSOP Charcoal Bezel Body -->
+  <rect x="6" y="5" width="48" height="34" rx="2" fill="url(#chip-base)" stroke="#070a0b" stroke-width="1.5" />
+  
+  <!-- Subtle Internal Matte Border Highlight -->
+  <rect x="7.5" y="6.5" width="45" height="31" rx="1" fill="none" stroke="#2c3738" stroke-width="0.75" opacity="0.4" />
+
+  <!-- 4. Chip Orientation Pin 1 Notch -->
+  <circle cx="11.5" cy="10.5" r="1.5" fill="#070a0b" />
+  <circle cx="11.5" cy="10.5" r="1" fill="#4d5f62" opacity="0.8" />
+</svg>

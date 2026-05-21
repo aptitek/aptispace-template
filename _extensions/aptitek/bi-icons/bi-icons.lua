@@ -119,10 +119,48 @@ end
 -- Skips Bootstrap .tab-pane divs — those are handled by JS initTabIcons().
 -- Wraps the first block's inlines with the icon prepended.
 function Div(el)
+  -- Generic Background Image Extractor
+  -- Intercepts any Image element carrying the `.background` class,
+  -- and turns it into a background-image of its parent Div.
+  local bg_src = nil
+  el = pandoc.walk_block(el, {
+    Image = function(img)
+      local is_bg = false
+      for _, cls in ipairs(img.classes) do
+        if cls == "background" then
+          is_bg = true
+          break
+        end
+      end
+      if is_bg then
+        bg_src = img.src
+        return {} -- Remove the image from the AST
+      end
+    end
+  })
+
+  if bg_src then
+    el.attributes["style"] = (el.attributes["style"] or "") .. " background-image: url('" .. bg_src .. "');"
+    
+    -- Ensure "card-canvas" is in classes so standard background styles apply
+    local has_canvas = false
+    for _, cls in ipairs(el.classes) do
+      if cls == "card-canvas" then
+        has_canvas = true
+        break
+      end
+    end
+    if not has_canvas then
+      el.classes:insert("card-canvas")
+    end
+    return el
+  end
+
   -- Panel-tabset panes: class is read at runtime by JS initTabIcons; skip here
   for _, cls in ipairs(el.classes) do
     if cls == "tab-pane" then return el end
   end
+
 
   local bi_class, remaining = extract_bi_class(el.classes)
   if not bi_class then return el end

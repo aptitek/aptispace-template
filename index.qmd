@@ -447,82 +447,45 @@ viewof rawInput = {
 }
 ```
 
-::: {#ram-bytes-container .d-flex .flex-wrap .mb-3 .p-3 .rounded style="background-color: var(--sol-base2); min-height: 120px;"}
+::: {.ram-motherboard}
+
+::: {.ram-stick #ram-stick-1}
+![](assets/ui/ram-bar.svg){.background}
+
+::: {.ram-bytes-container #ram-bytes-container-1}
+:::
+:::
+
+::: {.ram-stick #ram-stick-2}
+![](assets/ui/ram-bar.svg){.background}
+
+::: {.ram-bytes-container #ram-bytes-container-2}
+:::
+:::
+
 :::
 
 ::: {.ram-byte-template .d-none}
 ::: {.d-flex .flex-column .align-items-center .m-1}
-
-
-::: {.card .border-info .text-info .font-code .ram-byte-box title="Bits: {{binary}}"}
+::: {.ram-byte-box class="{{inactiveClass}}" title="Bits: {{binary}}"}
+![](assets/ui/chip.svg){.background}
 {{hex}}
 :::
-[Octet {{index}}]{.badge .bg-secondary .mb-1 .font-code style="font-size: 0.7em !important;"}
+[Octet {{index}}]{.badge .bg-secondary .mb-1 .font-code}
 :::
 :::
 
 :::
-
-:::
-
-
-
 
 ```{ojs}
 //| echo: false
+import { getRamData, renderRam } from "./assets/js/custom/ram.js";
 
-// 1. Logique de conversion (Réactive à chaque frappe/clic)
-ramData = {
-  let val = rawInput;
-  let byteList = [];
+// 1. Logique de conversion réactive
+ramData = getRamData(rawInput, dataType)
 
-  try {
-    if (dataType === "bool") {
-      let isTrue = val.toLowerCase() === "true" || val === "1" || val.toLowerCase() === "vrai";
-      byteList.push({ index: 0, hex: isTrue ? "01" : "00", binary: isTrue ? "00000001" : "00000000" });
-    
-    } else if (dataType === "int8") {
-      let num = parseInt(val) || 0;
-      let b = num & 0xFF;
-      byteList.push({ index: 0, hex: b.toString(16).padStart(2, '0').toUpperCase(), binary: b.toString(2).padStart(8, '0') });
-    
-    } else if (dataType === "int32") {
-      let num = parseInt(val) || 0;
-      for(let i=0; i<4; i++) {
-        let b = (num >> (24 - i*8)) & 0xFF;
-        byteList.push({ index: i, hex: b.toString(16).padStart(2, '0').toUpperCase(), binary: b.toString(2).padStart(8, '0') });
-      }
-    
-    } else if (dataType === "float64") {
-      let num = parseFloat(val) || 0;
-      let arr = new Float64Array([num]);
-      let dataview = new DataView(arr.buffer);
-      for(let i=0; i<8; i++) {
-        let b = dataview.getUint8(i);
-        byteList.push({ index: i, hex: b.toString(16).padStart(2, '0').toUpperCase(), binary: b.toString(2).padStart(8, '0') });
-      }
-    
-    } else if (dataType === "string") {
-      let str = val.substring(0, 16); // Limite pour l'affichage
-      for(let i=0; i<str.length; i++) {
-        let b = str.charCodeAt(i);
-        byteList.push({ index: i, hex: b.toString(16).padStart(2, '0').toUpperCase(), binary: b.toString(2).padStart(8, '0') });
-      }
-    }
-  } catch(e) {
-    byteList = [{ index: "?", hex: "??", binary: "Erreur" }];
-  }
-
-  return byteList;
-}
-
-// 2. Déclenchement de l'affichage (Effet de bord OJS)
-updateRamUI = {
-  // OJS détecte que ramData change et exécute ce bloc automatiquement
-  renderListTemplate("#ram-bytes-container", ".ram-byte-template", ramData);
-}
-
-
+// 2. Déclenchement réactif de l'affichage (Effet de bord OJS)
+updateRamUI = renderRam(ramData)
 ```
 
 ## Architecture Matérielle & Flux de Données
