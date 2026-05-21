@@ -1,0 +1,47 @@
+
+/* ==========================================================================
+   SIMULATEUR CARTE MÈRE (Animations SVG)
+   ========================================================================== */
+
+/* Style de base des composants et des câbles */
+.mobo-part {
+    fill: var(--sol-base03);
+    stroke: var(--sol-base01);
+    stroke-width: 2px;
+    transition: all 0.3s ease;
+}
+.mobo-bus {
+    fill: none;
+    stroke: var(--sol-base02);
+    stroke-width: 4px;
+    stroke-dasharray: 8; /* Crée les pointillés */
+    transition: stroke 0.3s ease;
+}
+
+/* Classes actives injectées par OJS */
+.is-active-disk { 
+    fill: rgba(38, 139, 210, 0.1) !important; /* sol-blue */
+    stroke: var(--sol-blue) !important; 
+    filter: drop-shadow(0 0 8px rgba(38, 139, 210, 0.4));
+}
+.is-active-ram { 
+    fill: rgba(133, 153, 0, 0.1) !important; /* sol-green */
+    stroke: var(--sol-green) !important; 
+    filter: drop-shadow(0 0 8px rgba(133, 153, 0, 0.4));
+}
+.is-active-cpu { 
+    fill: rgba(203, 75, 22, 0.1) !important; /* sol-orange */
+    stroke: var(--sol-orange) !important; 
+    filter: drop-shadow(0 0 8px rgba(203, 75, 22, 0.4));
+}
+
+/* L'animation magique du flux de données */
+.is-flowing {
+    stroke: var(--sol-yellow) !important;
+    animation: dataFlow 0.5s linear infinite;
+}
+
+@keyframes dataFlow {
+    from { stroke-dashoffset: 16; }
+    to { stroke-dashoffset: 0; }
+}

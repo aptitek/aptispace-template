@@ -15,9 +15,10 @@ const SOL_FALLBACKS = {
 };
 
 /**
- * 🕸️ Tracé de Réseau 2D ou 3D (Force-Directed Graph)
+ * 🕸️ Force-Directed Graph (2D or 3D)
+ * Creates and returns a graph instance mounted on the given container.
  */
-export function renderGraph(container, graphData, is3D = false) {
+export function createGraph(container, graphData, is3D = false) {
   if (is3D) {
     return ForceGraph3D()(container)
       .graphData(graphData)
@@ -32,26 +33,27 @@ export function renderGraph(container, graphData, is3D = false) {
 }
 
 /**
- * ☁️ Nuage de Mots 3D interactif
+ * ☁️ 3D Interactive Word Cloud
+ * Creates and returns a TagCloud instance mounted on the given container.
+ *
+ * @param {string} containerSelector - Element ID (without #) or CSS selector
+ * @param {string[]} words
+ * @param {object}  options          - Merged with defaults (radius, maxSpeed, etc.)
  */
-export function renderWordCloud3D(containerSelector, words, options = {}) {
+export function createWordCloud(containerSelector, words, options = {}) {
   const container = document.querySelector('#' + containerSelector);
   if (!container) {
-    console.warn(`Conteneur #${containerSelector} introuvable pour le WordCloud.`);
+    console.warn(`createWordCloud: element #${containerSelector} not found.`);
     return null;
   }
 
-  // Sécurité OJS : vider le conteneur avant de re-rendre pour éviter les doublons
-  container.innerHTML = "";
+  container.innerHTML = ""; // clear before re-render to avoid OJS duplicates
 
-  //TODO: Add colors
-
-  // Options par défaut fusionnées avec les options personnalisées
   const finalOptions = {
     radius: 100,
     maxSpeed: 'normal',
     initSpeed: 'normal',
-    keep: true, // Garde la rotation active quand la souris sort
+    keep: true,
     ...options
   };
 
@@ -123,11 +125,20 @@ export class CablingManager {
       connector: { type: "Bezier", options: { curviness: 70 } },
       paintStyle: { stroke: "#2aa198", strokeWidth: 3 },
       hoverPaintStyle: { stroke: "#b58900", strokeWidth: 4 },
-      endpointStyle: { fill: "#2aa198", radius: 8 },
-      endpointHoverStyle: { fill: "#b58900" },
     });
 
     // ── Endpoints jsPlumb ───────────────────────────
+    const SOCKET_STYLE = {
+      fill: "#02161b",
+      stroke: "#586e75",
+      strokeWidth: 4,
+    };
+    const SOCKET_HOVER = {
+      fill: "#02161b",
+      stroke: "#2aa198",
+      strokeWidth: 4,
+    };
+
     this.leftItems.forEach((it) => {
       const el = this.container.querySelector(`[data-id="L_${it.id}"]`);
       if (!el) return;
@@ -135,7 +146,9 @@ export class CablingManager {
         anchor: "Right",
         source: true,
         target: false,
-        endpoint: { type: "Dot", options: { radius: 9 } },
+        endpoint: { type: "Dot", options: { radius: 14 } },
+        paintStyle: SOCKET_STYLE,
+        hoverPaintStyle: SOCKET_HOVER,
         maxConnections: 1,
         connectionsDetachable: true,
         cssClass: "cabling-ep-left",
@@ -149,7 +162,9 @@ export class CablingManager {
         anchor: "Left",
         source: false,
         target: true,
-        endpoint: { type: "Dot", options: { radius: 9 } },
+        endpoint: { type: "Dot", options: { radius: 14 } },
+        paintStyle: SOCKET_STYLE,
+        hoverPaintStyle: SOCKET_HOVER,
         maxConnections: 1,
         connectionsDetachable: true,
         cssClass: "cabling-ep-right",
@@ -243,11 +258,6 @@ export class CablingManager {
   _makeColumn(side) {
     const col = document.createElement("div");
     col.className = `cabling-col cabling-col--${side}`;
-    col.style.cssText = `
-      display: flex; flex-direction: column; gap: 16px;
-      flex: 0 0 auto; width: 220px;
-      ${side === "left" ? "align-items: flex-end;" : "align-items: flex-start;"}
-    `;
     return col;
   }
 
@@ -258,48 +268,12 @@ export class CablingManager {
   }
 
   _makePill(item, group, index) {
-    const colors = ["#2aa198","#d33682","#cb4b16","#6c71c4","#268bd2"];
-    const accent = colors[group === "left" ? index : 0];
-
     const pill = document.createElement("div");
     pill.className = "cabling-pill";
     pill.dataset.id    = `${group === "left" ? "L" : "R"}_${item.id}`;
     pill.dataset.srcId = item.id;
     pill.dataset.group = group;
     pill.textContent   = item.label;
-    pill.style.cssText = `
-      padding: 10px 18px;
-      border-radius: 8px;
-      background: #073642;
-      color: #93a1a1;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      user-select: none;
-      border: 2px solid #586e75;
-      transition: border-color 0.2s, box-shadow 0.2s, color 0.2s;
-      max-width: 210px;
-      text-align: ${group === "left" ? "right" : "left"};
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      position: relative;
-    `;
-
-    // Hover visuel
-    pill.addEventListener("mouseenter", () => {
-      if (!this.validated) {
-        pill.style.borderColor = "#b58900";
-        pill.style.color = "#fdf6e3";
-      }
-    });
-    pill.addEventListener("mouseleave", () => {
-      if (!this.validated && this.activeNode?.el !== pill) {
-        pill.style.borderColor = this.activeNode?.el === pill ? "#b58900" : "#586e75";
-        pill.style.color = "#93a1a1";
-      }
-    });
-
     return pill;
   }
 
@@ -308,16 +282,12 @@ export class CablingManager {
   _setActive(pill) {
     this._clearActive();
     this.activeNode = { el: pill, srcId: pill.dataset.srcId, group: pill.dataset.group };
-    pill.style.borderColor = "#b58900";
-    pill.style.boxShadow   = "0 0 0 3px rgba(181,137,0,0.35)";
-    pill.style.color       = "#b58900";
+    pill.classList.add('is-active');
   }
 
   _clearActive() {
     if (this.activeNode?.el) {
-      this.activeNode.el.style.borderColor = "#586e75";
-      this.activeNode.el.style.boxShadow   = "";
-      this.activeNode.el.style.color       = "#93a1a1";
+      this.activeNode.el.classList.remove('is-active');
     }
     this.activeNode = null;
   }
@@ -408,9 +378,9 @@ export class CablingManager {
     // Force le re-rendu SVG immédiat (sans nécessiter un hover)
     this.jsp.repaintEverything();
 
-    // Bloquer les pills visuellement
+    // Lock pills visually
     this.container.querySelectorAll(".cabling-pill").forEach(el => {
-      el.style.cursor = "default";
+      el.classList.add('is-validated');
     });
 
     return { status: "validated", ...this.getState() };
@@ -434,11 +404,9 @@ export class CablingManager {
     this._sparks.forEach(s => s.remove());
     this._sparks = [];
 
-    // Réactiver les pills
+    // Restore pills
     this.container.querySelectorAll(".cabling-pill").forEach(el => {
-      el.style.cursor      = "pointer";
-      el.style.borderColor = "#586e75";
-      el.style.color       = "#93a1a1";
+      el.classList.remove('is-active', 'is-validated');
     });
 
     return { status: "hidden", ...this.getState() };

@@ -1,0 +1,19 @@
+/* ==========================================================================
+   SIMULATEUR RAM (Classes spécifiques)
+   ========================================================================== */
+
+.font-code {
+    font-family: var(--font-code) !important;
+}
+
+.ram-byte-box {
+    width: 55px;
+    height: 55px;
+    background-color: var(--sol-base03) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3em;
+    font-weight: bold;
+    cursor: help;
+}

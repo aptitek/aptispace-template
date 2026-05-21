@@ -214,6 +214,26 @@ export function renderFeedbackUI(panelSelector, state, listData = []) {
 
   if (state.status === "hidden") return;
 
+  // Update header text based on status
+  const header = panel.querySelector('.card-header');
+  if (header) {
+    let title = "Console Système";
+    if (state.status === "incomplete") title = "⚠️ Console — Brassage Incomplet";
+    else if (state.status === "validated") title = "✅ Console — Diagnostic Réussi";
+    else if (state.status === "error") title = "❌ Console — Conflit de Signal";
+    
+    let titleSpan = header.querySelector('.terminal-header-title');
+    if (!titleSpan) {
+      titleSpan = document.createElement('span');
+      titleSpan.className = 'terminal-header-title';
+      titleSpan.style.fontFamily = "var(--font-code, monospace)";
+      titleSpan.style.fontSize = "0.85em";
+      titleSpan.style.fontWeight = "bold";
+      header.appendChild(titleSpan);
+    }
+    titleSpan.textContent = title;
+  }
+
   // 2. Affichage dynamique de la carte active via le Moteur 1
   const activeCard = panel.querySelector(`.feedback-${state.status}`);
   if (activeCard) {
@@ -221,6 +241,48 @@ export function renderFeedbackUI(panelSelector, state, listData = []) {
     renderTemplate(activeCard, { score: state.score, total: state.total });
   }
 
-  // 3. Affichage dynamique de la liste via le Moteur 2
-  renderListTemplate(`${panelSelector} .feedback-details`, `${panelSelector} .feedback-item-template`, listData);
+  // 3. Affichage dynamique de la liste (Programmatic DOM creation)
+  const detailsContainer = panel.querySelector('.feedback-details');
+  if (detailsContainer) {
+    detailsContainer.innerHTML = ""; // Clear existing
+    
+    listData.forEach(item => {
+      const itemEl = document.createElement('div');
+      itemEl.className = 'feedback-item mb-2';
+
+      // Shell prompt prefix: >
+      const prefix = document.createElement('span');
+      prefix.className = 'text-muted me-1';
+      prefix.textContent = '>';
+      itemEl.appendChild(prefix);
+
+      // Label (Left variable)
+      const labelEl = document.createElement('strong');
+      labelEl.textContent = item.label + ' ';
+      itemEl.appendChild(labelEl);
+
+      // mapped to text
+      const midText = document.createTextNode('mapped to ');
+      itemEl.appendChild(midText);
+
+      // Right label (Assigned scale)
+      const rightLabelEl = document.createElement('em');
+      rightLabelEl.textContent = item.rightLabel + ' ';
+      itemEl.appendChild(rightLabelEl);
+
+      // Status badge: [OK] / [Erreur]
+      const badgeEl = document.createElement('span');
+      badgeEl.className = `${item.badgeClass} fw-bold`;
+      badgeEl.textContent = `[${item.badgeText}]`;
+      itemEl.appendChild(badgeEl);
+
+      // Explanation details: └─ ...
+      const feedbackEl = document.createElement('div');
+      feedbackEl.className = 'text-muted small ps-3 mt-1';
+      feedbackEl.textContent = `└─ ${item.feedback}`;
+      itemEl.appendChild(feedbackEl);
+
+      detailsContainer.appendChild(itemEl);
+    });
+  }
 }

@@ -4,7 +4,7 @@
 ```{ojs}
 //| echo: false
 // 📦 Imports centralisés pour tout le bloc
-import { renderWordCloud3D } from "./assets/js/networks.js"
+import { createWordCloud } from "./assets/js/networks.js"
 import { createBar, createLine, createFunnel } from "./assets/js/plots.js"
 ```
 
@@ -25,7 +25,7 @@ Catégories ou étiquettes sans aucun ordre de grandeur ni hiérarchie naturelle
 motsNominal = ["Rouge", "France", "Standard", "69003", "Bleu", "Genre", "Directeur", "Italie", "Vert"]
 
 renderNominale = {
-  renderWordCloud3D('plot-nominale', motsNominal, { radius: 80 }) //TODO: if not specified use current div instead of fixed id
+  createWordCloud('plot-nominale', motsNominal, { radius: 80 }) //TODO: if not specified use current div instead of fixed id
 }
 ```
 :::
@@ -143,105 +143,8 @@ renderContinuous = {
 //| echo: false
 import { parseTableData, renderFeedbackUI } from "./assets/js/core.js"
 import { CablingManager } from "./assets/js/networks.js"
+import { createLever } from "./assets/js/custom/lever.js"
 
-```
-
-```{=html}
-<style>
-/* ── jsPlumb Cabling Exercise ────────────────────────────────────── */
-#cabling-canvas {
-  padding: 24px 0;
-  box-sizing: border-box;
-  overflow: visible !important;
-}
-
-/* ── Smooth transitions on all connectors ── */
-#cabling-canvas .jtk-connector path {
-  transition: stroke 0.3s ease;
-}
-#cabling-canvas .jtk-endpoint circle {
-  transition: fill 0.2s ease;
-}
-
-/* ── Ghost connector during drag ── */
-#cabling-canvas .jtk-dragging path {
-  stroke-dasharray: 7 5;
-  opacity: 0.65;
-  animation: cable-flow 0.4s linear infinite;
-}
-
-/* ── Correct connection: green flowing glow ── */
-#cabling-canvas .conn-correct path {
-  stroke: #859900 !important;
-  stroke-width: 3.5 !important;
-  stroke-dasharray: 10 7;
-  animation: cable-flow-correct 0.75s linear infinite;
-  filter: drop-shadow(0 0 4px rgba(133, 153, 0, 0.6));
-}
-
-@keyframes cable-flow-correct {
-  to {
-    stroke-dashoffset: -17;
-    filter: drop-shadow(0 0 6px rgba(133, 153, 0, 0.9));
-  }
-}
-
-/* ── Incorrect connection: electric spark effect ── */
-#cabling-canvas .conn-incorrect path {
-  stroke: #dc322f !important;
-  stroke-width: 3 !important;
-  stroke-dasharray: 4 3;
-  animation: cable-spark 0.14s linear infinite;
-}
-
-@keyframes cable-spark {
-  0%   { stroke-dashoffset: 0;   filter: drop-shadow(0 0 2px #dc322f); }
-  20%  {                         filter: drop-shadow(0 0 11px #ff5555) drop-shadow(0 0 4px #fff4); }
-  40%  { stroke-dashoffset: -7;  filter: drop-shadow(0 0 2px #dc322f); }
-  60%  {                         filter: drop-shadow(0 0 14px #ff4444) drop-shadow(0 0 5px #ffa50066); }
-  80%  { stroke-dashoffset: -14; filter: drop-shadow(0 0 3px #dc322f); }
-  100% { stroke-dashoffset: -14; filter: drop-shadow(0 0 2px #dc322f); }
-}
-
-/* ── Selected pill highlight (click-to-connect) ── */
-.cabling-pill.is-active {
-  border-color: #b58900 !important;
-  box-shadow: 0 0 0 3px rgba(181, 137, 0, 0.35) !important;
-  color: #b58900 !important;
-}
-
-/* ── Spark particles (incorrect connections) ── */
-.cabling-spark {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  pointer-events: none;
-  transform-origin: center center;
-  animation: spark-fly 0.55s ease-out infinite;
-  z-index: 10;
-}
-
-@keyframes spark-fly {
-  0% {
-    transform: rotate(var(--angle)) translateX(0px) scale(1.2);
-    background: #fff;
-    box-shadow: 0 0 5px #fff, 0 0 8px #ff4444;
-    opacity: 1;
-  }
-  50% {
-    background: #ff6600;
-    box-shadow: 0 0 4px #ff6600;
-    opacity: 0.8;
-  }
-  100% {
-    transform: rotate(var(--angle)) translateX(18px) scale(0);
-    background: #dc322f;
-    box-shadow: 0 0 2px #dc322f;
-    opacity: 0;
-  }
-}
-</style>
 ```
 
 
@@ -262,50 +165,76 @@ import { CablingManager } from "./assets/js/networks.js"
 
 Reliez chaque pièce à conviction de gauche à sa catégorie de données logique de droite.
 
-::: {#cabling-canvas .w-100 .my-3 style="min-height: 200px; overflow: visible;"}
+::: {.cabling-panel}
+
+::: {.panel-screw .top-left}
+:::
+::: {.panel-screw .top-right}
+:::
+::: {.panel-screw .bottom-left}
+:::
+::: {.panel-screw .bottom-right}
 :::
 
-::: {.d-flex .gap-2 .justify-content-center}
+::: {.cabling-workspace-wrapper}
+
+::: {#cabling-canvas}
+:::
+
+::: {#power-lever .lever-wrapper}
+
+::: {.lever-housing}
+
+[ON]{.lever-label-top}
+
+::: {.lever-slot}
+:::
+
+::: {.lever-handle}
+:::
+
+::: {.lever-led}
+:::
+
+[OFF]{.lever-label-bottom}
+
+:::
+
+[Circuit coupé]{.lever-status .is-off}
+
+:::
+
+:::
+
+:::
+
 
 ```{ojs}
 //| echo: false
-viewof btnValidate = Inputs.button("🔌 Synchroniser & Valider", { class: "btn btn-primary" })
-viewof btnReset    = Inputs.button("🧹 Débrancher Tout", { class: "btn btn-light" })
-
+viewof powerOn = createLever("#power-lever", invalidation)
 ```
 
+
+::: {#cabling-feedback-panel .card .card-window .mt-4 style="display: none;"}
+
+::: {.card-header}
 :::
 
-::: {#cabling-feedback-panel style="display: none;" .mt-4}
+::: {.card-body style="background: var(--sol-base03) !important; color: var(--sol-base0) !important; font-family: var(--font-code, monospace) !important; padding: 20px !important; min-height: 120px !important;"}
 
-::: {.card .border-warning .bg-warning-subtle .feedback-card .feedback-incomplete}
-::: {.card-body}
-⚠️ **Signal brouillé — Brassage incomplet** L'analyse ne peut pas démarrer. Reliez **toutes** les fiches ({{score}}/{{total}}).
-:::
+::: {.feedback-card .feedback-incomplete .text-warning .fw-bold .mb-3}
+[!] SIGNAL BROUILLÉ : Brassage incomplet. L'analyse ne peut pas démarrer ({{score}}/{{total}} connectés).
 :::
 
-::: {.card .border-success .bg-success-subtle .feedback-card .feedback-validated}
-::: {.card-body}
-✅ **Diagnostic Validé (Score : {{score}}/{{total}})** Excellent travail ! Le signal est pur.
-:::
+::: {.feedback-card .feedback-validated .text-success .fw-bold .mb-3}
+[+] DIAGNOSTIC VALIDÉ : Excellent travail, le signal est pur ({{score}}/{{total}} corrects).
 :::
 
-::: {.card .border-danger .bg-danger-subtle .feedback-card .feedback-error}
-::: {.card-body}
-❌ **Conflit de Signal (Score : {{score}}/{{total}})** Des courts-circuits subsistent. Analysez la nature des variables.
-:::
+::: {.feedback-card .feedback-error .text-danger .fw-bold .mb-3}
+[-] CONFLIT DE SIGNAL : Des courts-circuits subsistent. Analysez la nature des variables ({{score}}/{{total}} corrects).
 :::
 
-::: {.feedback-details .mt-3}
-:::
-
-::: {.feedback-item-template style="display: none;"}
-::: {.feedback-item .mb-2 .border-bottom .pb-2}
-**{{label}}** relié à *{{rightLabel}}* [\[{{badgeText}}\]]{.fw-bold .{{badgeClass}}}  
-::: {.text-muted .small .mt-1}
-{{feedback}}
-:::
-:::
+::: {.feedback-details .reveal-lines .border-top .pt-3}
 :::
 
 :::
@@ -331,13 +260,21 @@ engine = {
   return m;
 }
 
-// C. Pipeline réactif d'affichage du Feedback
+// C. Pipeline réactif d'affichage du Feedback (déclenché par le levier)
 uiLogic = {
-  btnValidate; btnReset;
+  powerOn; // Réactivité sur le levier
 
   let state = { status: "hidden" };
-  if (btnValidate) state = engine.validate();
-  if (btnReset) state = engine.reset();
+
+  if (powerOn === true) {
+    // Levier ON  → valider le brassage
+    state = engine.validate();
+  } else {
+    // Levier OFF → tout réinitialiser et masquer les résultats
+    engine.reset();
+    renderFeedbackUI("#cabling-feedback-panel", { status: "hidden" });
+    return;
+  }
 
   let listData = [];
   if (state.status === "validated") {
