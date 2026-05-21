@@ -405,3 +405,83 @@ export function createTabsetWatcher(tabsetSelector, labelMap, onChange) {
 
   return { destroy: () => observer?.disconnect() };
 }
+
+// =====================================================================
+// 🤖 GENERIC STATE MACHINE COMPONENT (REUSABLE PIPELINE ENGINE)
+// =====================================================================
+
+/**
+ * A highly reusable, lightweight state machine engine for driving step-by-step
+ * animations, diagnostics, and structured reactive sequences in simulators.
+ */
+export class StateMachine {
+  constructor(options = {}) {
+    this.states = options.states || [];     // Array of state configurations/payloads
+    this.currentIndex = 0;
+    this.interval = options.interval || 950; // Delay in milliseconds between steps
+    this.onStateChange = options.onStateChange || (() => {}); // Transition callback
+    this.timer = null;
+    this.isPlaying = false;
+    this.loop = options.loop !== false;
+  }
+
+  /**
+   * Starts the state machine execution sequence.
+   */
+  start() {
+    if (this.isPlaying) return;
+    this.isPlaying = true;
+    
+    // Trigger first state immediately
+    this.onStateChange(this.states[this.currentIndex], this.currentIndex);
+    this.run();
+  }
+
+  /**
+   * Internal loop runner.
+   */
+  run() {
+    this.timer = setInterval(() => {
+      this.next();
+    }, this.interval);
+  }
+
+  /**
+   * Advances the sequence to the next state, looping if configured.
+   */
+  next() {
+    if (!this.isPlaying) return;
+    
+    this.currentIndex++;
+    if (this.currentIndex >= this.states.length) {
+      if (this.loop) {
+        this.currentIndex = 0;
+      } else {
+        this.stop();
+        return;
+      }
+    }
+    
+    this.onStateChange(this.states[this.currentIndex], this.currentIndex);
+  }
+
+  /**
+   * Pauses/stops the execution.
+   */
+  stop() {
+    this.isPlaying = false;
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+  }
+
+  /**
+   * Resets the execution back to the initial state.
+   */
+  reset() {
+    this.stop();
+    this.currentIndex = 0;
+    this.onStateChange(this.states[0], 0);
+  }
+}

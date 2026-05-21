@@ -84,6 +84,7 @@ export function renderMobo(hardwareState) {
   } 
   else if (hardwareState === "l3") {
     if (busRamChipset) busRamChipset.classList.add("is-flowing");
+    if (busChipsetRam) busChipsetRam.classList.add("is-flowing");
     if (busChipsetCpu) busChipsetCpu.classList.add("is-flowing");
     if (busRamCpu) busRamCpu.classList.add("is-flowing");
   } 

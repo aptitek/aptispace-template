@@ -489,6 +489,111 @@ ramData = getRamData(rawInput, dataType)
 updateRamUI = renderRam(ramData)
 ```
 
+## Stockage Colonnaire vs Ligne (RAM)
+
+::: {.card .card-window .mb-4}
+::: {.card-header}
+📊 Simulateur de Structure RAM : Ligne vs Colonne
+:::
+
+::: {.panel-tabset .ram-storage-tabset}
+
+## <i class="bi bi-hdd-fill"></i> Stockage en Ligne
+
+::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
+::: {.card-body .p-0 .pb-2}
+Le stockage **Orienté Ligne** est le standard transactionnel (SQL classique, fichiers CSV). Les attributs d'une même ligne (ID, Âge, Salaire) sont enregistrés de manière strictement contiguë en mémoire. Idéal pour écrire de nouvelles transactions rapidement, mais très lent pour extraire ou analyser une colonne spécifique sur des millions d'enregistrements.
+:::
+:::
+
+## <i class="bi bi-layout-three-columns"></i> Stockage en Colonne
+
+::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
+::: {.card-body .p-0 .pb-2}
+Le stockage **Orienté Colonne** est le standard de la Data Science moderne (DataFrames Polars/Pandas, fichiers Parquet, Apache Arrow). Les valeurs d'une même colonne sont regroupées de manière continue en RAM. Idéal pour calculer des moyennes ou filtrer sur un attribut précis à la vitesse de la lumière !
+:::
+:::
+
+:::
+
+::: {.card-control-row}
+```{ojs}
+//| panel: input
+//| echo: false
+viewof queryCol = Inputs.radio(
+  ["Aucune", "Âge", "Salaire"],
+  { label: "Simuler une requête analytique CPU sur :", value: "Aucune" }
+)
+```
+:::
+
+::: {.card-body}
+::: {#ram-graph-container style="height: 380px; position: relative; background: transparent; border-radius: 8px;"}
+:::
+
+```{ojs}
+//| echo: false
+import { createRamStorageGraph } from "./assets/js/networks.js"
+
+// 1. Détecteur réactif du Tabset de stockage RAM
+mutable storageMode = "ligne"
+
+_ramStorageTabWatcher = {
+  const w = createTabsetWatcher(
+    ".ram-storage-tabset",
+    { "Stockage en Ligne": "ligne", "Stockage en Colonne": "colonne" },
+    (val) => { mutable storageMode = val; }
+  );
+  invalidation.then(() => w.destroy());
+  return html`<span style="display:none"></span>`;
+}
+
+// 2. Rendu réactif du graphe d'accès mémoire
+renderRamGraph = {
+  createRamStorageGraph("ram-graph-container", storageMode, queryCol);
+}
+```
+
+::: {.card .card-info .mt-3 .mb-0}
+::: {.card-header}
+💡 Analyse de Performance CPU
+:::
+::: {.card-body}
+```{ojs}
+//| echo: false
+{
+  const isNone = queryCol === "Aucune";
+  const isLigne = storageMode === "ligne";
+  let title = "🔍 Mode d'accès au processeur";
+  let content = "Sélectionnez une colonne ci-dessus pour observer le comportement du processeur lors de la lecture des données.";
+  let alertClass = "is-debug";
+
+  if (!isNone) {
+    if (isLigne) {
+      title = "⚠️ Cache Miss systématiques (Accès Ligne)";
+      content = `Pour lire la colonne <strong>${queryCol}</strong>, le processeur doit sauter les autres attributs en RAM (ID, Salaire, etc.). Ces sauts non-contigus empêchent la prélecture matérielle, entraînant des <strong>Cache Miss</strong> répétés. Le CPU passe son temps à attendre la RAM.`;
+      alertClass = "is-danger";
+    } else {
+      title = "⚡ Cache Hit et Vectorisation SIMD (Accès Colonne)";
+      content = `Toutes les valeurs de la colonne <strong>${queryCol}</strong> sont stockées de manière strictement contiguë en mémoire. Le processeur charge le bloc entier dans ses caches L1/L2/L3 en une seule opération (<strong>Cache Hits</strong> massifs) et peut appliquer des instructions vectorielles <strong>SIMD</strong>. C'est le secret de la vitesse de Polars et Pandas moderne !`;
+      alertClass = "is-success";
+    }
+  }
+
+  return html`
+    <div class="card ${alertClass} border-0 shadow-none mb-0">
+      <div class="card-header border-0 pb-1" style="background: transparent; font-weight: 800;">${title}</div>
+      <div class="card-body pt-1" style="background: transparent;">${content}</div>
+    </div>
+  `;
+}
+```
+:::
+:::
+
+:::
+:::
+
 ## Architecture Matérielle & Flux de Données
 
 ::: {.card .card-window .mb-4}
@@ -669,7 +774,7 @@ Tout en haut de la pyramide, les registres internes du cœur traitent les donné
 ::: {.mb-3}
 ::: {.d-flex .justify-content-between .font-code .mb-1 style="font-size: 0.72rem;"}
 [🟩 Vitesse d'accès]{}
-[< 0.3 ns (Instantané)]{.text-muted}
+[< 0.3 ns]{.text-muted}
 :::
 ::: {.progress style="height: 6px;"}
 ::: {.progress-bar .bg-success style="width: 100%;" title="Vitesse"}
@@ -679,7 +784,7 @@ Tout en haut de la pyramide, les registres internes du cœur traitent les donné
 ::: {}
 ::: {.d-flex .justify-content-between .font-code .mb-1 style="font-size: 0.72rem;"}
 [🟦 Capacité de stockage]{}
-[512 B (Infime)]{.text-muted}
+[512 B]{.text-muted}
 :::
 ::: {.progress style="height: 6px;"}
 ::: {.progress-bar style="width: 0.5%; background-color: #268bd2;" title="Capacité"}
