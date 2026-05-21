@@ -1,27 +1,26 @@
 // ==========================================
-// mobo.js — Motherboard simulation engine
+// mobo.js — Engine de simulation de carte mère unifié
 // ==========================================
 // Usage (OJS):
-//   import { initMoboSvg, getMoboExplanations, renderMobo } from "./assets/js/custom/mobo.js"
+//   import { initMoboSvg, renderMobo } from "./assets/js/custom/mobo.js"
 //
 //   init = initMoboSvg("#motherboard-view")
-//   moboExplanations = getMoboExplanations("#mobo-data table")
-//   updateMotherboardUI = renderMobo(hardwareState, moboExplanations)
+//   updateMotherboardUI = renderMobo(hardwareState)
 //
 
-import { renderTemplate, parseTableData } from "../core.js";
+import { renderTemplate } from "../core.js";
 
 /**
- * Loads the motherboard SVG dynamically and renders it inline inside the container
- * so that JavaScript has full interactive access to its internal DOM nodes.
+ * Charge dynamiquement l'SVG de la carte mère et l'intègre en ligne dans le conteneur
+ * pour permettre un accès DOM JavaScript complet à ses éléments internes.
  *
- * @param {string} selector - CSS selector for the motherboard container
+ * @param {string} selector - Sélecteur CSS du conteneur
  */
 export async function initMoboSvg(selector) {
   const container = document.querySelector(selector);
   if (!container) return;
 
-  // Extract motherboard.svg URL from computed styles or markdown background
+  // L'URL de l'SVG par défaut
   let svgUrl = new URL('../../ui/motherboard.svg', import.meta.url).href;
   
   const style = getComputedStyle(container).backgroundImage;
@@ -35,62 +34,53 @@ export async function initMoboSvg(selector) {
     if (res.ok) {
       const svgText = await res.text();
       container.innerHTML = svgText;
-      container.style.backgroundImage = 'none'; // clear background once inline
+      container.style.backgroundImage = 'none'; // Efface l'image de fond statique
     }
   } catch (e) {
-    console.error("initMoboSvg: Failed to fetch motherboard SVG inline —", e);
+    console.error("initMoboSvg: Impossible de charger l'SVG en ligne —", e);
   }
 }
 
 /**
- * Parses the Markdown table explanations into a simple dictionary.
+ * Met à jour le flux d'exécution matériel, applique les classes d'états et anime les bus de données.
  *
- * @param {string} tableSelector - CSS selector for the Markdown data table
- * @returns {Object}             - Dictionary mapping id -> text explanation
+ * @param {string} hardwareState - L'état actif ('ssd', 'ram', 'l3', 'l2_l1', 'cpu_reg')
  */
-export function getMoboExplanations(tableSelector) {
-  const moboData = parseTableData(tableSelector);
-  return Object.fromEntries(moboData.map(row => [row.id, row.text]));
-}
+export function renderMobo(hardwareState) {
+  // A. Cible le conteneur principal du simulateur
+  const container = document.querySelector("#motherboard-view");
+  if (!container) return;
 
-/**
- * Updates the motherboard system state, triggers CSS flow animations, and renders descriptions.
- *
- * @param {string} hardwareState - The current system state ('idle', 'loading', 'processing')
- * @param {Object} explanations  - Dictionary of step descriptions
- */
-export function renderMobo(hardwareState, explanations = null) {
-  // A. Mise à jour facultative du texte explicatif via le template
-  if (explanations && document.querySelector("#mobo-explanation")) {
-    renderTemplate("#mobo-explanation", { 
-      text: explanations[hardwareState] || "Sélectionnez un état pour démarrer le simulateur." 
-    });
-  }
+  // Nettoyage des anciennes classes d'états
+  const states = ["is-active-ssd", "is-active-ram", "is-active-l3", "is-active-l2-l1", "is-active-cpu-reg"];
+  states.forEach(s => container.classList.remove(s));
 
-  // B. Sélection des éléments SVG (doivent être inline dans le DOM)
-  const disk = document.querySelector("#part-disk rect");
-  const ram  = document.querySelector("#part-ram rect");
-  const cpu  = document.querySelector("#part-cpu rect");
-  const bus1 = document.querySelector("#bus-disk-ram");
-  const bus2 = document.querySelector("#bus-ram-cpu");
+  // Injection du nouvel état actif
+  const activeClass = `is-active-${hardwareState}`;
+  container.classList.add(activeClass);
 
-  if (!disk || !ram || !cpu) return;
+  // B. Contrôle dynamique des bus de données animés
+  const busSsdChipset = container.querySelector("#bus-ssd-chipset");
+  const busChipsetRam = container.querySelector("#bus-chipset-ram");
+  const busRamChipset = container.querySelector("#bus-ram-chipset");
+  const busChipsetCpu = container.querySelector("#bus-chipset-cpu");
+  const busCpuInternal = container.querySelector("#bus-cpu-internal");
 
-  // C. Reset total des classes SVG
-  [disk, ram, cpu].forEach(el => el.className.baseVal = "mobo-part");
-  [bus1, bus2].forEach(el => {
-    if (el) el.className.baseVal = "mobo-bus";
+  // Reset des bus
+  [busSsdChipset, busChipsetRam, busRamChipset, busChipsetCpu, busCpuInternal].forEach(bus => {
+    if (bus) bus.classList.remove("is-flowing");
   });
 
-  // D. Application dynamique des animations
-  if (hardwareState === "loading") {
-    disk.className.baseVal += " is-active-disk";
-    ram.className.baseVal  += " is-active-ram";
-    if (bus1) bus1.className.baseVal += " is-flowing";
+  // Activation des flux néons selon l'état
+  if (hardwareState === "ram") {
+    if (busSsdChipset) busSsdChipset.classList.add("is-flowing");
+    if (busChipsetRam) busChipsetRam.classList.add("is-flowing");
   } 
-  else if (hardwareState === "processing") {
-    ram.className.baseVal  += " is-active-ram";
-    cpu.className.baseVal  += " is-active-cpu";
-    if (bus2) bus2.className.baseVal += " is-flowing";
+  else if (hardwareState === "l3") {
+    if (busRamChipset) busRamChipset.classList.add("is-flowing");
+    if (busChipsetCpu) busChipsetCpu.classList.add("is-flowing");
+  } 
+  else if (hardwareState === "l2_l1" || hardwareState === "cpu_reg") {
+    if (busCpuInternal) busCpuInternal.classList.add("is-flowing");
   }
 }

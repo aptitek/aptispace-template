@@ -493,31 +493,202 @@ updateRamUI = renderRam(ramData)
 
 ::: {.card .card-window .mb-4}
 ::: {.card-header}
-🖥️ Simulateur de flux d'exécution
+🖥️ Simulateur de flux d'exécution & Hiérarchie Mémoire
 :::
 ::: {.panel-tabset .mobo-tabset}
 
-## Au repos {.bi-moon-stars}
+## SSD {.bi-hdd-network}
 
 ::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
 ::: {.card-body .p-0 .pb-2}
-**Au repos**, les données de votre projet (votre fichier CSV, vos scripts) dorment paisiblement sur le Disque Dur (SSD). Le CPU et la RAM sont en attente.
+::: {.grid .align-items-center}
+::: {.g-col-12 .g-col-md-7}
+**Stockage permanent (SSD) :** Au repos, toutes les données de votre projet (les fichiers CSV, les scripts Python) dorment sur le Disque Dur. C'est le niveau d'accès le plus lent, mais avec une capacité de stockage immense et non volatile (les données restent à l'extinction).
+:::
+::: {.g-col-12 .g-col-md-5}
+::: {.card .bg-light .border .p-3 .rounded .shadow-sm .mb-0}
+::: {.font-code .fw-bold .mb-3 style="font-size: 0.8rem;"}
+📊 Profil de performance : SSD
+:::
+::: {.mb-3}
+::: {.d-flex .justify-content-between .font-code .mb-1 style="font-size: 0.72rem;"}
+[🟩 Vitesse d'accès]{}
+[15 000 ns (Très lent)]{.text-muted}
+:::
+::: {.progress style="height: 6px;"}
+::: {.progress-bar .bg-danger style="width: 1%;" title="Vitesse"}
+:::
+:::
+:::
+::: {}
+::: {.d-flex .justify-content-between .font-code .mb-1 style="font-size: 0.72rem;"}
+[🟦 Capacité de stockage]{}
+[1 TB (Immense)]{.text-muted}
+:::
+::: {.progress style="height: 6px;"}
+::: {.progress-bar style="width: 100%; background-color: #268bd2;" title="Capacité"}
+:::
+:::
+:::
+:::
+:::
+:::
 :::
 :::
 
-## Chargement {.bi-folder-symlink}
+## RAM {.bi-memory}
 
 ::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
 ::: {.card-body .p-0 .pb-2}
-**Lecture du fichier :** Le système d'exploitation copie les données du Disque lent vers la RAM (Mémoire Vive), qui est ultra-rapide mais volatile. C'est ce qui se passe quand vous tapez `pd.read_csv()`.
+::: {.grid .align-items-center}
+::: {.g-col-12 .g-col-md-7}
+**Mémoire vive (RAM) :** Lorsque vous exécutez `pd.read_csv("data.csv")`, les données transitent du SSD vers la RAM sous le contrôle du Chipset. La RAM est beaucoup plus rapide que le SSD, mais elle est volatile (vidée à l'extinction) et sa capacité reste limitée.
+:::
+::: {.g-col-12 .g-col-md-5}
+::: {.card .bg-light .border .p-3 .rounded .shadow-sm .mb-0}
+::: {.font-code .fw-bold .mb-3 style="font-size: 0.8rem;"}
+📊 Profil de performance : RAM
+:::
+::: {.mb-3}
+::: {.d-flex .justify-content-between .font-code .mb-1 style="font-size: 0.72rem;"}
+[🟩 Vitesse d'accès]{}
+[60 ns (Rapide)]{.text-muted}
+:::
+::: {.progress style="height: 6px;"}
+::: {.progress-bar .bg-warning style="width: 35%;" title="Vitesse"}
+:::
+:::
+:::
+::: {}
+::: {.d-flex .justify-content-between .font-code .mb-1 style="font-size: 0.72rem;"}
+[🟦 Capacité de stockage]{}
+[16 GB (Grande)]{.text-muted}
+:::
+::: {.progress style="height: 6px;"}
+::: {.progress-bar style="width: 65%; background-color: #268bd2;" title="Capacité"}
+:::
+:::
+:::
+:::
+:::
+:::
 :::
 :::
 
-## Entraînement {.bi-cpu}
+## Cache L3 {.bi-layers-half}
 
 ::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
 ::: {.card-body .p-0 .pb-2}
-**Exécution :** Le CPU récupère les données dans la RAM par petits paquets, effectue ses calculs mathématiques (additions, multiplications de matrices), et renvoie les résultats dans la RAM.
+::: {.grid .align-items-center}
+::: {.g-col-12 .g-col-md-7}
+**Cache de niveau 3 (L3) :** Pour devancer les besoins du processeur, les données sont pré-chargées depuis la RAM vers le Cache L3 de la puce. Ce cache est partagé entre tous les cœurs du CPU. Sa vitesse est très élevée, mais sa taille se compte en mégaoctets.
+:::
+::: {.g-col-12 .g-col-md-5}
+::: {.card .bg-light .border .p-3 .rounded .shadow-sm .mb-0}
+::: {.font-code .fw-bold .mb-3 style="font-size: 0.8rem;"}
+📊 Profil de performance : Cache L3
+:::
+::: {.mb-3}
+::: {.d-flex .justify-content-between .font-code .mb-1 style="font-size: 0.72rem;"}
+[🟩 Vitesse d'accès]{}
+[10 ns (Très rapide)]{.text-muted}
+:::
+::: {.progress style="height: 6px;"}
+::: {.progress-bar .bg-success style="width: 70%;" title="Vitesse"}
+:::
+:::
+:::
+::: {}
+::: {.d-flex .justify-content-between .font-code .mb-1 style="font-size: 0.72rem;"}
+[🟦 Capacité de stockage]{}
+[16 MB (Très petite)]{.text-muted}
+:::
+::: {.progress style="height: 6px;"}
+::: {.progress-bar style="width: 8%; background-color: #268bd2;" title="Capacité"}
+:::
+:::
+:::
+:::
+:::
+:::
+:::
+:::
+
+## Caches L2 & L1 {.bi-lightning-charge}
+
+::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
+::: {.card-body .p-0 .pb-2}
+::: {.grid .align-items-center}
+::: {.g-col-12 .g-col-md-7}
+**Caches cœurs L2 & L1 :** Pour accélérer encore le traitement, chaque cœur possède ses propres caches dédiés L2 (moyen) et L1 (ultra-rapide). La donnée demandée est descendue au plus près des unités de calcul (Hit) pour éviter l'accès RAM extrêmement pénalisant (Miss).
+:::
+::: {.g-col-12 .g-col-md-5}
+::: {.card .bg-light .border .p-3 .rounded .shadow-sm .mb-0}
+::: {.font-code .fw-bold .mb-3 style="font-size: 0.8rem;"}
+📊 Profil de performance : Caches L1/L2
+:::
+::: {.mb-3}
+::: {.d-flex .justify-content-between .font-code .mb-1 style="font-size: 0.72rem;"}
+[🟩 Vitesse d'accès]{}
+[1 - 3 ns (Ultra-rapide)]{.text-muted}
+:::
+::: {.progress style="height: 6px;"}
+::: {.progress-bar .bg-success style="width: 90%;" title="Vitesse"}
+:::
+:::
+:::
+::: {}
+::: {.d-flex .justify-content-between .font-code .mb-1 style="font-size: 0.72rem;"}
+[🟦 Capacité de stockage]{}
+[576 KB (Extrêmement petite)]{.text-muted}
+:::
+::: {.progress style="height: 6px;"}
+::: {.progress-bar style="width: 3%; background-color: #268bd2;" title="Capacité"}
+:::
+:::
+:::
+:::
+:::
+:::
+:::
+:::
+
+## Registres {.bi-cpu}
+
+::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
+::: {.card-body .p-0 .pb-2}
+::: {.grid .align-items-center}
+::: {.g-col-12 .g-col-md-7}
+**Registres & CPU :** Tout en haut de la pyramide, les registres internes du cœur traitent les données à la vitesse du processeur (calculs arithmétiques immédiats en moins d'une fraction de nanoseconde). C'est la mémoire ultime en vitesse, mais limitée à quelques octets !
+:::
+::: {.g-col-12 .g-col-md-5}
+::: {.card .bg-light .border .p-3 .rounded .shadow-sm .mb-0}
+::: {.font-code .fw-bold .mb-3 style="font-size: 0.8rem;"}
+📊 Profil de performance : Registres
+:::
+::: {.mb-3}
+::: {.d-flex .justify-content-between .font-code .mb-1 style="font-size: 0.72rem;"}
+[🟩 Vitesse d'accès]{}
+[< 0.3 ns (Instantané)]{.text-muted}
+:::
+::: {.progress style="height: 6px;"}
+::: {.progress-bar .bg-success style="width: 100%;" title="Vitesse"}
+:::
+:::
+:::
+::: {}
+::: {.d-flex .justify-content-between .font-code .mb-1 style="font-size: 0.72rem;"}
+[🟦 Capacité de stockage]{}
+[512 B (Infime)]{.text-muted}
+:::
+::: {.progress style="height: 6px;"}
+::: {.progress-bar style="width: 0.5%; background-color: #268bd2;" title="Capacité"}
+:::
+:::
+:::
+:::
+:::
+:::
 :::
 :::
 
@@ -541,191 +712,21 @@ import { initMoboSvg, renderMobo } from "./assets/js/custom/mobo.js";
 initMobo = initMoboSvg("#motherboard-view")
 
 // 2. Détecteur réactif du Tabset de la carte mère (géré via card.js)
-mutable hardwareState = "idle"
+mutable hardwareState = "ssd"
 
 _moboTabWatcher = {
   const w = createTabsetWatcher(
     ".mobo-tabset",
-    { "Au repos": "idle", "Chargement": "loading", "Entraînement": "processing" },
+    { "SSD": "ssd", "RAM": "ram", "Cache L3": "l3", "Caches L2 & L1": "l2_l1", "Registres": "cpu_reg" },
     (val) => { mutable hardwareState = val; }
   );
   invalidation.then(() => w.destroy());
   return html`<span style="display:none"></span>`;
 }
 
-// 3. Déclenchement réactif des animations de flux physiques
+// 3. Déclenchement réactif des animations de flux physiques et highlights
 updateMotherboardUI = {
   initMobo; // Attente inlining SVG
   renderMobo(hardwareState);
-}
-```
-
-
-## Hiérarchie Mémoire (Simulateur de Cache)
-
-::: {.card .card-window .mb-4}
-::: {.card-header}
-⚡ Simulateur L1 / L2
-:::
-::: {.card-body}
-Le CPU a besoin de données. S'il les trouve dans son cache très proche (Hit), c'est immédiat. Sinon (Miss), il doit aller les chercher dans une mémoire plus lente.
-
-::: {.grid .mt-3}
-
-::: {.g-col-12 .g-col-md-5}
-**1. Demander une donnée au CPU :**
-```{ojs}
-//| echo: false
-// Création d'un groupe de boutons natif qui renvoie la valeur cliquée
-viewof requestedBlock = {
-  const div = html`<div class="d-flex gap-2 flex-wrap mb-3">
-    <button class="btn btn-outline-primary" value="A">Donnée A</button>
-    <button class="btn btn-outline-primary" value="B">Donnée B</button>
-    <button class="btn btn-outline-primary" value="C">Donnée C</button>
-    <button class="btn btn-outline-primary" value="D">Donnée D</button>
-    <button class="btn btn-outline-primary" value="E">Donnée E</button>
-  </div>`;
-  div.value = null;
-  div.querySelectorAll('button').forEach(b => b.onclick = () => {
-    div.value = b.value;
-    div.dispatchEvent(new CustomEvent("input"));
-  });
-  return div;
-}
-
-```
-
-::: {#cache-stats-panel .mt-4}
-::: {.card .bg-light}
-::: {.card-body .py-2}
-
-* **Hits L1 (Immédiat) :** [{{hitsL1}}]{.badge .bg-success .float-end}
-* **Hits L2 (Moyen) :** [{{hitsL2}}]{.badge .bg-warning .float-end}
-* **Miss (Accès RAM lent) :** [{{misses}}]{.badge .bg-danger .float-end}
-:::
-:::
-:::{.callout-note .mt-3}
-::: {#cache-log}
-{{logMessage}}
-:::
-:::
-:::
-:::
-
-::: {.g-col-12 .g-col-md-7 .bg-light .p-4 .rounded}
-**Cache L1 (Ultra-rapide, 2 places)**
-::: {#l1-container .d-flex .gap-2 .mb-4}
-:::
-
-**Cache L2 (Rapide, 4 places)**
-::: {#l2-container .d-flex .gap-2 .mb-4}
-:::
-
-**RAM Principale (Lente, Infinie)**
-::: {.d-flex .align-items-center .gap-2 .p-3 .border .border-secondary .rounded .text-muted}
-📦 Contient toutes les données (A, B, C, D, E...)
-:::
-:::
-
-:::
-
-::: {#cache-slot-template .d-none}
-::: {.cache-slot class="{{statusClass}} {{animClass}}" title="Dernier accès : {{age}}"}
-{{value}}
-:::
-:::
-
-```{ojs}
-//| echo: false
-
-// 1. Initialisation de l'état mémoire
-mutable cacheState = ({
-  l1: [], l2: [],
-  hitsL1: 0, hitsL2: 0, misses: 0,
-  logMessage: "En attente de la première requête..."
-})
-mutable lastAction = null // Pour déclencher l'animation CSS
-
-// 2. Le Moteur de Cache (S'exécute à chaque clic sur un bouton)
-processRequest = {
-  requestedBlock; // Dépendance : on écoute les clics
-  if (!requestedBlock) return;
-  
-  let { l1, l2, hitsL1, hitsL2, misses } = cacheState;
-  let log = "";
-  mutable lastAction = { block: requestedBlock, type: "" };
-
-  // --- Algorithme de Recherche ---
-  if (l1.includes(requestedBlock)) {
-    // 🎯 HIT L1
-    hitsL1++;
-    log = `⚡ HIT L1 : La donnée [${requestedBlock}] était dans le cache de niveau 1. Accès immédiat (1 cycle).`;
-    mutable lastAction = { block: requestedBlock, type: "hit-l1" };
-  } 
-  else if (l2.includes(requestedBlock)) {
-    // 🟡 HIT L2 (Miss L1)
-    hitsL2++;
-    log = `⚠️ MISS L1 / HIT L2 : La donnée [${requestedBlock}] a été trouvée dans le L2. Promue vers L1 (10 cycles).`;
-    mutable lastAction = { block: requestedBlock, type: "hit-l2" };
-    
-    // Promotion (On monte la donnée du L2 vers le L1, principe FIFO)
-    if (l1.length >= 2) l2.unshift(l1.pop()); // Le plus vieux L1 redescend en L2
-    l1.unshift(requestedBlock);
-    l2 = l2.filter((v, i) => v !== requestedBlock || i === 0); // Nettoie le doublon dans L2
-  } 
-  else {
-    // ❌ MISS TOTAL (Accès RAM)
-    misses++;
-    log = `❌ MISS TOTAL : Donnée [${requestedBlock}] introuvable. Récupération depuis la RAM très lente (100+ cycles).`;
-    mutable lastAction = { block: requestedBlock, type: "miss" };
-    
-    // Cascading Push (RAM -> L2 -> L1)
-    if (l1.length >= 2) {
-      let evictedL1 = l1.pop();
-      if (l2.length >= 4) l2.pop(); // FIFO L2
-      l2.unshift(evictedL1);
-    }
-    l1.unshift(requestedBlock);
-  }
-
-  // Sauvegarde du nouvel état
-  mutable cacheState = { l1, l2, hitsL1, hitsL2, misses, logMessage: log };
-}
-
-// 3. Mise à jour de l'Interface Graphique (UI) via core.js
-updateCacheUI = {
-  // A. Mise à jour du panneau de statistiques
-  renderTemplate("#cache-stats-panel", {
-    hitsL1: cacheState.hitsL1,
-    hitsL2: cacheState.hitsL2,
-    misses: cacheState.misses,
-    logMessage: cacheState.logMessage
-  });
-
-  // Fonction utilitaire pour préparer les données visuelles des slots
-  const formatSlots = (cacheArray, maxSize, level) => {
-    let slots = [];
-    for (let i = 0; i < maxSize; i++) {
-      let val = cacheArray[i];
-      let anim = "";
-      // Déclenche l'animation si c'est le bloc qu'on vient de manipuler
-      if (val === lastAction?.block) {
-        if (lastAction.type === `hit-${level}`) anim = "flash-hit";
-        if (lastAction.type === "miss" && level === "l1") anim = "flash-miss";
-      }
-      
-      slots.push({
-        value: val || "-",
-        statusClass: val ? "is-filled" : "is-empty",
-        animClass: anim,
-        age: i // Indice FIFO
-      });
-    }
-    return slots;
-  };
-
-  // B. Remplissage des racks L1 (2 slots) et L2 (4 slots)
-  renderListTemplate("#l1-container", "#cache-slot-template", formatSlots(cacheState.l1, 2, "l1"));
-  renderListTemplate("#l2-container", "#cache-slot-template", formatSlots(cacheState.l2, 4, "l2"));
 }
 ```

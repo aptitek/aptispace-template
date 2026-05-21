@@ -1,52 +1,120 @@
-
 /* ==========================================================================
-   SIMULATEUR CARTE MÈRE (Animations SVG)
+   SIMULATEUR CARTE MÈRE (Animations SVG & Tiers de Cache)
    ========================================================================== */
 
-/* Motherboard View Container and Canvas Layout */
+/* Motherboard View Container and Responsive Aspect Ratio */
 .motherboard-view {
     position: relative;
     width: 100%;
-    max-width: 580px;
-    height: 290px;
+    max-width: 800px;
     margin: 0 auto;
     border-radius: 8px;
     overflow: hidden;
+    aspect-ratio: 2 / 1; /* Garde le ratio 800x400 fluide sur mobile et desktop */
 }
 
-/* Style de base des composants et des câbles */
+/* Style de base des composants PCB et des bus */
 .mobo-part {
     fill: var(--sol-base03);
     stroke: var(--sol-base01);
     stroke-width: 2px;
     transition: all 0.3s ease;
 }
+
 .mobo-bus {
     fill: none;
     stroke: var(--sol-base02);
     stroke-width: 4px;
-    stroke-dasharray: 8; /* Crée les pointillés */
+    stroke-dasharray: 8; /* Pointillés par défaut */
     transition: stroke 0.3s ease;
 }
 
-/* Classes actives injectées par OJS */
-.is-active-disk { 
-    fill: rgba(38, 139, 210, 0.1) !important; /* sol-blue */
-    stroke: var(--sol-blue) !important; 
-    filter: drop-shadow(0 0 8px rgba(38, 139, 210, 0.4));
-}
-.is-active-ram { 
-    fill: rgba(133, 153, 0, 0.1) !important; /* sol-green */
-    stroke: var(--sol-green) !important; 
-    filter: drop-shadow(0 0 8px rgba(133, 153, 0, 0.4));
-}
-.is-active-cpu { 
-    fill: rgba(203, 75, 22, 0.1) !important; /* sol-orange */
-    stroke: var(--sol-orange) !important; 
-    filter: drop-shadow(0 0 8px rgba(203, 75, 22, 0.4));
+/* Tiers internes du CPU et structures de cache */
+.cpu-die {
+    fill: transparent;
+    stroke: var(--sol-base01);
+    stroke-width: 1.5px;
+    transition: all 0.3s ease;
 }
 
-/* L'animation magique du flux de données */
+.cpu-core {
+    fill: var(--sol-base03);
+    stroke: var(--sol-base01);
+    stroke-width: 1px;
+    transition: all 0.3s ease;
+}
+
+.cpu-l3-region {
+    fill: #073642;
+    stroke: var(--sol-base01);
+    stroke-width: 1px;
+    transition: all 0.3s ease;
+}
+
+.cpu-l1-region {
+    fill: var(--sol-base03);
+    stroke: var(--sol-base01);
+    stroke-width: 1px;
+    transition: all 0.3s ease;
+}
+
+.cpu-reg-region {
+    fill: var(--sol-base03);
+    stroke: var(--sol-base01);
+    stroke-width: 1px;
+    transition: all 0.3s ease;
+}
+
+/* ========================================================================= */
+/* HIGHLIGHT ACTIVE STATE STYLES (Injected dynamically via mobo.js)          */
+/* ========================================================================= */
+
+/* State 1: SSD Active */
+.is-active-ssd #part-ssd .mobo-part {
+    fill: rgba(38, 139, 210, 0.08) !important; /* sol-blue */
+    stroke: var(--sol-blue) !important; 
+    filter: drop-shadow(0 0 8px rgba(38, 139, 210, 0.35));
+}
+
+/* State 2: RAM Active */
+.is-active-ram #part-ram .mobo-part {
+    fill: rgba(133, 153, 0, 0.08) !important; /* sol-green */
+    stroke: var(--sol-green) !important; 
+    filter: drop-shadow(0 0 8px rgba(133, 153, 0, 0.35));
+}
+
+/* State 3: Cache L3 Active */
+.is-active-l3 #cpu-l3 {
+    fill: rgba(181, 137, 0, 0.15) !important; /* sol-yellow */
+    stroke: var(--sol-yellow) !important;
+    filter: drop-shadow(0 0 8px rgba(181, 137, 0, 0.5));
+}
+
+/* State 4: Caches L2 & L1 Active */
+.is-active-l2-l1 #cpu-die {
+    fill: rgba(203, 75, 22, 0.06) !important; /* sol-orange (L2 Die Highlight) */
+    stroke: var(--sol-orange) !important;
+    filter: drop-shadow(0 0 8px rgba(203, 75, 22, 0.35));
+}
+.is-active-l2-l1 #cpu-l1 {
+    fill: rgba(42, 161, 152, 0.25) !important; /* sol-cyan (L1 Core Highlight) */
+    stroke: var(--sol-cyan) !important;
+    filter: drop-shadow(0 0 6px rgba(42, 161, 152, 0.6));
+}
+
+/* State 5: Registers & CPU execution active */
+.is-active-cpu-reg #cpu-core-0 .cpu-core {
+    fill: rgba(211, 54, 130, 0.08) !important; /* sol-magenta (Core 0 Active) */
+    stroke: var(--sol-magenta) !important;
+    filter: drop-shadow(0 0 8px rgba(211, 54, 130, 0.35));
+}
+.is-active-cpu-reg #cpu-reg {
+    fill: rgba(38, 139, 210, 0.3) !important; /* sol-blue (Registers Highlight) */
+    stroke: var(--sol-blue) !important;
+    filter: drop-shadow(0 0 6px rgba(38, 139, 210, 0.65));
+}
+
+/* L'animation magique du flux de données sur les bus */
 .is-flowing {
     stroke: var(--sol-yellow) !important;
     animation: dataFlow 0.5s linear infinite;
@@ -55,4 +123,18 @@
 @keyframes dataFlow {
     from { stroke-dashoffset: 16; }
     to { stroke-dashoffset: 0; }
+}
+
+/* Rangs de profils de performances de mémoires (Sidebar) */
+.perf-level {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1.5px solid transparent;
+    transition: all 0.25s ease-in-out;
+}
+
+.perf-level.active-level {
+    background-color: rgba(38, 139, 210, 0.06);
+    border-color: rgba(38, 139, 210, 0.2);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
