@@ -596,6 +596,7 @@ export function renderStateMachineGraph(container, graphData, customOptions = {}
   const options = {
     nodeRadius: 16,
     nodeBorderWidth: 2,
+    nodeShape: "circle",
     fontSize: 10,
     fontFamily: "var(--font-code, Consolas, monospace)",
     linkWidth: 2,
@@ -609,7 +610,9 @@ export function renderStateMachineGraph(container, graphData, customOptions = {}
     getNodeStatus: (node) => node.status || "default",
     getLinkStatus: (link) => link.status || "default",
     getNodeLabel: (node) => node.label || node.id,
+    getNodeShape: (node) => node.shape || options.nodeShape || "circle",
     getLinkLabel: (link) => link.label || "",
+    getLinkCondition: (link) => link.condition,
     onNodeClick: null,
     styles: {},
     ...customOptions
@@ -684,9 +687,59 @@ export function renderStateMachineGraph(container, graphData, customOptions = {}
     });
 
   // 4. Custom Node Drawing: nodeCanvasObject
-  // Draws high-fidelity, polished nodes with dynamic halos for the active state
+  // Draws high-fidelity, polished nodes with dynamic shape rendering and halos
+  const defineNodePath = (ctx, x, y, shape, r, scale = 1.0) => {
+    ctx.beginPath();
+    const radius = r * scale;
+
+    switch (shape) {
+      case "square":
+        ctx.rect(x - radius, y - radius, radius * 2, radius * 2);
+        break;
+      case "rect": {
+        const w = radius * 2.6;
+        const h = radius * 1.5;
+        ctx.rect(x - w / 2, y - h / 2, w, h);
+        break;
+      }
+      case "rounded rect": {
+        const w = radius * 2.6;
+        const h = radius * 1.5;
+        const cr = Math.min(w, h) * 0.2; // 20% corner radius
+        drawRoundedRect(ctx, x - w / 2, y - h / 2, w, h, cr);
+        break;
+      }
+      case "pill": {
+        const w = radius * 3.0;
+        const h = radius * 1.4;
+        drawRoundedRect(ctx, x - w / 2, y - h / 2, w, h, h / 2);
+        break;
+      }
+      case "oval": {
+        const rx = radius * 1.4;
+        const ry = radius * 0.9;
+        ctx.ellipse(x, y, rx, ry, 0, 0, 2 * Math.PI);
+        break;
+      }
+      case "diamond": {
+        const size = radius * 1.35;
+        ctx.moveTo(x, y - size);
+        ctx.lineTo(x + size, y);
+        ctx.lineTo(x, y + size);
+        ctx.lineTo(x - size, y);
+        ctx.closePath();
+        break;
+      }
+      case "circle":
+      default:
+        ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
+        break;
+    }
+  };
+
   graph.nodeCanvasObject((node, ctx, globalScale) => {
     const status = options.getNodeStatus(node);
+    const shape = options.getNodeShape(node);
     const style = styles[status] || styles.default;
     
     const nodeBg = resolveColor(style.nodeBg, "#eee8d5");
@@ -700,11 +753,9 @@ export function renderStateMachineGraph(container, graphData, customOptions = {}
     // Pulse effect for the 'current' active node using system clock
     if (status === "current") {
       const pulseFactor = 1 + 0.1 * Math.sin(Date.now() / 150);
-      const glowRadius = r * pulseFactor;
 
-      // Outer glowing halo
-      ctx.beginPath();
-      ctx.arc(node.x, node.y, glowRadius + 4, 0, 2 * Math.PI, false);
+      // Outer glowing halo (matching the node's custom shape!)
+      defineNodePath(ctx, node.x, node.y, shape, r, pulseFactor + 0.2);
       ctx.fillStyle = utils.rgba(nodeBorder, 0.15);
       ctx.fill();
 
@@ -713,19 +764,18 @@ export function renderStateMachineGraph(container, graphData, customOptions = {}
       ctx.shadowBlur = 15;
     }
 
-    // Opaque background backing circle to hide the link lines underneath
-    ctx.beginPath();
-    ctx.arc(node.x, node.y, r, 0, 2 * Math.PI, false);
+    // Opaque background backing path to hide the link lines underneath
+    defineNodePath(ctx, node.x, node.y, shape, r, 1.0);
     ctx.fillStyle = resolveColor("var(--sol-base3)", "#fdf6e3");
     ctx.fill();
 
-    // Main Circle Background (Status-based, could be semi-transparent)
-    ctx.beginPath();
-    ctx.arc(node.x, node.y, r, 0, 2 * Math.PI, false);
+    // Main shape Background (Status-based, could be semi-transparent)
+    defineNodePath(ctx, node.x, node.y, shape, r, 1.0);
     ctx.fillStyle = nodeBg;
     ctx.fill();
 
-    // Node Border
+    // Node Border Outline
+    defineNodePath(ctx, node.x, node.y, shape, r, 1.0);
     ctx.lineWidth = options.nodeBorderWidth / Math.min(1, globalScale); // Keep border crisp
     ctx.strokeStyle = nodeBorder;
     ctx.stroke();
@@ -739,11 +789,15 @@ export function renderStateMachineGraph(container, graphData, customOptions = {}
       ctx.textBaseline = "middle";
       ctx.fillStyle = nodeText;
       
-      // Handle multiline labels or truncation if required
-      const maxTextWidth = r * 1.8;
+      // Calculate dynamic max boundaries for text fitting depending on shape width
+      let maxTextWidth = r * 1.8;
+      if (shape === "rect" || shape === "rounded rect") maxTextWidth = r * 2.3;
+      if (shape === "pill") maxTextWidth = r * 2.6;
+      if (shape === "oval") maxTextWidth = r * 2.2;
+      
       let text = label;
       
-      // Simple intelligent truncation inside the circle
+      // Simple intelligent truncation inside the node boundaries
       let textWidth = ctx.measureText(text).width;
       if (textWidth > maxTextWidth) {
         while (text.length > 3 && textWidth > maxTextWidth) {
@@ -758,61 +812,126 @@ export function renderStateMachineGraph(container, graphData, customOptions = {}
     ctx.restore();
   });
 
-  // 5. Custom Link Labels in 'after' mode
-  // Renders beautiful, centered labels along the links with a solid background pill
-  const hasLinkLabels = graphData.links.some(l => options.getLinkLabel(l));
-  if (hasLinkLabels) {
+  // 5. Custom Link Overlay Elements (Labels & Conditional Tags) in 'after' mode
+  const hasLinkOverlays = graphData.links.some(l => 
+    options.getLinkLabel(l) || 
+    (options.getLinkCondition && options.getLinkCondition(l)) || 
+    l.condition !== undefined
+  );
+
+  if (hasLinkOverlays) {
     graph.linkCanvasObjectMode(() => "after");
     graph.linkCanvasObject((link, ctx, globalScale) => {
-      const label = options.getLinkLabel(link);
-      if (!label) return;
-
-      const status = options.getLinkStatus(link);
-      const style = styles[status] || styles.default;
-      const linkText = resolveColor(style.linkText, "#657b83");
-      const labelBg = resolveColor("var(--sol-base3)", "#fdf6e3"); // Clean pill background
-
       const { source, target } = link;
       if (typeof source !== "object" || typeof target !== "object") return; // Position safety
 
-      // Midpoint coordinate calculations
-      const x = source.x + (target.x - source.x) * 0.5;
-      const y = source.y + (target.y - source.y) * 0.5;
+      const status = options.getLinkStatus(link);
+      const style = styles[status] || styles.default;
 
-      ctx.save();
-      
-      const fSize = Math.max(4, options.fontSize - 1);
-      ctx.font = `${fSize}px ${options.fontFamily}`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
+      // ================= DRAW LINK CONDITION TAG (At 25% along the link from source) =================
+      const condition = options.getLinkCondition ? options.getLinkCondition(link) : link.condition;
+      if (condition !== undefined && condition !== null) {
+        let isTrue = false;
+        let condLabel = "";
 
-      const textWidth = ctx.measureText(label).width;
-      const paddingX = 4;
-      const paddingY = 2;
-      const rectW = textWidth + paddingX * 2;
-      const rectH = fSize + paddingY * 2;
+        if (typeof condition === "object") {
+          isTrue = !!condition.value;
+          condLabel = condition.label || (isTrue ? "Vrai" : "Faux");
+        } else {
+          isTrue = !!condition;
+          condLabel = isTrue ? "Vrai" : "Faux";
+        }
 
-      // Draw standard curved/rounded background pill to avoid overlap mess
-      ctx.fillStyle = labelBg;
-      ctx.strokeStyle = resolveColor(style.linkStroke, "#586e75");
-      ctx.lineWidth = 1;
-      
-      drawRoundedRect(
-        ctx, 
-        x - rectW / 2, 
-        y - rectH / 2, 
-        rectW, 
-        rectH, 
-        rectH / 2
-      );
-      ctx.fill();
-      ctx.stroke();
+        // Linear interpolation to place the tag at 25% along the link
+        const startT = 0.25;
+        const startX = source.x + (target.x - source.x) * startT;
+        const startY = source.y + (target.y - source.y) * startT;
 
-      // Centered label text inside pill
-      ctx.fillStyle = linkText;
-      ctx.fillText(label, x, y);
+        ctx.save();
+        ctx.translate(startX, startY);
 
-      ctx.restore();
+        const tagFontSize = Math.max(3.5, options.fontSize - 1.5);
+        ctx.font = `bold ${tagFontSize}px ${options.fontFamily}`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        const textWidth = ctx.measureText(condLabel).width;
+        const pillH = tagFontSize + 4;
+        const pillW = textWidth + 6;
+
+        // Color scheme based on true/false state
+        const tagBg = isTrue ? "rgba(133, 153, 0, 0.15)" : "rgba(220, 50, 47, 0.15)";
+        const tagBorder = resolveColor(isTrue ? "var(--sol-green)" : "var(--sol-red)", isTrue ? "#859900" : "#dc322f");
+        const tagText = tagBorder;
+
+        // Opaque backing pill to hide link line underneath
+        ctx.beginPath();
+        drawRoundedRect(ctx, -pillW / 2, -pillH / 2, pillW, pillH, 3);
+        ctx.fillStyle = resolveColor("var(--sol-base3)", "#fdf6e3");
+        ctx.fill();
+
+        // Colored semi-transparent background
+        ctx.beginPath();
+        drawRoundedRect(ctx, -pillW / 2, -pillH / 2, pillW, pillH, 3);
+        ctx.fillStyle = tagBg;
+        ctx.fill();
+        
+        // Border outline
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = tagBorder;
+        ctx.stroke();
+
+        // Text drawing
+        ctx.fillStyle = tagText;
+        ctx.fillText(condLabel, 0, 0);
+
+        ctx.restore();
+      }
+
+      // ================= DRAW LINK CENTER LABEL (At 50% along the link) =================
+      const label = options.getLinkLabel(link);
+      if (label) {
+        const linkText = resolveColor(style.linkText, "#657b83");
+        const labelBg = resolveColor("var(--sol-base3)", "#fdf6e3"); // Clean pill background
+
+        const x = source.x + (target.x - source.x) * 0.5;
+        const y = source.y + (target.y - source.y) * 0.5;
+
+        ctx.save();
+        
+        const fSize = Math.max(4, options.fontSize - 1);
+        ctx.font = `${fSize}px ${options.fontFamily}`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        const textWidth = ctx.measureText(label).width;
+        const paddingX = 4;
+        const paddingY = 2;
+        const rectW = textWidth + paddingX * 2;
+        const rectH = fSize + paddingY * 2;
+
+        // Draw standard curved/rounded background pill to avoid overlap mess
+        ctx.fillStyle = labelBg;
+        ctx.strokeStyle = resolveColor(style.linkStroke, "#586e75");
+        ctx.lineWidth = 1;
+        
+        drawRoundedRect(
+          ctx, 
+          x - rectW / 2, 
+          y - rectH / 2, 
+          rectW, 
+          rectH, 
+          rectH / 2
+        );
+        ctx.fill();
+        ctx.stroke();
+
+        // Centered label text inside pill
+        ctx.fillStyle = linkText;
+        ctx.fillText(label, x, y);
+
+        ctx.restore();
+      }
     });
   }
 

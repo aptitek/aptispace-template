@@ -833,15 +833,15 @@ import { StateMachine } from "./assets/js/core.js"
 testSmGraph = {
   // 1. Définir les nœuds et les transitions avec coordonnées fixes pour stabiliser la structure 2D
   const nodes = [
-    { id: "A", label: "Initial", fx: -120, fy: 0, status: "entry" }, // Le nœud A commence avec le statut "entry"
-    { id: "B", label: "Traitement", fx: 0, fy: -80, status: "default" },
-    { id: "C", label: "Analyse", fx: 0, fy: 80, status: "default" },
-    { id: "D", label: "Terminé", fx: 120, fy: 0, status: "default" }
+    { id: "A", label: "Initial", fx: -120, fy: 0, status: "entry", shape: "circle" },
+    { id: "B", label: "Traitement", fx: 0, fy: -80, status: "default", shape: "rounded rect" },
+    { id: "C", label: "Analyse", fx: 0, fy: 80, status: "default", shape: "diamond" },
+    { id: "D", label: "Terminé", fx: 120, fy: 0, status: "default", shape: "pill" }
   ];
 
   const links = [
-    { source: "A", target: "B", label: "flux_1", status: "default" },
-    { source: "A", target: "C", label: "flux_2", status: "default" },
+    { source: "A", target: "B", label: "flux_1", status: "default", condition: { value: true, label: "x > 0" } },
+    { source: "A", target: "C", label: "flux_2", status: "default", condition: { value: false, label: "x <= 0" } },
     { source: "B", target: "D", label: "validation_1", status: "default" },
     { source: "C", target: "D", label: "validation_2", status: "default" }
   ];
