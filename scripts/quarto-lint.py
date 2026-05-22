@@ -49,17 +49,17 @@ def process_quarto_nesting(content: str, add_comments: bool = True) -> str:
             if in_code_block:
                 # Fermeture du bloc de code actuel
                 popped = stack.pop()
-                new_marker = '`' * (3 + popped['depth'])
+                close_marker = "```"
                 closed_codes += 1
-                print(f"    [NESTING] Line {line_idx}: Code block '{popped['class']}' closed with '{new_marker}'.")
-                output_lines.append(f"{indent}{new_marker}")
+                print(f"    [NESTING] Line {line_idx}: Code block '{popped['class']}' closed with '{close_marker}'.")
+                output_lines.append(f"{indent}{close_marker}")
             else:
                 # Ouverture d'un bloc de code
                 depth = len([s for s in stack if s['type'] == 'div'])
                 lang = extract_code_lang(meta_clean)
                 stack.append({'type': 'code', 'class': lang, 'marker': marker, 'line': line_idx, 'depth': depth})
                 opened_codes += 1
-                new_marker = '`' * (3 + depth)
+                new_marker = "```"
                 print(f"    [NESTING] Line {line_idx}: Code block '{lang}' opened with '{new_marker}' (level {depth + 1}).")
                 output_lines.append(f"{indent}{new_marker}{meta_clean}".rstrip())
                 
@@ -101,7 +101,7 @@ def process_quarto_nesting(content: str, add_comments: bool = True) -> str:
                 print(f"      - Closing div '{item['class']}' opened at line {item['line']} with '{new_marker}'")
                 output_lines.append(new_marker)
             elif item['type'] == 'code':
-                new_marker = '`' * (3 + item['depth'])
+                new_marker = "```"
                 print(f"      - Closing code block '{item['class']}' opened at line {item['line']} with '{new_marker}'")
                 output_lines.append(new_marker)
         stack.clear()

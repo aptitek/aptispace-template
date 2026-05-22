@@ -18,7 +18,7 @@ Nominale [Qualitative]{.badge .bg-info .float-end}
 :::::: {.card-body}
 
 ::::::: {#plot-nominale style="height: 180px;"}
-````````{ojs}
+```{ojs}
 //| echo: false
 
 motsNominal = ["Rouge", "France", "Standard", "69003", "Bleu", "Genre", "Directeur", "Italie", "Vert"]
@@ -26,7 +26,7 @@ motsNominal = ["Rouge", "France", "Standard", "69003", "Bleu", "Genre", "Directe
 renderNominale = {
   createWordCloud('plot-nominale', motsNominal, { radius: 80 }) //TODO: if not specified use current div instead of fixed id
 }
-````````
+```
 :::::::
 
 ::::::: {.concept-details}
@@ -47,7 +47,7 @@ Ordinale [Qualitative]{.badge .bg-info .float-end}
 ::::::
 :::::: {.card-body}
 ::::::: {#plot-ordinale style="height: 180px;"}
-````````{ojs}
+```{ojs}
 //| echo: false
 renderOrdinale = {
   createPiramid("plot-ordinale", {
@@ -61,7 +61,7 @@ renderOrdinale = {
     ]
   });
 }
-````````
+```
 :::::::
 
 ::::::: {.concept-details}
@@ -82,7 +82,7 @@ Discrète [Quantitative]{.badge .bg-success .float-end}
 ::::::
 :::::: {.card-body}
 ::::::: {#plot-discrete style="height: 180px;"}
-````````{ojs}
+```{ojs}
 //| echo: false
 dataDiscrete = {
   let vals = Array.from({length: 5}, () => 10 + Math.floor(Math.random() * 80));
@@ -95,7 +95,7 @@ renderDiscrete = {
     layout: { margin: { t: 10, b: 20, l: 30, r: 10 }, paper_bgcolor: 'transparent', plot_bgcolor: 'transparent' }
   });
 }
-````````
+```
 :::::::
 
 ::::::: {.concept-details}
@@ -116,7 +116,7 @@ Continue [Quantitative]{.badge .bg-success .float-end}
 ::::::
 :::::: {.card-body}
 ::::::: {#plot-continuous style="height: 180px;"}
-````````{ojs}
+```{ojs}
 //| echo: false
 dataContinuous = {
   let x = [], y = [];
@@ -141,7 +141,7 @@ renderContinuous = {
     }
   });
 }
-````````
+```
 :::::::
 ::::::: {.concept-details}
 Valeurs décimales mesurables sur une échelle infinie. Il existe un nombre infini de possibilités réelles entre deux mesures.
@@ -159,13 +159,13 @@ Valeurs décimales mesurables sur une échelle infinie. Il existe un nombre infi
 ## Cablage
 
 ::: {.card .card-window .mb-4}
-````{ojs}
+```{ojs}
 //| echo: false
 import { parseTableData, renderFeedbackUI } from "./assets/js/core.js"
-import { CablingManager } from "./assets/js/networks.js"
+import { createCabling } from "./assets/js/networks.js"
 import { createLever } from "./assets/js/custom/lever.js"
 
-````
+```
 
 :::: {.card-header}
 🔌 Panneau de brassage des indices
@@ -222,7 +222,7 @@ Reliez chaque pièce à conviction de gauche à sa catégorie de données logiqu
 [Circuit alimenté]{#lever-status-on .lever-status .is-on style="display: none;"}
 [Circuit coupé]{#lever-status-off .lever-status .is-off}
 
-````````{ojs}
+```{ojs}
 //| echo: false
 {
   powerOn;
@@ -234,7 +234,7 @@ Reliez chaque pièce à conviction de gauche à sa catégorie de données logiqu
   }
   return html`<span style="display: none;"></span>`;
 }
-````````
+```
 
 :::::::
 
@@ -242,10 +242,10 @@ Reliez chaque pièce à conviction de gauche à sa catégorie de données logiqu
 
 :::::
 
-`````{ojs}
+```{ojs}
 //| echo: false
 viewof powerOn = createLever("#power-lever", invalidation)
-`````
+```
 
 ::::: {#cabling-feedback-panel .terminal .mt-4 style="display: none;"}
 
@@ -273,7 +273,7 @@ viewof powerOn = createLever("#power-lever", invalidation)
 
 :::::
 
-`````{ojs}
+```{ojs}
 //| echo: false
 
 // A. Chargement et déduction des listes
@@ -285,7 +285,7 @@ rightItems = Array.from(new Set(leftItems.map(item => item.match))).map(id => ({
 
 // B. Cycle de vie du moteur graphique
 engine = {
-  const m = new CablingManager("#cabling-canvas", leftItems, rightItems, (state) => {
+  const m = createCabling("#cabling-canvas", leftItems, rightItems, (state) => {
     if(state.score < leftItems.length) renderFeedbackUI("#cabling-feedback-panel", { status: "hidden" });
   });
   invalidation.then(() => m.destroy());
@@ -330,7 +330,7 @@ uiLogic = {
   renderFeedbackUI("#cabling-feedback-panel", state, listData);
 }
 
-`````
+```
 
 ## Encodage en Mémoire (RAM)
 
@@ -343,7 +343,7 @@ uiLogic = {
 [42]{#rawInput .search-bar .bi-keyboard placeholder="Entrez une valeur…"}
 ::::::
 
-``````{ojs}
+```{ojs}
 //| echo: false
 import { renderTemplate, renderListTemplate } from "./assets/js/core.js"
 import { createTabsetWatcher } from "./assets/js/custom/card.js"
@@ -361,7 +361,7 @@ _ramTabWatcher = {
   invalidation.then(() => w.destroy());
   return html`<span style="display:none"></span>`;
 }
-``````
+```
 
 :::::: {.panel-tabset .ram-tabset}
 
@@ -435,13 +435,13 @@ _ramTabWatcher = {
 
 :::::: {.card-body}
 
-```````{ojs}
+```{ojs}
 //| echo: false
 viewof rawInput = {
   const el = document.querySelector("#rawInput");
   return el;
 }
-```````
+```
 
 ::::::: {.ram-motherboard}
 
@@ -473,7 +473,7 @@ viewof rawInput = {
 
 ::::::
 
-``````{ojs}
+```{ojs}
 //| echo: false
 import { getRamData, renderRam } from "./assets/js/custom/ram.js";
 
@@ -482,7 +482,7 @@ ramData = getRamData(rawInput, dataType)
 
 // 2. Déclenchement réactif de l'affichage (Effet de bord OJS)
 updateRamUI = renderRam(ramData)
-``````
+```
 
 ## Stockage Colonnaire vs Ligne (RAM)
 
@@ -530,7 +530,7 @@ Le stockage **Orienté Colonne** est le standard de la Data Science moderne (Dat
 :::::::: {#ram-graph-container .ram-simulator-wrapper}
 ::::::::
 
-````````{ojs}
+```{ojs}
 //| echo: false
 import { createRamStorageGraph } from "./assets/js/networks.js"
 import { initTabActions } from "./assets/js/custom/card.js"
@@ -560,7 +560,7 @@ renderRamGraph = {
   return html`<span style="display:none"></span>`;
 }
 
-````````
+```
 
 :::::::
 ::::::
@@ -780,7 +780,7 @@ Tout en haut de la pyramide, les registres internes du cœur traitent les donné
 
 ::::::
 
-``````{ojs}
+```{ojs}
 //| echo: false
 import { initMoboSvg, renderMobo } from "./assets/js/custom/mobo.js";
 
@@ -805,7 +805,7 @@ updateMotherboardUI = {
   initMobo; // Attente inlining SVG
   renderMobo(hardwareState);
 }
-``````
+```
 
 ## []{.bi-cpu} Diagnostic Machine à États
 
@@ -825,29 +825,194 @@ Test diagnostic pour valider le moteur générique de machine à états.
 :::::::
 ::::::
 
-``````{ojs}
+```{ojs}
 //| echo: false
-import { renderStateMachine } from "./assets/js/networks.js"
+import { renderStateMachineGraph } from "./assets/js/networks.js"
+import { StateMachine } from "./assets/js/core.js"
 
 testSmGraph = {
-  const states = [
-    { id: "A", label: "État A", val: "Initial", x: -80, y: 0 },
-    { id: "B", label: "État B", val: "Traitement", x: 80, y: 0 }
-  ];
-  const transitions = [
-    { source: "A", target: "B", label: "Transition" }
+  // 1. Définir les nœuds et les transitions avec coordonnées fixes pour stabiliser la structure 2D
+  const nodes = [
+    { id: "A", label: "Initial", fx: -120, fy: 0, status: "entry" }, // Le nœud A commence avec le statut "entry"
+    { id: "B", label: "Traitement", fx: 0, fy: -80, status: "default" },
+    { id: "C", label: "Analyse", fx: 0, fy: 80, status: "default" },
+    { id: "D", label: "Terminé", fx: 120, fy: 0, status: "default" }
   ];
 
-  const graph = renderStateMachine("test-sm-graph", states, transitions, {
-    interval: 1100,
-    loop: true,
-    startBtnId: "btn-sm-start"
+  const links = [
+    { source: "A", target: "B", label: "flux_1", status: "default" },
+    { source: "A", target: "C", label: "flux_2", status: "default" },
+    { source: "B", target: "D", label: "validation_1", status: "default" },
+    { source: "C", target: "D", label: "validation_2", status: "default" }
+  ];
+
+  const graphData = { nodes, links };
+
+  // Helper pour réinitialiser le graphe à l'état de repos (sans nœud actif, nœud A surbrillé en "entry")
+  const resetGraph = () => {
+    nodes.forEach(n => {
+      n.status = n.id === "A" ? "entry" : "default";
+    });
+    links.forEach(l => {
+      l.status = "default";
+    });
+    graph.graphData({ nodes, links });
+  };
+
+  // 2. Initialiser le renderer de graphe
+  const graph = renderStateMachineGraph("#test-sm-graph", graphData, {
+    width: 600,
+    height: 300,
+    nodeRadius: 20,
+    fontSize: 9,
+    enableZoom: false,
+    enablePan: false,
+    enableDrag: true,
+    zoomToFit: true,
+    zoomToFitPadding: 60,
+    // Style sémantique des transitions et nœuds
+    styles: {
+      default: {
+        nodeBg: "var(--sol-base3)",
+        nodeBorder: "var(--sol-base01)",
+        nodeText: "var(--sol-base00)",
+        linkStroke: "var(--sol-base1)",
+        linkText: "var(--sol-base01)",
+        particles: 0
+      },
+      entry: {
+        nodeBg: "rgba(38, 139, 210, 0.15)", // Surbrillance bleue pour l'entrée
+        nodeBorder: "var(--sol-blue)",
+        nodeText: "var(--sol-blue)",
+        linkStroke: "var(--sol-base1)",
+        linkText: "var(--sol-base01)",
+        particles: 0
+      },
+      past: {
+        nodeBg: "rgba(133, 153, 0, 0.1)",
+        nodeBorder: "var(--sol-green)",
+        nodeText: "var(--sol-green)",
+        linkStroke: "var(--sol-green)",
+        linkText: "var(--sol-green)",
+        particles: 1,
+        particleColor: "var(--sol-green)"
+      },
+      current: {
+        nodeBg: "rgba(181, 137, 0, 0.15)",
+        nodeBorder: "var(--sol-yellow)",
+        nodeText: "var(--sol-yellow)",
+        linkStroke: "var(--sol-yellow)",
+        linkText: "var(--sol-yellow)",
+        particles: 5,
+        particleColor: "var(--sol-yellow)"
+      }
+    }
   });
 
-  invalidation.then(() => { if (graph && graph.destroy) graph.destroy(); });
-  return html`<span style="display:none"></span>`;
+  // Appliquer le style "entry" initial immédiatement après le chargement du graphe
+  resetGraph();
+
+  // 3. Modèle d'états ordonné pour le scénario de diagnostic
+  const steps = [
+    { activeNode: "A", activeLink: null, pastNodes: [], pastLinks: [] },
+    { activeNode: "B", activeLink: "A-B", pastNodes: ["A"], pastLinks: [] },
+    { activeNode: "C", activeLink: "A-C", pastNodes: ["A", "B"], pastLinks: ["A-B"] },
+    { activeNode: "D", activeLink: "B-D", pastNodes: ["A", "B", "C"], pastLinks: ["A-B", "A-C"] }
+  ];
+
+  // 4. Moteur de Machine à États
+  const sm = new StateMachine({
+    states: steps,
+    interval: 1200,
+    loop: false,
+    onStateChange: (step, index) => {
+      // Met à jour le status de chaque nœud
+      nodes.forEach(n => {
+        if (n.id === step.activeNode) {
+          n.status = "current";
+        } else if (step.pastNodes.includes(n.id)) {
+          n.status = "past";
+        } else {
+          n.status = "default";
+        }
+      });
+
+      // Met à jour le status de chaque lien avec extraction robuste d'ID
+      links.forEach(l => {
+        const srcId = typeof l.source === "object" ? l.source.id : l.source;
+        const tgtId = typeof l.target === "object" ? l.target.id : l.target;
+        const linkId = `${srcId}-${tgtId}`;
+
+        if (linkId === step.activeLink) {
+          l.status = "current";
+        } else if (step.pastLinks.includes(linkId)) {
+          l.status = "past";
+        } else {
+          l.status = "default";
+        }
+      });
+
+      // Force-directed graph re-render avec les nouveaux statuts réactifs
+      graph.graphData({ nodes, links });
+
+      // Si c'est le dernier état, réinitialiser l'état du bouton et arrêter proprement après affichage
+      if (index === steps.length - 1) {
+        setTimeout(() => {
+          playing = false;
+          if (btn) {
+            btn.innerHTML = '<i class="bi bi-play-fill"></i> Lancer SM';
+            btn.classList.add("btn-success");
+            btn.classList.remove("btn-danger");
+          }
+          sm.stop();
+          sm.currentIndex = 0; // Réinitialise l'index à 0 sans déclencher d'état actif
+          resetGraph(); // Rétablit le style repos (nœud A en "entry")
+        }, 1200);
+      }
+    }
+  });
+
+  // 5. Gestionnaire de bouton
+  const btn = document.querySelector("#btn-sm-start");
+  let playing = false;
+
+  const handleToggle = () => {
+    playing = !playing;
+    if (playing) {
+      btn.innerHTML = '<i class="bi bi-pause-fill"></i> Pause';
+      btn.classList.add("btn-danger");
+      btn.classList.remove("btn-success");
+      sm.start();
+    } else {
+      btn.innerHTML = '<i class="bi bi-play-fill"></i> Lancer SM';
+      btn.classList.add("btn-success");
+      btn.classList.remove("btn-danger");
+      sm.stop();
+      sm.currentIndex = 0; // Réinitialise l'index
+      resetGraph(); // Rétablit le style repos (nœud A en "entry")
+    }
+  };
+
+  if (btn) {
+    btn.innerHTML = '<i class="bi bi-play-fill"></i> Lancer SM';
+    btn.classList.add("btn-success");
+    btn.addEventListener("click", handleToggle);
+  }
+
+  // Nettoyage complet à l'invalidation d'Observable (KISS/SRP-compliant)
+  invalidation.then(() => {
+    sm.stop();
+    if (btn) {
+      btn.removeEventListener("click", handleToggle);
+    }
+    if (graph && graph.destroy) {
+      graph.destroy();
+    }
+  });
+
+  return graph;
 }
-``````
+```
 
 :::::
 ::::
