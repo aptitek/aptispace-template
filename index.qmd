@@ -558,9 +558,10 @@ _ramStorageTabWatcher = {
 // 2. Extraction dynamique des données depuis la table Markdown
 ramTableData = parseTableData("#ram-data-source table")
 
-// 3. Rendu réactif du graphe d'accès mémoire
 renderRamGraph = {
-  createRamStorageGraph("ram-graph-container", storageMode, 'Salaire', ramTableData);
+  const graph = createRamStorageGraph("ram-graph-container", storageMode, 'Salaire', ramTableData);
+  invalidation.then(() => { if (graph && graph.destroy) graph.destroy(); });
+  return html`<span style="display:none"></span>`;
 }
 
 ```
@@ -810,3 +811,46 @@ updateMotherboardUI = {
   renderMobo(hardwareState);
 }
 ```
+
+## []{.bi-cpu} Diagnostic Machine à États
+
+::: {.card .border-0 .shadow-none .bg-transparent}
+::: {.card-body .p-0 .pb-2}
+Test diagnostic pour valider le moteur générique de machine à états.
+:::
+:::
+
+::: {.tab-actions}
+* [Lancer SM]{#btn-sm-start .bi-play-fill .btn}
+:::
+
+::: {.card-body}
+::: {#test-sm-graph .state-machine-wrapper}
+:::
+:::
+
+```{ojs}
+//| echo: false
+import { renderStateMachine } from "./assets/js/networks.js"
+
+testSmGraph = {
+  const states = [
+    { id: "A", label: "État A", val: "Initial", x: -80, y: 0 },
+    { id: "B", label: "État B", val: "Traitement", x: 80, y: 0 }
+  ];
+  const transitions = [
+    { source: "A", target: "B", label: "Transition" }
+  ];
+  
+  const graph = renderStateMachine("test-sm-graph", states, transitions, {
+    interval: 1100,
+    loop: true,
+    startBtnId: "btn-sm-start"
+  });
+  
+  invalidation.then(() => { if (graph && graph.destroy) graph.destroy(); });
+  return html`<span style="display:none"></span>`;
+}
+```
+
+

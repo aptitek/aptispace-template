@@ -63,17 +63,35 @@ export const solarizedTemplate = {
   }
 };
 
-/**
- * 🎨 Dynamic theme color resolver
- * Retrieves the computed color of a CSS variable at runtime.
- */
 export const getThemeColor = (varName, fallback) => {
   if (typeof window !== "undefined") {
     const value = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
-    if (value) return value;
+    if (value) {
+      return resolveCssValue(value);
+    }
   }
   return fallback;
 };
+
+/**
+ * 🛠️ Recursive CSS Variable Resolver
+ * Resolves up to 3 levels of nested var(--name) calls so that standard Canvas 2D
+ * contexts can understand and render them correctly.
+ */
+export function resolveCssValue(value) {
+  if (!value) return "";
+  let resolved = value;
+  const varRegex = /var\((--[^,)]+)(?:,\s*([^)]+))?\)/g;
+  
+  for (let i = 0; i < 3; i++) {
+    if (!resolved.includes("var(")) break;
+    resolved = resolved.replace(varRegex, (match, varName, fallback) => {
+      const computed = getComputedStyle(document.documentElement).getPropertyValue(varName.trim()).trim();
+      return computed || (fallback ? fallback.trim() : "");
+    });
+  }
+  return resolved;
+}
 
 /**
  * 📊 Plotly Solarized Theme Template (Resolved at runtime)

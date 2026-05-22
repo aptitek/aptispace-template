@@ -5,7 +5,7 @@ import ForceGraph from "https://esm.sh/force-graph";
 import ForceGraph3D from "https://esm.sh/3d-force-graph";
 import SpriteText from "https://esm.sh/three-spritetext";
 import TagCloud from "https://esm.sh/TagCloud";
-import { getThemeColor, utils, StateMachine } from "./core.js";
+import { getThemeColor, resolveCssValue, utils, StateMachine } from "./core.js";
 
 const SOL_FALLBACKS = {
   base03: "#002b36", base02: "#073642", base01: "#586e75", base00: "#657b83",
@@ -589,7 +589,8 @@ export function createRamStorageGraph(containerSelector, storageMode, queryCol, 
   // CPU Initial Load Wire
   links.push({
     id: `CPU->${physicalOrder[0]}`,
-    source: "CPU", target: physicalOrder[0],
+    source: nodes.find(n => n.id === "CPU"), 
+    target: nodes.find(n => n.id === physicalOrder[0]),
     type: "physical", cacheLabel: "Load", cacheColor: colorLoad
   });
 
@@ -611,8 +612,8 @@ export function createRamStorageGraph(containerSelector, storageMode, queryCol, 
 
     links.push({
       id: `${sourceId}->${targetId}`,
-      source: sourceId, 
-      target: targetId,
+      source: nodes.find(n => n.id === sourceId), 
+      target: nodes.find(n => n.id === targetId),
       type: "physical", 
       cacheLabel: isHit ? "Hit" : "Miss", 
       cacheColor: isHit ? colorHit : colorMiss
@@ -657,7 +658,10 @@ export function createRamStorageGraph(containerSelector, storageMode, queryCol, 
   // 6. Extract Design Tokens from CSS to control Canvas styling
   const compStyle = getComputedStyle(container);
   const getNum = (varName, fallback) => parseFloat(compStyle.getPropertyValue(varName)) || fallback;
-  const getStr = (varName, fallback) => compStyle.getPropertyValue(varName).trim() || fallback;
+  const getStr = (varName, fallback) => {
+    const rawVal = compStyle.getPropertyValue(varName).trim();
+    return rawVal ? resolveCssValue(rawVal) : fallback;
+  };
 
   const cfg = {
     nodeText: getStr('--canvas-node-text', '#fdf6e3'),
@@ -685,7 +689,8 @@ export function createRamStorageGraph(containerSelector, storageMode, queryCol, 
     .nodeCanvasObject((node, ctx, globalScale) => {
       const label = node.type === "cpu" ? "CPU: Processeur" : `${node.label}: ${node.val}`;
       const fontSize = cfg.nodeFont / globalScale;
-      ctx.font = `${fontSize}px var(--font-mono, monospace)`;
+      const fontMono = getThemeColor('--font-mono', 'monospace');
+      ctx.font = `${fontSize}px ${fontMono}`;
       const textWidth = ctx.measureText(label).width;
       const bWidth = textWidth + cfg.nodePadX;
       const bHeight = fontSize * 2.5;
@@ -713,7 +718,8 @@ export function createRamStorageGraph(containerSelector, storageMode, queryCol, 
       ctx.fillText(label, node.x, node.y - fontSize * 0.25);
 
       if (node.type !== "cpu") {
-        ctx.font = `${cfg.addrFont / globalScale}px var(--font-mono, monospace)`;
+        const fontMono = getThemeColor('--font-mono', 'monospace');
+        ctx.font = `${cfg.addrFont / globalScale}px ${fontMono}`;
         ctx.fillStyle = node.isActive ? colorActive : "rgba(253, 246, 227, 0.6)";
         ctx.fillText(node.addr, node.x, node.y + fontSize * 0.7);
       }
@@ -733,7 +739,7 @@ export function createRamStorageGraph(containerSelector, storageMode, queryCol, 
     setupGraphLinkLabelDrawing(graph, {
       labelFontSize: cfg.labelFont,
       labelBg: cfg.labelBg,
-      fontFamily: 'var(--font-mono, monospace)'
+      fontFamily: getThemeColor('--font-mono', 'monospace')
     });
 
   // 7. Initialize State Engine via extracted helper
@@ -781,11 +787,16 @@ export function runGraphStateMachine(container, graph, nodes, links, statesSeque
     onStateChange: (statePayload) => {
       nodes.forEach(n => n.isActive = statePayload.activeNodes.has(n.id));
       links.forEach(l => {
-        const linkId = `${typeof l.source === 'object' ? l.source.id : l.source}->${typeof l.target === 'object' ? l.target.id : l.target}`;
+        const sourceId = typeof l.source === 'object' ? l.source.id : l.source;
+        const targetId = typeof l.target === 'object' ? l.target.id : l.target;
+        l.source = nodes.find(n => n.id === sourceId) || l.source;
+        l.target = nodes.find(n => n.id === targetId) || l.target;
+        
+        const linkId = `${sourceId}->${targetId}`;
         l.isCurrent = statePayload.currentLinks.has(linkId);
         l.isPast = statePayload.pastLinks.has(linkId);
       });
-      graph.graphData({ nodes, links });
+      graph.graphData({ nodes: [...nodes], links: [...links] });
     }
   });
 
@@ -856,7 +867,9 @@ export function renderGraph(containerSelector, data, options = {}) {
   if (cooldownTicks === 0) {
     graph.d3Force('center', null);
     graph.d3Force('charge', null);
-    graph.d3Force('link', null);
+    if (graph.d3Force('link')) {
+      graph.d3Force('link').strength(0);
+    }
   }
 
   // ResizeObserver for clean responsiveness and viewport matching
@@ -1041,8 +1054,8 @@ export function renderStateMachine(containerSelector, states, transitions, optio
 
   const links = transitions.map(t => ({
     id: `${t.source}->${t.target}`,
-    source: t.source,
-    target: t.target,
+    source: nodes.find(n => n.id === t.source) || t.source,
+    target: nodes.find(n => n.id === t.target) || t.target,
     label: t.label || ""
   }));
 
@@ -1089,7 +1102,10 @@ export function renderStateMachine(containerSelector, states, transitions, optio
 
   // 3. Setup canvas styling properties from theme variables
   const compStyle = getComputedStyle(container);
-  const getStr = (varName, fallback) => compStyle.getPropertyValue(varName).trim() || fallback;
+  const getStr = (varName, fallback) => {
+    const rawVal = compStyle.getPropertyValue(varName).trim();
+    return rawVal ? resolveCssValue(rawVal) : fallback;
+  };
   const getNum = (varName, fallback) => parseFloat(compStyle.getPropertyValue(varName)) || fallback;
 
   // Generic Style Object loaded dynamically with CSS variables as defaults
@@ -1112,7 +1128,7 @@ export function renderStateMachine(containerSelector, states, transitions, optio
     
     labelFontSize: options.labelFontSize !== undefined ? options.labelFontSize : getNum('--sm-label-font-size', 11),
     labelBg: options.labelBg || getStr('--sm-label-bg', 'rgba(0, 43, 54, 0.9)'),
-    fontFamily: options.fontFamily || compStyle.getPropertyValue('--font-code') || 'monospace'
+    fontFamily: options.fontFamily || getThemeColor('--font-mono', 'monospace')
   };
 
   // 4. Initialize Graph via generalized renderGraph helper
