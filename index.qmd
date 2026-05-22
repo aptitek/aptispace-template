@@ -836,7 +836,7 @@ testSmGraph = {
     { id: "A", label: "Initial", fx: -120, fy: 0, status: "entry", shape: "circle" },
     { id: "B", label: "Traitement", fx: 0, fy: -80, status: "default", shape: "rounded rect" },
     { id: "C", label: "Analyse", fx: 0, fy: 80, status: "default", shape: "diamond" },
-    { id: "D", label: "Terminé", fx: 120, fy: 0, status: "default", shape: "pill" }
+    { id: "D", label: "Terminé", fx: 120, fy: 0, status: "default", shape: "pill", color: "rgba(42, 161, 152, 0.12)", borderColor: "var(--sol-cyan)", textColor: "var(--sol-cyan)" }
   ];
 
   const links = [
