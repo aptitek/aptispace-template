@@ -407,7 +407,69 @@ export function createTabsetWatcher(tabsetSelector, labelMap, onChange) {
 }
 
 // =====================================================================
-// 🤖 GENERIC STATE MACHINE COMPONENT (REUSABLE PIPELINE ENGINE)
+// 🔘 TAB ACTION BUTTONS (Inject buttons into tabset nav bars from QMD)
+// =====================================================================
+
+/**
+ * Finds all `.tab-action` divs in the DOM and injects them as styled
+ * buttons into the target tabset's `.nav-tabs` bar.
+ *
+ * QMD usage:
+ * ```markdown
+ * ::: {#my-btn-id .tab-action data-target=".my-tabset" data-icon="play-fill"}
+ * Button Label
+ * :::
+ * ```
+ *
+ * - `id`          → becomes the button's DOM id (used by JS to bind actions)
+ * - `.tab-action` → marker class, triggers processing
+ * - `data-target` → CSS selector for the parent `.panel-tabset`
+ * - `data-icon`   → Bootstrap icon name without `bi-` prefix (optional)
+ */
+export function initTabActions() {
+  document.querySelectorAll('.tab-action').forEach(div => {
+    const targetSelector = div.dataset.target;
+    const iconName = div.dataset.icon;
+    const btnId = div.id;
+    const label = div.textContent.trim();
+
+    if (!targetSelector) return;
+
+    const tabset = document.querySelector(targetSelector);
+    if (!tabset) return;
+
+    const navTabs = tabset.querySelector('.nav-tabs');
+    if (!navTabs) return;
+
+    // Build the button
+    const li = document.createElement('li');
+    li.className = 'nav-item ms-auto d-flex align-items-center';
+
+    const btn = document.createElement('button');
+    btn.className = 'btn-tab-action';
+    btn.type = 'button';
+    if (btnId) btn.id = btnId;
+
+    if (iconName) {
+      const icon = document.createElement('i');
+      icon.className = `bi bi-${iconName}`;
+      btn.appendChild(icon);
+    }
+
+    if (label) {
+      btn.appendChild(document.createTextNode(` ${label}`));
+    }
+
+    li.appendChild(btn);
+    navTabs.appendChild(li);
+
+    // Hide the original QMD div and remove its id to avoid shadowing
+    div.removeAttribute('id');
+    div.style.display = 'none';
+  });
+}
+
+
 // =====================================================================
 
 /**

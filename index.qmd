@@ -498,7 +498,7 @@ updateRamUI = renderRam(ramData)
 
 ::: {.panel-tabset .ram-storage-tabset}
 
-## <i class="bi bi-hdd-fill"></i> Stockage en Ligne
+## []{.bi-hdd-fill} Stockage en Ligne
 
 ::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
 ::: {.card-body .p-0 .pb-2}
@@ -506,7 +506,7 @@ Le stockage **Orienté Ligne** est le standard transactionnel (SQL classique, fi
 :::
 :::
 
-## <i class="bi bi-layout-three-columns"></i> Stockage en Colonne
+## []{.bi-layout-three-columns} Stockage en Colonne
 
 ::: {.card .border-0 .shadow-none .bg-transparent .mb-0}
 ::: {.card-body .p-0 .pb-2}
@@ -514,26 +514,35 @@ Le stockage **Orienté Colonne** est le standard de la Data Science moderne (Dat
 :::
 :::
 
+::: {.tab-actions}
+* []{#btn-ram-start .bi-play-fill} Lancer Simulation
 :::
 
-::: {.card-control-row}
-```{ojs}
-//| panel: input
-//| echo: false
-viewof queryCol = Inputs.radio(
-  ["Aucune", "Âge", "Salaire"],
-  { label: "Simuler une requête analytique CPU sur :", value: "Aucune" }
-)
-```
+::: {#btn-ram-start .tab-action data-target=".ram-storage-tabset" data-icon="play-fill"}
+Lancer Simulation
 :::
 
 ::: {.card-body}
-::: {#ram-graph-container style="height: 380px; position: relative; background: transparent; border-radius: 8px;"}
+
+::: {#ram-data-source .d-none}
+
+| Age | Salaire |
+| --- | --- |
+| 25 | 50k |
+| 30 | 60k |
+| 28 | 55k |
+:::
+
+::: {#ram-graph-container .ram-simulator-wrapper}
 :::
 
 ```{ojs}
 //| echo: false
 import { createRamStorageGraph } from "./assets/js/networks.js"
+import { initTabActions } from "./assets/js/custom/card.js"
+
+// 0. Inject tab action buttons into nav bars (must run before graph init)
+initTabActions()
 
 // 1. Détecteur réactif du Tabset de stockage RAM
 mutable storageMode = "ligne"
@@ -548,48 +557,16 @@ _ramStorageTabWatcher = {
   return html`<span style="display:none"></span>`;
 }
 
-// 2. Rendu réactif du graphe d'accès mémoire
+// 2. Extraction dynamique des données depuis la table Markdown
+ramTableData = parseTableData("#ram-data-source table")
+
+// 3. Rendu réactif du graphe d'accès mémoire
 renderRamGraph = {
-  createRamStorageGraph("ram-graph-container", storageMode, queryCol);
+  createRamStorageGraph("ram-graph-container", storageMode, 'Salaire', ramTableData);
 }
+
 ```
 
-::: {.card .card-info .mt-3 .mb-0}
-::: {.card-header}
-💡 Analyse de Performance CPU
-:::
-::: {.card-body}
-```{ojs}
-//| echo: false
-{
-  const isNone = queryCol === "Aucune";
-  const isLigne = storageMode === "ligne";
-  let title = "🔍 Mode d'accès au processeur";
-  let content = "Sélectionnez une colonne ci-dessus pour observer le comportement du processeur lors de la lecture des données.";
-  let alertClass = "is-debug";
-
-  if (!isNone) {
-    if (isLigne) {
-      title = "⚠️ Cache Miss systématiques (Accès Ligne)";
-      content = `Pour lire la colonne <strong>${queryCol}</strong>, le processeur doit sauter les autres attributs en RAM (ID, Salaire, etc.). Ces sauts non-contigus empêchent la prélecture matérielle, entraînant des <strong>Cache Miss</strong> répétés. Le CPU passe son temps à attendre la RAM.`;
-      alertClass = "is-danger";
-    } else {
-      title = "⚡ Cache Hit et Vectorisation SIMD (Accès Colonne)";
-      content = `Toutes les valeurs de la colonne <strong>${queryCol}</strong> sont stockées de manière strictement contiguë en mémoire. Le processeur charge le bloc entier dans ses caches L1/L2/L3 en une seule opération (<strong>Cache Hits</strong> massifs) et peut appliquer des instructions vectorielles <strong>SIMD</strong>. C'est le secret de la vitesse de Polars et Pandas moderne !`;
-      alertClass = "is-success";
-    }
-  }
-
-  return html`
-    <div class="card ${alertClass} border-0 shadow-none mb-0">
-      <div class="card-header border-0 pb-1" style="background: transparent; font-weight: 800;">${title}</div>
-      <div class="card-body pt-1" style="background: transparent;">${content}</div>
-    </div>
-  `;
-}
-```
-:::
-:::
 
 :::
 :::
