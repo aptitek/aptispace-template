@@ -58,11 +58,42 @@ end
 function Span(el)
   -- Case 1: Generic search/input component
   local is_search_bar = false
+  local is_button = false
   for _, cls in ipairs(el.classes) do
     if cls == "search-bar" then
       is_search_bar = true
-      break
+    elseif cls == "btn" or cls:match("^btn%-") or cls == "button" then
+      is_button = true
     end
+  end
+
+  -- Case 1.5: Generic button component
+  if is_button then
+    local bi_class, remaining = extract_bi_class(el.classes)
+    local val = pandoc.utils.stringify(el.content)
+    local id = el.identifier or ""
+    local id_attr = ""
+    if id ~= "" then
+      id_attr = ' id="' .. id .. '"'
+    end
+
+    local icon_html = ""
+    if bi_class then
+      icon_html = '<i class="bi ' .. bi_class .. '" aria-hidden="true"></i> '
+    end
+
+    -- Construct classes string preserving all other class names
+    local class_list = { "btn-tab-action" }
+    for _, r_cls in ipairs(remaining) do
+      table.insert(class_list, r_cls)
+    end
+    local class_str = table.concat(class_list, " ")
+
+    local html = string.format(
+      '<button%s class="%s">%s%s</button>',
+      id_attr, class_str, icon_html, val
+    )
+    return pandoc.RawInline("html", html)
   end
 
   if is_search_bar then

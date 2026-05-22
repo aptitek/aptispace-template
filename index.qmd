@@ -515,11 +515,9 @@ Le stockage **Orienté Colonne** est le standard de la Data Science moderne (Dat
 :::
 
 ::: {.tab-actions}
-* []{#btn-ram-start .bi-play-fill} Lancer Simulation
+* [Lancer Simulation]{#btn-ram-start .bi-play-fill .btn}
 :::
 
-::: {#btn-ram-start .tab-action data-target=".ram-storage-tabset" data-icon="play-fill"}
-Lancer Simulation
 :::
 
 ::: {.card-body}

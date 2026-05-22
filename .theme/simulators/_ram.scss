@@ -160,33 +160,32 @@
     align-items: center !important;
 }
 
-.nav-tabs .nav-link.btn-tab-action {
-    border: 1px solid var(--sol-yellow, #b58900) !important;
-    border-radius: 20px !important;
-    color: var(--sol-yellow, #b58900) !important;
+.btn-tab-action {
+    border: none !important;
     background: transparent !important;
-    padding: 4px 14px !important;
-    margin-left: auto !important; /* Statically dock to the far right */
-    margin-right: 0 !important;
-    font-weight: 700 !important;
-    font-size: 0.78rem !important;
-    transition: all 0.2s ease-in-out !important;
+    color: var(--sol-yellow, #b58900) !important;
+    padding: 6px 12px !important;
+    font-weight: 600 !important;
+    font-size: 0.82rem !important;
+    transition: all 0.15s ease-in-out !important;
     cursor: pointer !important;
     box-shadow: none !important;
     display: inline-flex !important;
     align-items: center !important;
-    gap: 4px !important;
+    gap: 6px !important;
     height: fit-content !important;
+    text-decoration: none !important;
 
     i {
-        color: var(--sol-yellow, #b58900) !important;
-        margin-right: 4px !important;
+        color: inherit !important;
+        font-size: 0.95rem !important;
     }
 
     &:hover, &:focus {
-        background: rgba(181, 137, 0, 0.12) !important;
-        box-shadow: 0 0 10px rgba(181, 137, 0, 0.4) !important;
-        color: var(--sol-yellow, #b58900) !important;
+        background: transparent !important;
+        color: var(--sol-orange, #cb4b16) !important; /* Elegant hover accent color from Solarized theme */
+        opacity: 0.9 !important;
+        outline: none !important;
     }
 
     &:active {

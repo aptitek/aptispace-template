@@ -427,45 +427,35 @@ export function createTabsetWatcher(tabsetSelector, labelMap, onChange) {
  * - `data-icon`   → Bootstrap icon name without `bi-` prefix (optional)
  */
 export function initTabActions() {
-  document.querySelectorAll('.tab-action').forEach(div => {
-    const targetSelector = div.dataset.target;
-    const iconName = div.dataset.icon;
-    const btnId = div.id;
-    const label = div.textContent.trim();
+  document.querySelectorAll('.tab-actions').forEach(container => {
+    // 1. Locate the target tabset
+    const tabset = container.closest('.panel-tabset') || 
+                   container.previousElementSibling?.closest('.panel-tabset') ||
+                   container.parentElement?.querySelector('.panel-tabset');
 
-    if (!targetSelector) return;
-
-    const tabset = document.querySelector(targetSelector);
-    if (!tabset) return;
+    if (!tabset) {
+      console.warn("initTabActions: Target tabset not found for actions container.", container);
+      return;
+    }
 
     const navTabs = tabset.querySelector('.nav-tabs');
-    if (!navTabs) return;
-
-    // Build the button
-    const li = document.createElement('li');
-    li.className = 'nav-item ms-auto d-flex align-items-center';
-
-    const btn = document.createElement('button');
-    btn.className = 'btn-tab-action';
-    btn.type = 'button';
-    if (btnId) btn.id = btnId;
-
-    if (iconName) {
-      const icon = document.createElement('i');
-      icon.className = `bi bi-${iconName}`;
-      btn.appendChild(icon);
+    if (!navTabs) {
+      console.warn("initTabActions: Nav tabs container not found in target tabset.");
+      return;
     }
 
-    if (label) {
-      btn.appendChild(document.createTextNode(` ${label}`));
-    }
+    // 2. Relocate any compiled buttons inside the container
+    container.querySelectorAll('.btn-tab-action').forEach(btn => {
+      const actionLi = document.createElement('li');
+      actionLi.className = 'nav-item ms-auto d-flex align-items-center';
+      
+      // Move the button directly into the nav list
+      actionLi.appendChild(btn);
+      navTabs.appendChild(actionLi);
+    });
 
-    li.appendChild(btn);
-    navTabs.appendChild(li);
-
-    // Hide the original QMD div and remove its id to avoid shadowing
-    div.removeAttribute('id');
-    div.style.display = 'none';
+    // 3. Hide original container
+    container.style.display = 'none';
   });
 }
 
