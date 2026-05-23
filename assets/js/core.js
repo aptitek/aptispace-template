@@ -328,7 +328,7 @@ export function initTabIcons(tabsetSelector) {
 
     const source = pane.classList.length
       ? pane
-      : pane.querySelector("h2, h3, h4");
+      : pane.querySelector("h1, h2, h3, h4, h5, h6");
     if (!source) return;
 
     const biClass = Array.from(source.classList).find(c => c.startsWith("bi-"));

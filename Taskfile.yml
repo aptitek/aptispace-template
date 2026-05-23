@@ -24,6 +24,7 @@ tasks:
     desc: Lint and format Quarto markdown files
     cmds:
       - echo "Linting and formatting files..."
+      - python3 scripts/code-lint.py .
       - python3 scripts/quarto-lint.py .
 
   publish:
