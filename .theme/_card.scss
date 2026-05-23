@@ -35,8 +35,8 @@
 }
 
 /* --- WINDOW HEADER & CONTROL DOTS --- */
-.card-window .card-header,
-.card-window .nav-tabs,
+.card-window > .card-header,
+.card-window > .nav-tabs,
 .card-window-header {
     display: flex !important;
     align-items: center !important;
@@ -54,7 +54,7 @@
 }
 
 /* Strip margins and paddings on any nested wrappers (like Quarto paragraphs or headings) to let flex alignment work perfectly */
-.card.card-window .card-header > *,
+.card.card-window > .card-header > *,
 .card-window-header > * {
     margin: 0 !important;
     padding: 0 !important;
@@ -65,8 +65,8 @@
     justify-content: center !important;
 }
 
-.card-window .card-header::before,
-.card-window .nav-tabs::before,
+.card-window > .card-header::before,
+.card-window > .nav-tabs::before,
 .card-window-header::before {
     content: "" !important;
     position: absolute !important;
