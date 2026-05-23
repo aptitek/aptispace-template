@@ -462,7 +462,59 @@ export function createWordCloud(containerSelector, words, options = {}) {
     ...options
   };
 
-  return TagCloud(container, words, finalOptions);
+  const tagCloudInstance = TagCloud(container, words, finalOptions);
+
+  // Apply beautiful custom coloring to words
+  const items = container.querySelectorAll('.tagcloud--item');
+  items.forEach(item => {
+    const text = item.textContent.trim().toLowerCase();
+    
+    // 1. Specific colors for color names (French & English)
+    const colorMap = {
+      // French
+      'rouge': 'var(--sol-red, #dc322f)',
+      'bleu': 'var(--sol-blue, #268bd2)',
+      'vert': 'var(--sol-green, #859900)',
+      'jaune': 'var(--sol-yellow, #b58900)',
+      'orange': 'var(--sol-orange, #cb4b16)',
+      'violet': 'var(--sol-violet, #6c71c4)',
+      'rose': 'var(--sol-magenta, #d33682)',
+      'cyan': 'var(--sol-cyan, #2aa198)',
+      'magenta': 'var(--sol-magenta, #d33682)',
+      // English
+      'red': 'var(--sol-red, #dc322f)',
+      'blue': 'var(--sol-blue, #268bd2)',
+      'green': 'var(--sol-green, #859900)',
+      'yellow': 'var(--sol-yellow, #b58900)',
+      'purple': 'var(--sol-violet, #6c71c4)',
+      'pink': 'var(--sol-magenta, #d33682)'
+    };
+
+    if (colorMap[text]) {
+      item.style.color = colorMap[text];
+      item.style.fontWeight = 'bold';
+    } else {
+      // 2. Cohesive theme palette for non-color-name words
+      const palette = [
+        'var(--sol-cyan, #2aa198)',
+        'var(--sol-violet, #6c71c4)',
+        'var(--sol-magenta, #d33682)',
+        'var(--sol-orange, #cb4b16)',
+        'var(--sol-yellow, #b58900)',
+        'var(--sol-base01, #586e75)',
+        'var(--sol-base00, #657b83)'
+      ];
+      // Deterministic color assignment based on word content
+      let hash = 0;
+      for (let i = 0; i < text.length; i++) {
+        hash = text.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      const colorIndex = Math.abs(hash) % palette.length;
+      item.style.color = palette[colorIndex];
+    }
+  });
+
+  return tagCloudInstance;
 }
 
 /**
