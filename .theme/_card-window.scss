@@ -1,0 +1,270 @@
+/* ==========================================================================
+   WINDOW CARD SYSTEM
+   — .card-window, .panel-tabset, .terminal share the same macOS-style chrome.
+   ========================================================================== */
+
+/* ── Per-instance override vars (inherited by nested children) ── */
+.card-window {
+    --card-window-bg:             var(--card-bg);
+    --card-window-border:         var(--card-border);
+    --card-window-shadow:         var(--card-shadow);
+    --card-window-shadow-hover:   var(--card-shadow-hover);
+    --card-window-border-hover:   var(--card-border-hover);
+    --card-window-header-bg:      var(--card-header-bg);
+    --card-window-header-border:  var(--card-header-border);
+    --card-window-tab-active-bg:      var(--card-tab-active-bg);
+    --card-window-tab-active-color:   var(--card-tab-active-color);
+    --card-window-tab-active-border:  var(--card-tab-active-border);
+    --card-window-tab-inactive-color: var(--card-tab-inactive-color);
+    --card-window-tab-hover-bg:       var(--card-tab-hover-bg);
+}
+
+/* ── Shared container chrome ── */
+.card-window,
+.panel-tabset {
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    margin-bottom: 2rem !important;
+    position: relative !important;
+    background-color: var(--card-window-bg, var(--card-bg)) !important;
+    border: 1px solid var(--card-window-border, var(--card-border)) !important;
+    box-shadow: var(--card-window-shadow, var(--card-shadow)) !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+.card-window:hover,
+.panel-tabset:hover {
+    box-shadow: var(--card-window-shadow-hover, var(--card-shadow-hover)) !important;
+    border-color: var(--card-window-border-hover, var(--card-border-hover)) !important;
+}
+
+/* ── Header bar: shared layout ── */
+.card-window > .card-header,
+.card-window > .nav-tabs,
+.card-window-header,
+.panel-tabset .nav-tabs,
+.terminal .card-header {
+    display: flex !important;
+    align-items: center !important;
+    height: 38px !important;
+    padding: 0 16px !important;
+    user-select: none !important;
+    position: relative !important;
+}
+
+/* Centered-title headers (window + terminal); panel-tabset is tab-aligned */
+.card-window > .card-header,
+.card-window-header,
+.terminal .card-header {
+    justify-content: center !important;
+    text-align: center !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+}
+
+/* card-window header colours & font */
+.card-window > .card-header,
+.card-window > .nav-tabs,
+.card-window-header {
+    background-color: var(--card-window-header-bg, var(--card-header-bg)) !important;
+    border-bottom: 1px solid var(--card-window-header-border, var(--card-header-border)) !important;
+    font-family: var(--font-code, monospace) !important;
+}
+
+/* panel-tabset nav extras (it's a <ul>) */
+.panel-tabset .nav-tabs {
+    background-color: var(--card-window-header-bg, var(--card-header-bg)) !important;
+    border-bottom: 1px solid var(--card-window-header-border, var(--card-header-border)) !important;
+    list-style: none !important;
+    margin-bottom: 0 !important;
+}
+
+/* Strip margins from header children (Quarto injects <p>/<h*> wrappers) */
+.card.card-window > .card-header > *,
+.card-window-header > *,
+.terminal .card-header > * {
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+    width: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* ── Traffic light dots — shared visual ── */
+.card-window > .card-header::before,
+.card-window > .nav-tabs::before,
+.card-window-header::before,
+.panel-tabset .nav-tabs::before,
+.terminal .card-header::before {
+    content: "" !important;
+    width: 8px !important;
+    height: 8px !important;
+    background-color: var(--macos-dot-red) !important;
+    border-radius: 50% !important;
+    box-shadow: 14px 0 0 var(--macos-dot-yellow), 28px 0 0 var(--macos-dot-green) !important;
+    opacity: 0.85 !important;
+}
+
+/* Absolute-positioned dots (headers have position: relative) */
+.card-window > .card-header::before,
+.card-window > .nav-tabs::before,
+.card-window-header::before,
+.terminal .card-header::before {
+    position: absolute !important;
+    left: 16px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+}
+
+/* Inline-flex dot (panel-tabset — pushes tabs right via margin) */
+.panel-tabset .nav-tabs::before {
+    display: inline-block !important;
+    flex-shrink: 0 !important;
+    margin-right: 42px !important;
+}
+
+/* ── Tab nav-link ── */
+.card-window .nav-link,
+.panel-tabset .nav-tabs .nav-link {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    border-top-left-radius: 6px !important;
+    border-top-right-radius: 6px !important;
+    padding: 5px 14px !important;
+    font-family: var(--font-code, monospace) !important;
+    font-size: 0.8rem !important;
+    height: 28px !important;
+    line-height: 1 !important;
+    margin-bottom: -1px !important;
+    transition: all 0.15s ease !important;
+    text-decoration: none !important;
+    background-color: transparent !important;
+    border: 1px solid transparent !important;
+    border-bottom: none !important;
+    color: var(--card-window-tab-inactive-color, var(--card-tab-inactive-color)) !important;
+}
+
+.card-window .nav-link::before {
+    color: var(--card-window-tab-inactive-color, var(--card-tab-inactive-color)) !important;
+    opacity: 0.7;
+}
+
+.card-window .nav-link:hover,
+.panel-tabset .nav-tabs .nav-link:hover {
+    background-color: var(--card-window-tab-hover-bg, var(--card-tab-hover-bg)) !important;
+    color: var(--card-window-tab-active-color, var(--card-tab-active-color)) !important;
+}
+
+.card-window .nav-link.active,
+.card-window .nav-link:active,
+.panel-tabset .nav-tabs .nav-link.active,
+.panel-tabset .nav-tabs .nav-link:active {
+    background-color: var(--card-window-tab-active-bg, var(--card-tab-active-bg)) !important;
+    border-color: var(--card-window-tab-active-border, var(--card-tab-active-border)) !important;
+    border-bottom-color: var(--card-window-tab-active-bg, var(--card-tab-active-bg)) !important;
+    color: var(--card-window-tab-active-color, var(--card-tab-active-color)) !important;
+    font-weight: 700 !important;
+    box-shadow: var(--shadow-tiny) !important;
+}
+
+.card-window .nav-link.active::before,
+.card-window .nav-link:active::before,
+.panel-tabset .nav-tabs .nav-link.active::before,
+.panel-tabset .nav-tabs .nav-link:active::before {
+    color: var(--accent-primary) !important;
+    opacity: 1 !important;
+}
+
+/* panel-tabset file icon (unique — not on card-window tabs) */
+.panel-tabset .nav-tabs .nav-link::before {
+    content: "\f3e6" !important;
+    font-family: "bootstrap-icons" !important;
+    font-size: 0.85rem !important;
+    color: var(--card-window-tab-inactive-color, var(--card-tab-inactive-color)) !important;
+    opacity: 0.7;
+}
+
+/* ── panel-tabset nav items ── */
+.panel-tabset .nav-tabs .nav-item {
+    margin-bottom: -1px !important;
+    border: none !important;
+    padding: 0 !important;
+    list-style: none !important;
+}
+
+/* ── panel-tabset tab content ── */
+.panel-tabset .tab-content {
+    background-color: var(--card-window-bg, var(--card-bg)) !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 0 0 8px 8px !important;
+}
+
+.panel-tabset .tab-content .tab-pane {
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+}
+
+.panel-tabset .tab-content div.sourceCode {
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+}
+
+.panel-tabset .tab-content div.sourceCode pre.sourceCode {
+    padding: 16px 20px !important;
+    margin: 0 !important;
+}
+
+/* ── panel-tabset nested inside .card-window ──
+   Strips standalone chrome; card-window provides border/shadow/radius.
+   Tab bar sits flush; pane is a compact italic hint row.             */
+.card-window .panel-tabset {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin-bottom: 0 !important;
+    background-color: transparent !important;
+}
+
+.card-window .panel-tabset .nav-tabs {
+    height: 32px !important;
+    padding: 0 12px !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    /* `black` = CSS mask opacity (fully opaque), not a visual color */
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - 32px), transparent 100%) !important;
+    mask-image:         linear-gradient(to right, black calc(100% - 32px), transparent 100%) !important;
+}
+
+.card-window .panel-tabset .nav-tabs::-webkit-scrollbar { display: none !important; }
+.card-window .panel-tabset .nav-tabs::before            { display: none !important; }
+.card-window .panel-tabset .nav-tabs .nav-link::before  { display: none !important; }
+.card-window .panel-tabset .nav-tabs .nav-item          { flex-shrink: 0 !important; }
+
+.card-window .panel-tabset .tab-content {
+    background-color: transparent !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+}
+
+.card-window .panel-tabset .tab-content .tab-pane {
+    padding: 6px 16px 8px !important;
+    font-size: 0.8rem !important;
+    color: var(--card-window-tab-inactive-color, var(--card-tab-inactive-color)) !important;
+    font-style: italic !important;
+    border-bottom: 1px solid var(--card-window-header-border, var(--card-header-border)) !important;
+}
+
+.card-window .panel-tabset .tab-content .tab-pane p { margin: 0 !important; }

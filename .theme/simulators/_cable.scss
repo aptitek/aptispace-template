@@ -9,8 +9,8 @@
   padding: 32px 36px;
   margin: 25px 0;
   box-shadow: 
-    0 15px 40px rgba(0, 0, 0, 0.4),
-    inset 0 1px 2px rgba(255, 255, 255, 0.03);
+    0 15px 40px rgba(var(--sol-base03-rgb), 0.4),
+    inset 0 1px 2px rgba(var(--sol-base3-rgb), 0.03);
   overflow: visible !important;
 }
 
@@ -122,7 +122,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   position: relative;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 6px rgba(var(--sol-base03-rgb), 0.15);
   transition: border-color 0.25s, box-shadow 0.25s, color 0.25s, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
   .cabling-col--left  & { border-left:  3px solid var(--sol-base01); text-align: right; }
@@ -130,7 +130,7 @@
 
   &:hover {
     border-color: rgba(var(--sol-blue-rgb), 0.5);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 6px 16px rgba(var(--sol-base03-rgb), 0.25);
     color: var(--sol-base1);
     transform: translateY(-2px);
   }
@@ -138,7 +138,7 @@
   /* Active / selected state (click-to-connect) */
   &.is-active {
     border-color: var(--sol-yellow) !important;
-    box-shadow: 0 0 0 3px rgba(var(--sol-yellow-rgb), 0.25), 0 6px 16px rgba(0, 0, 0, 0.25) !important;
+    box-shadow: 0 0 0 3px rgba(var(--sol-yellow-rgb), 0.25), 0 6px 16px rgba(var(--sol-base03-rgb), 0.25) !important;
     color: var(--sol-yellow) !important;
   }
 
@@ -173,7 +173,7 @@
     height: 7px;
     border-radius: 50%;
     background: radial-gradient(circle at 35% 35%, var(--sol-base1), var(--sol-base01));
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 2px rgba(var(--sol-base03-rgb), 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.2);
     pointer-events: none;
     z-index: 2;
     transition: background 0.2s ease, box-shadow 0.2s ease;
@@ -201,7 +201,7 @@
 #cabling-canvas .jtk-connector path {
   stroke-linecap: round;
   transition: stroke 0.3s ease, filter 0.3s ease;
-  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.35));
+  filter: drop-shadow(0 3px 5px rgba(var(--sol-base03-rgb), 0.35));
 }
 
 /* ── Ghost connector during drag ── */
@@ -235,7 +235,7 @@
 
 @keyframes cable-spark {
   0%   { stroke-dashoffset: 0;   filter: drop-shadow(0 0 3px var(--sol-red)); }
-  20%  {                         filter: drop-shadow(0 0 12px rgba(var(--sol-red-rgb), 0.9)) drop-shadow(0 0 4px rgba(255,255,255,0.25)); }
+  20%  {                         filter: drop-shadow(0 0 12px rgba(var(--sol-red-rgb), 0.9)) drop-shadow(0 0 4px rgba(var(--sol-base3-rgb),0.25)); }
   40%  { stroke-dashoffset: -7;  filter: drop-shadow(0 0 3px var(--sol-red)); }
   60%  {                         filter: drop-shadow(0 0 14px rgba(var(--sol-red-rgb), 0.85)) drop-shadow(0 0 5px rgba(var(--sol-orange-rgb), 0.4)); }
   80%  { stroke-dashoffset: -14; filter: drop-shadow(0 0 4px var(--sol-red)); }

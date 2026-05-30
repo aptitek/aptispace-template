@@ -140,6 +140,20 @@ $dark: $sol-base02 !default;
     --badge-color: var(--sol-base01);
     --badge-border: rgba(var(--sol-base1-rgb), 0.2);
 
+    /* --- JS/iframe semantic aliases (used by viewer.html and external consumers) --- */
+    --bg-color:      var(--sol-base3);
+    --text-color:    var(--sol-base00);
+    --sidebar-bg:    var(--sol-base2);
+    --border-color:  var(--sol-base2);
+    --link-color:    var(--sol-blue);
+    --link-hover:    var(--sol-orange);
+    --success-color: var(--sol-green);
+    --error-color:   var(--sol-red);
+    --code-bg:       var(--sol-base2);
+    --btn-hover:     var(--sol-base2);
+    --font-base: #{$font-family-base};
+    --font-code: #{$font-family-code};
+
     /* --- Simulator Tokens --- */
     /* macOS window control dots (used on cards, terminals, tabsets) */
     --macos-dot-red:    var(--sol-red);
@@ -177,14 +191,14 @@ $dark: $sol-base02 !default;
     
     --card-bg: var(--sol-base03);
     --card-border: var(--sol-base02);
-    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    --card-shadow-hover: 0 12px 36px rgba(0, 0, 0, 0.22);
+    --card-shadow: 0 10px 30px rgba(var(--sol-base03-rgb), 0.15);
+    --card-shadow-hover: 0 12px 36px rgba(var(--sol-base03-rgb), 0.22);
     --card-border-hover: var(--sol-base01);
     
-    --shadow-tiny: 0 -2px 4px rgba(0, 0, 0, 0.05);
-    --shadow-small: 0 4px 8px rgba(0, 0, 0, 0.2);
-    --shadow-medium: 0 -2px 10px rgba(0, 0, 0, 0.25);
-    --canvas-shadow-inset: inset 0 2px 8px rgba(0, 0, 0, 0.25);
+    --shadow-tiny: 0 -2px 4px rgba(var(--sol-base03-rgb), 0.05);
+    --shadow-small: 0 4px 8px rgba(var(--sol-base03-rgb), 0.2);
+    --shadow-medium: 0 -2px 10px rgba(var(--sol-base03-rgb), 0.25);
+    --canvas-shadow-inset: inset 0 2px 8px rgba(var(--sol-base03-rgb), 0.25);
     
     --card-header-bg: var(--sol-base02);
     --card-header-border: rgba(147, 161, 161, 0.1);
@@ -221,14 +235,14 @@ $dark: $sol-base02 !default;
         
         --card-bg: var(--sol-base03);
         --card-border: var(--sol-base02);
-        --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        --card-shadow-hover: 0 12px 36px rgba(0, 0, 0, 0.22);
+        --card-shadow: 0 10px 30px rgba(var(--sol-base03-rgb), 0.15);
+        --card-shadow-hover: 0 12px 36px rgba(var(--sol-base03-rgb), 0.22);
         --card-border-hover: var(--sol-base01);
         
-        --shadow-tiny: 0 -2px 4px rgba(0, 0, 0, 0.05);
-        --shadow-small: 0 4px 8px rgba(0, 0, 0, 0.2);
-        --shadow-medium: 0 -2px 10px rgba(0, 0, 0, 0.25);
-        --canvas-shadow-inset: inset 0 2px 8px rgba(0, 0, 0, 0.25);
+        --shadow-tiny: 0 -2px 4px rgba(var(--sol-base03-rgb), 0.05);
+        --shadow-small: 0 4px 8px rgba(var(--sol-base03-rgb), 0.2);
+        --shadow-medium: 0 -2px 10px rgba(var(--sol-base03-rgb), 0.25);
+        --canvas-shadow-inset: inset 0 2px 8px rgba(var(--sol-base03-rgb), 0.25);
         
         --card-header-bg: var(--sol-base02);
         --card-header-border: rgba(147, 161, 161, 0.1);

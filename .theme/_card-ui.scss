@@ -1,0 +1,294 @@
+/* ==========================================================================
+   METRIC CARD
+   ========================================================================== */
+
+.card-metric {
+    flex: 1 !important;
+    min-width: 150px !important;
+    border: 1px solid var(--sol-base1) !important;
+    background-color: var(--sol-base3) !important;
+    border-radius: 8px !important;
+    padding: 12px 16px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    box-shadow: var(--shadow-tiny) !important;
+}
+
+.card-metric:hover {
+    box-shadow: var(--shadow-small) !important;
+    border-color: var(--sol-base01) !important;
+}
+
+.card-metric-title {
+    font-family: var(--font-base, sans-serif) !important;
+    font-size: 0.75rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    font-weight: bold !important;
+    color: var(--sol-base01) !important;
+}
+
+.card-metric-value {
+    font-family: var(--font-code, monospace) !important;
+    font-size: 1.8rem !important;
+    font-weight: bold !important;
+    margin: 0 !important;
+    line-height: 1.2 !important;
+}
+
+/* ==========================================================================
+   BOOTSTRAP CARD RESKIN
+   ========================================================================== */
+
+.card {
+    background-color: var(--card-bg) !important;
+    border: 1px solid var(--card-border) !important;
+    box-shadow: var(--card-shadow) !important;
+    border-radius: 8px !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    overflow: hidden !important;
+}
+
+.card.border-info  { border-color: var(--sol-blue) !important; }
+.card.bg-light     { background-color: var(--sol-base2) !important; }
+
+.card:hover { box-shadow: var(--card-shadow-hover) !important; border-color: var(--card-border-hover) !important; }
+.card:hover.border-info { border-color: var(--sol-blue) !important; }
+
+.card .card-header {
+    display: flex !important;
+    align-items: center !important;
+    height: 38px !important;
+    padding: 0 16px !important;
+    background-color: var(--card-header-bg) !important;
+    border-bottom: 1px solid var(--card-header-border) !important;
+    color: var(--body-color) !important;
+    font-weight: 700 !important;
+    font-size: 0.8rem !important;
+}
+
+.card .card-header > * {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+    width: 100% !important;
+}
+
+.card .card-body {
+    background-color: transparent !important;
+    color: var(--body-color) !important;
+    padding: 16px !important;
+}
+
+/* ==========================================================================
+   CONCEPT CARD — RESPONSIVE DOCK-LEFT DIAGRAM
+   ========================================================================== */
+
+.card-concept .card-body {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+    padding: 20px !important;
+}
+
+@media (min-width: 768px) {
+    .card-concept .card-body {
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: 24px !important;
+    }
+
+    .card-concept .card-body > div[id^="plot-"] {
+        flex: 0 0 160px !important;
+        width: 160px !important;
+        height: 140px !important;
+        margin: 0 !important;
+        overflow: hidden !important;
+    }
+
+    .card-concept .card-body .concept-details {
+        flex: 1 1 auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+}
+
+.callout-example {
+    border-left: 3px solid var(--sol-green) !important;
+    background-color: rgba(var(--sol-green-rgb), 0.08) !important;
+    padding: 8px 12px !important;
+    border-radius: 4px !important;
+    margin-top: 6px !important;
+    margin-bottom: 0 !important;
+    font-size: 0.85em !important;
+    line-height: 1.4 !important;
+
+    strong { color: var(--sol-green) !important; }
+}
+
+/* ==========================================================================
+   TERMINAL
+   — Header layout + dot pseudo-elements are inherited from _card-window.scss.
+   — Only unique properties defined here.
+   ========================================================================== */
+
+.terminal {
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    position: relative !important;
+    background-color: var(--sol-base03) !important;
+    border: 1px solid rgba(var(--sol-base01-rgb), 0.25) !important;
+    box-shadow: 0 8px 32px rgba(var(--sol-base03-rgb), 0.35) !important;
+    font-family: var(--font-code, monospace) !important;
+    transition: all 0.3s ease !important;
+}
+
+.terminal .card-header {
+    background-color: var(--terminal-header-bg) !important;
+    border-bottom: 1px solid rgba(var(--sol-base01-rgb), 0.15) !important;
+    font-size: 0.8rem !important;
+    color: var(--sol-base1) !important;
+}
+
+.terminal .card-body {
+    background-color: var(--sol-base03) !important;
+    color: var(--sol-base0) !important;
+    padding: 20px !important;
+    min-height: 120px !important;
+}
+
+/* Title set by renderFeedback in core.js */
+.terminal-header-title {
+    font-family: var(--font-code, monospace) !important;
+    font-size: 0.85em !important;
+    font-weight: bold !important;
+}
+
+.feedback-details:not(:empty) {
+    border-top: 1px solid var(--sol-base01) !important;
+    padding-top: 12px !important;
+    margin-top: 4px !important;
+}
+
+.terminal-line {
+    display: block;
+    margin-bottom: 8px !important;
+    line-height: 1.5 !important;
+    animation: terminal-line-fade 0.3s ease-out forwards;
+
+    &.text-success { color: var(--sol-green) !important; }
+    &.text-warning { color: var(--sol-yellow) !important; }
+    &.text-danger  { color: var(--sol-red) !important; }
+}
+
+@keyframes terminal-line-fade {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   SEARCH BAR
+   ========================================================================== */
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    height: 42px;
+    border-radius: 21px;
+    border: 1.5px solid var(--card-header-border);
+    background: var(--sol-base2);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+
+    > i.bi {
+        font-size: 1.05rem;
+        color: var(--sol-base01);
+        flex-shrink: 0;
+        pointer-events: none;
+        transition: color 0.2s ease;
+    }
+
+    > input {
+        flex: 1;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-family: var(--font-code, monospace);
+        font-size: 0.95rem;
+        color: var(--sol-base00);
+        min-width: 0;
+
+        &::placeholder { color: var(--sol-base1); font-style: italic; }
+    }
+
+    &:focus-within {
+        border-color: var(--sol-blue);
+        box-shadow: 0 0 0 3px rgba(var(--sol-blue-rgb), 0.15);
+        > i.bi { color: var(--sol-blue); }
+    }
+}
+
+/* ==========================================================================
+   CARD CONTROL ROW  (sub-header strip inside .card-window)
+   ========================================================================== */
+
+.card-window > .card-control-row {
+    padding: 0 !important;
+    background-color: var(--card-window-bg) !important;
+    display: flex !important;
+    align-items: center !important;
+    height: 34px !important;
+    overflow: hidden !important;
+
+    p {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+}
+
+/* Search bar flattened inside the control row */
+.card-window > .card-control-row .search-bar {
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    padding: 0 16px !important;
+    gap: 10px !important;
+    box-shadow: none !important;
+    display: flex !important;
+    align-items: center !important;
+
+    > i.bi   { font-size: 0.95rem !important; color: var(--sol-base1) !important; }
+    > input  { font-size: 0.85rem !important; height: 100% !important; color: var(--sol-base00) !important; }
+
+    &:focus-within {
+        background-color: rgba(var(--sol-blue-rgb), 0.03) !important;
+        > i.bi { color: var(--sol-blue) !important; }
+    }
+}
+
+/* ==========================================================================
+   INSPECTOR TOKEN BADGE  (color driven by --inspector-color set per-token by JS)
+   ========================================================================== */
+
+.inspector-token-badge {
+    background: color-mix(in srgb, var(--inspector-color, var(--sol-base01)) 15%, transparent) !important;
+    color: var(--inspector-color, var(--sol-base01)) !important;
+    border: 1px solid color-mix(in srgb, var(--inspector-color, var(--sol-base01)) 30%, transparent) !important;
+}
+
+.inspector-token-label { color: var(--inspector-color, var(--sol-base01)) !important; }
