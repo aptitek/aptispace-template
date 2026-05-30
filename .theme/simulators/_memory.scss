@@ -85,31 +85,9 @@
    SIMULATEUR DE STOCKAGE (LIGNE VS COLONNE)
    ========================================================================== */
 
-/* Conteneur principal du Canvas (remplace les styles en ligne) */
+/* Conteneur principal du Canvas (hérite de .plot-wrapper) */
 .ram-simulator-wrapper {
-    height: 380px;
-    position: relative;
-    background: transparent;
-    border-radius: 8px;
-    width: 100%;
-    overflow: hidden; /* Empêche tout débordement du canvas pendant le resize */
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    > div {
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        width: 100% !important;
-        height: 100% !important;
-    }
-
-    canvas {
-        display: block !important;
-        margin: 0 auto !important;
-    }
+    @extend .plot-wrapper;
 
     /* 🎨 Design Tokens pour le Canvas (Lues par JS) */
     --canvas-node-text: var(--sol-base3, #fdf6e3);
