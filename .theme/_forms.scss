@@ -1,3 +1,5 @@
+/* ==========================================================================
+   FORMS & INPUTS
    ========================================================================== */
 
 /* --- Segmented Radio Buttons Group (.btn-group using .btn-check) --- */
@@ -114,8 +116,16 @@ select:focus {
 }
 
 input[type="number"] {
-    width: 60px !important;
+    width: 70px !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
     text-align: center !important;
+    -moz-appearance: textfield !important;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
 }
 
 /* --- Default Range Sliders --- */
