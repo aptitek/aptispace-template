@@ -75,9 +75,9 @@
     transform: translateY(-50%) !important;
     width: 8px !important;
     height: 8px !important;
-    background-color: #dc322f !important; /* red controls */
+    background-color: var(--macos-dot-red) !important;
     border-radius: 50% !important;
-    box-shadow: 14px 0 0 #b58900, 28px 0 0 #859900 !important; /* yellow, green controls */
+    box-shadow: 14px 0 0 var(--macos-dot-yellow), 28px 0 0 var(--macos-dot-green) !important;
     opacity: 0.85 !important;
 }
 
@@ -165,9 +165,9 @@
     flex-shrink: 0 !important;
     width: 8px !important;
     height: 8px !important;
-    background-color: #dc322f !important; /* red controls */
+    background-color: var(--macos-dot-red) !important;
     border-radius: 50% !important;
-    box-shadow: 14px 0 0 #b58900, 28px 0 0 #859900 !important; /* yellow, green controls */
+    box-shadow: 14px 0 0 var(--macos-dot-yellow), 28px 0 0 var(--macos-dot-green) !important;
     margin-right: 42px !important;
     opacity: 0.85 !important;
 }
@@ -286,7 +286,9 @@
     scrollbar-width: none !important;          /* Firefox */
     -ms-overflow-style: none !important;       /* IE/Edge legacy */
 
-    /* Fade-out gradient on the right edge hints at hidden tabs */
+    /* Fade-out gradient on the right edge hints at hidden tabs.
+       `black` here is CSS mask-image semantics (fully opaque = visible),
+       not a visual color — it cannot be replaced with a Solarized token. */
     -webkit-mask-image: linear-gradient(
         to right,
         black calc(100% - 32px),
@@ -444,9 +446,9 @@
     flex-shrink: 0 !important;
     width: 8px !important;
     height: 8px !important;
-    background-color: #dc322f !important; /* red controls */
+    background-color: var(--macos-dot-red) !important;
     border-radius: 50% !important;
-    box-shadow: 14px 0 0 #b58900, 28px 0 0 #859900 !important; /* yellow, green controls */
+    box-shadow: 14px 0 0 var(--macos-dot-yellow), 28px 0 0 var(--macos-dot-green) !important;
     margin-right: 42px !important;
     opacity: 0.85 !important;
 }
@@ -878,7 +880,7 @@
         height: 38px !important;
         padding: 0 16px !important;
         user-select: none !important;
-        background-color: #0b4352 !important; /* Lighter base02 (standard base02 is #073642) */
+        background-color: var(--terminal-header-bg) !important;
         border-bottom: 1px solid rgba(88, 110, 117, 0.15) !important;
         position: relative !important;
         text-align: center !important;
@@ -919,6 +921,13 @@
         padding: 20px !important;
         min-height: 120px !important;
     }
+}
+
+/* Terminal header title — set by renderFeedbackUI in core.js */
+.terminal-header-title {
+    font-family: var(--font-code, monospace) !important;
+    font-size: 0.85em !important;
+    font-weight: bold !important;
 }
 
 /* --- CUSTOM TERMINAL LINE STYLING & ANIMATIONS --- */
@@ -1033,6 +1042,21 @@
         display: flex !important;
         align-items: center !important;
     }
+}
+
+/* ==========================================================================
+   TOKEN INSPECTOR BADGE
+   Styled via --inspector-color CSS custom property, set per-token by JS.
+   ========================================================================== */
+
+.inspector-token-badge {
+    background: color-mix(in srgb, var(--inspector-color, var(--sol-base01)) 15%, transparent) !important;
+    color: var(--inspector-color, var(--sol-base01)) !important;
+    border: 1px solid color-mix(in srgb, var(--inspector-color, var(--sol-base01)) 30%, transparent) !important;
+}
+
+.inspector-token-label {
+    color: var(--inspector-color, var(--sol-base01)) !important;
 }
 
 /* Make the search pill flat and edge-to-edge when inside the control row */

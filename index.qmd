@@ -17,7 +17,7 @@ Nominale [Qualitative]{.badge .bg-info .float-end}
 ::::::
 :::::: {.card-body}
 
-::::::: {#plot-nominale style="height: 180px;"}
+::::::: {#plot-nominale}
 ```{ojs}
 //| echo: false
 
@@ -46,7 +46,7 @@ Catégories ou étiquettes sans aucun ordre de grandeur ni hiérarchie naturelle
 Ordinale [Qualitative]{.badge .bg-info .float-end}
 ::::::
 :::::: {.card-body}
-::::::: {#plot-ordinale style="height: 180px;"}
+::::::: {#plot-ordinale}
 ```{ojs}
 //| echo: false
 renderOrdinale = {
@@ -81,7 +81,7 @@ Catégories textuelles dotées d'une hiérarchie stricte et d'une logique de ran
 Discrète [Quantitative]{.badge .bg-success .float-end}
 ::::::
 :::::: {.card-body}
-::::::: {#plot-discrete style="height: 180px;"}
+::::::: {#plot-discrete}
 ```{ojs}
 //| echo: false
 dataDiscrete = {
@@ -115,7 +115,7 @@ Valeurs numériques entières dénombrables. On compte des unités distinctes et
 Continue [Quantitative]{.badge .bg-success .float-end}
 ::::::
 :::::: {.card-body}
-::::::: {#plot-continuous style="height: 180px;"}
+::::::: {#plot-continuous}
 ```{ojs}
 //| echo: false
 dataContinuous = {
@@ -172,7 +172,7 @@ import { createLever } from "./assets/js/custom/lever.js"
 ::::
 :::: {.card-body}
 
-::::: {#cabling-data style="display: none;"}
+::::: {#cabling-data .d-none}
 
 | id      | label                       | match    | feedback                                                                |
 | :------ | :-------------------------- | :------- | :---------------------------------------------------------------------- |
@@ -219,7 +219,7 @@ Reliez chaque pièce à conviction de gauche à sa catégorie de données logiqu
 
 ::::::::
 
-[Circuit alimenté]{#lever-status-on .lever-status .is-on style="display: none;"}
+[Circuit alimenté]{#lever-status-on .lever-status .is-on .d-none}
 [Circuit coupé]{#lever-status-off .lever-status .is-off}
 
 ```{ojs}
@@ -229,10 +229,10 @@ Reliez chaque pièce à conviction de gauche à sa catégorie de données logiqu
   const elOn = document.querySelector("#lever-status-on");
   const elOff = document.querySelector("#lever-status-off");
   if (elOn && elOff) {
-    elOn.style.display = powerOn ? "inline-block" : "none";
-    elOff.style.display = powerOn ? "none" : "inline-block";
+    elOn.classList.toggle('d-none', !powerOn);
+    elOff.classList.toggle('d-none', powerOn);
   }
-  return html`<span style="display: none;"></span>`;
+  return html`<span class="d-none"></span>`;
 }
 ```
 
@@ -247,7 +247,7 @@ Reliez chaque pièce à conviction de gauche à sa catégorie de données logiqu
 viewof powerOn = createLever("#power-lever", invalidation)
 ```
 
-::::: {#cabling-feedback-panel .terminal .mt-4 style="display: none;"}
+::::: {#cabling-feedback-panel .terminal .mt-4 .d-none}
 
 :::::: {.card-header}
 ::::::
@@ -359,7 +359,7 @@ _ramTabWatcher = {
     (val) => { mutable dataType = val; }
   );
   invalidation.then(() => w.destroy());
-  return html`<span style="display:none"></span>`;
+  return html`<span class="d-none"></span>`;
 }
 ```
 
@@ -548,7 +548,7 @@ _ramStorageTabWatcher = {
     (val) => { mutable storageMode = val; }
   );
   invalidation.then(() => w.destroy());
-  return html`<span style="display:none"></span>`;
+  return html`<span class="d-none"></span>`;
 }
 
 // 2. Extraction dynamique des données depuis la table Markdown
@@ -557,7 +557,7 @@ ramTableData = parseTableData("#ram-data-source table")
 renderRamGraph = {
   const graph = createRamStorageGraph("ram-graph-container", storageMode, 'Salaire', ramTableData);
   invalidation.then(() => { if (graph && graph.destroy) graph.destroy(); });
-  return html`<span style="display:none"></span>`;
+  return html`<span class="d-none"></span>`;
 }
 
 ```
@@ -721,7 +721,7 @@ _moboTabWatcher = {
     (val) => { mutable hardwareState = val; }
   );
   invalidation.then(() => w.destroy());
-  return html`<span style="display:none"></span>`;
+  return html`<span class="d-none"></span>`;
 }
 
 // 3. Déclenchement réactif des animations de flux physiques et highlights
@@ -988,9 +988,9 @@ Flux de Tokens (Capsules)
 
 | Propriété      | Valeur                                                                                                                                                                                                                                                                                                  |
 | :------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Contenu**    | [**{{text}}**]{.font-code .px-2 .py-1 .rounded style="background: color-mix(in srgb, var(--inspector-color, var(--sol-base01)) 15%, transparent); color: var(--inspector-color, var(--sol-base01)); border: 1px solid color-mix(in srgb, var(--inspector-color, var(--sol-base01)) 30%, transparent);"} |
-| **Index**      | [**{{index}}**]{.text-white .font-code .small}                                                                                                                                                                                                                                                          |
-| **ID / Label** | [**{{label}}**]{.font-code style="color: var(--inspector-color, var(--sol-base01));"}                                                                                                                                                                                                                   |
+| **Contenu**    | [**{{text}}**]{.font-code .px-2 .py-1 .rounded .inspector-token-badge} |
+| **Index**      | [**{{index}}**]{.text-body-secondary .font-code .small}                                                                                                                                                                                                                                                          |
+| **ID / Label** | [**{{label}}**]{.font-code .inspector-token-label} |
 | **Fragment**   | [{{fragmentText}}]{.badge class="{{badgeClass}}"}                                                                                                                                                                                                                                                       |
 
 : {.table .table-sm .table-borderless .mb-0}
@@ -1033,7 +1033,7 @@ tokenWidget = {
       index: "-",
       label: "-",
       fragmentText: "Sélectionnez un token",
-      badgeClass: "bg-secondary text-white"
+      badgeClass: "bg-secondary"
     });
   }
 
@@ -1064,7 +1064,7 @@ updateWidgetInput = {
   if (tokenWidget && typeof tokenWidget.update === "function") {
     tokenWidget.update(text);
   }
-  return html`<span style="display:none"></span>`;
+  return html`<span class="d-none"></span>`;
 }
 ```
 

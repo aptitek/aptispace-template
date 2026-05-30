@@ -63,10 +63,11 @@ export function createLever(selector, invalidation) {
   const housing = wrapper.querySelector('.lever-housing');
   const handle  = wrapper.querySelector('.lever-handle');
 
-  // Handle pixel positions — must match _lever.scss
-  const TOP_ON  = 18;
-  const TOP_OFF = 82;
-  const MID     = (TOP_ON + TOP_OFF) / 2;
+  // Read pixel positions from CSS custom properties — _variables.scss is the single source of truth
+  const cssVars  = getComputedStyle(document.documentElement);
+  const TOP_ON   = parseFloat(cssVars.getPropertyValue('--lever-top-on'))  || 18;
+  const TOP_OFF  = parseFloat(cssVars.getPropertyValue('--lever-top-off')) || 82;
+  const MID      = (TOP_ON + TOP_OFF) / 2;
 
   wrapper.value = false;
 

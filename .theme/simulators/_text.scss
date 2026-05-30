@@ -79,5 +79,5 @@
     opacity: 0.6;
     margin-right: 1px;
     font-weight: 800;
-    color: color-mix(in srgb, var(--token-color, var(--sol-blue)) 80%, white);
+    color: color-mix(in srgb, var(--token-color, var(--sol-blue)) 80%, var(--sol-base3));
 }

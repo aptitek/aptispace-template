@@ -1,7 +1,7 @@
 // ==========================================
 // plots.js - Composants Graphiques Plotly Standardisés
 // ==========================================
-import { getPlotlyTheme } from "./core.js";
+import { getPlotlyTheme, getThemeColor } from "./core.js";
 
 /**
  * 📈 Scatter Plot (Nuage de points)
@@ -151,7 +151,7 @@ export function createPyramid(divId, data, options = {}) {
     textinfo: options.textinfo || 'text',
     hoverinfo: options.hoverinfo || 'text',
     textfont: {
-      color: "white",
+      color: getThemeColor("--sol-base3", "#fdf6e3"),
       family: "Recursive, sans-serif",
       ...options.textfont
     },

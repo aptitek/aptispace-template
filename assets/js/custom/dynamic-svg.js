@@ -13,23 +13,6 @@ export function createDynamicSvg(svgSelector, idMap, onClick) {
   const container = document.querySelector(svgSelector);
   if (!container) return;
 
-  // Ensure dynamic hover styles exist
-  let styleEl = document.getElementById("dynamic-svg-styles");
-  if (!styleEl) {
-    styleEl = document.createElement("style");
-    styleEl.id = "dynamic-svg-styles";
-    styleEl.textContent = `
-      .dynamic-svg-interactive {
-        cursor: pointer;
-        transition: filter 0.2s ease, transform 0.2s ease;
-      }
-      .dynamic-svg-interactive:hover {
-        filter: brightness(1.3) drop-shadow(0 0 5px rgba(255, 255, 255, 0.4));
-      }
-    `;
-    document.head.appendChild(styleEl);
-  }
-
   Object.keys(idMap).forEach(id => {
     const el = container.querySelector(`#${id}`);
     if (el) {

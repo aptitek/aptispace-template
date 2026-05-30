@@ -127,7 +127,7 @@ export function createGraph(container, graphData, optionsOr3d = {}) {
         const sprite = new SpriteText(label);
         const status = options.getNodeStatus(node);
         const style = styles[status] || styles.default;
-        sprite.color = resolveColor(node.color || style.nodeText || "white", "white");
+        sprite.color = resolveColor(node.color || style.nodeText || "var(--sol-base0)", "#839496");
         sprite.textHeight = options.fontSize || 8;
         return sprite;
       });

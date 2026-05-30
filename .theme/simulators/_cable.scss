@@ -3,7 +3,7 @@
 /* ── Electric Panel Board ── */
 .cabling-panel {
   position: relative;
-  background: #001f27; /* Darker than base03 for real electric control panel depth */
+  background: var(--cabling-panel-bg);
   border: 1px solid var(--sol-base02);
   border-radius: 14px;
   padding: 32px 36px;
@@ -181,7 +181,7 @@
 
   /* Hover: cyan glow ring around the socket */
   &:hover::after {
-    background: radial-gradient(circle at 35% 35%, var(--sol-cyan), #1a8080);
+    background: radial-gradient(circle at 35% 35%, var(--sol-cyan), var(--cabling-cyan-hover));
     box-shadow:
       0 0 6px rgba(var(--sol-cyan-rgb), 0.9),
       0 0 14px rgba(var(--sol-cyan-rgb), 0.5);
@@ -189,7 +189,7 @@
 
   /* Connected/validated: green pin */
   &.is-connected::after {
-    background: radial-gradient(circle at 35% 35%, var(--sol-green), #3d5000);
+    background: radial-gradient(circle at 35% 35%, var(--sol-green), var(--cabling-green-pin));
     box-shadow:
       0 0 6px rgba(var(--sol-green-rgb), 0.8),
       0 0 12px rgba(var(--sol-green-rgb), 0.4);
@@ -257,8 +257,8 @@
 @keyframes spark-fly {
   0% {
     transform: rotate(var(--angle)) translateX(0) scale(1.2);
-    background: #fff;
-    box-shadow: 0 0 5px #fff, 0 0 10px var(--sol-orange), 0 0 16px var(--sol-red);
+    background: var(--spark-initial);
+    box-shadow: 0 0 5px var(--spark-initial), 0 0 10px var(--sol-orange), 0 0 16px var(--sol-red);
     opacity: 1;
   }
   50% {

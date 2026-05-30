@@ -41,28 +41,6 @@ export const theme = {
   fontMono: '"Recursive", SFMono-Regular, Menlo, Monaco, Consolas, monospace'
 };
 
-/**
- * 📊 Plotly Solarized Theme Template
- * Consumes CSS custom design tokens as the single source of truth.
- * When the light/dark theme switches, Plotly automatically conforms!
- */
-export const solarizedTemplate = {
-  layout: {
-    font: {
-      family: "var(--font-code, Consolas, monospace)",
-      color: "var(--sol-base00, #657b83)"
-    },
-    paper_bgcolor: "var(--sol-base3, #fdf6e3)",
-    plot_bgcolor: "var(--sol-base2, #eee8d5)",
-    colorway: [
-      "var(--sol-blue, #268bd2)",
-      "var(--sol-orange, #cb4b16)",
-      "var(--sol-green, #859900)",
-      "var(--sol-yellow, #b58900)"
-    ]
-  }
-};
-
 export const getThemeColor = (varName, fallback) => {
   if (typeof window !== "undefined") {
     const value = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
@@ -227,8 +205,8 @@ export function renderFeedbackUI(panelSelector, state, listData = []) {
   if (!panel) return;
 
   // 1. Affichage global du panneau
-  panel.style.display = state.status === "hidden" ? "none" : "block";
-  panel.querySelectorAll('.feedback-card').forEach(card => card.style.display = "none");
+  panel.classList.toggle('d-none', state.status === "hidden");
+  panel.querySelectorAll('.feedback-card').forEach(card => card.classList.add('d-none'));
 
   if (state.status === "hidden") return;
 
@@ -239,14 +217,11 @@ export function renderFeedbackUI(panelSelector, state, listData = []) {
     if (state.status === "incomplete") title = "⚠️ Console — Brassage Incomplet";
     else if (state.status === "validated") title = "✅ Console — Diagnostic Réussi";
     else if (state.status === "error") title = "❌ Console — Conflit de Signal";
-    
+
     let titleSpan = header.querySelector('.terminal-header-title');
     if (!titleSpan) {
       titleSpan = document.createElement('span');
       titleSpan.className = 'terminal-header-title';
-      titleSpan.style.fontFamily = "var(--font-code, monospace)";
-      titleSpan.style.fontSize = "0.85em";
-      titleSpan.style.fontWeight = "bold";
       header.appendChild(titleSpan);
     }
     titleSpan.textContent = title;
@@ -255,7 +230,7 @@ export function renderFeedbackUI(panelSelector, state, listData = []) {
   // 2. Affichage dynamique de la carte active via le Moteur 1
   const activeCard = panel.querySelector(`.feedback-${state.status}`);
   if (activeCard) {
-    activeCard.style.display = "block";
+    activeCard.classList.remove('d-none');
     renderTemplate(activeCard, { score: state.score, total: state.total });
   }
 

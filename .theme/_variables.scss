@@ -139,6 +139,35 @@ $dark: $sol-base02 !default;
     --badge-bg: rgba(var(--sol-base1-rgb), 0.1);
     --badge-color: var(--sol-base01);
     --badge-border: rgba(var(--sol-base1-rgb), 0.2);
+
+    /* --- Simulator Tokens --- */
+    /* macOS window control dots (used on cards, terminals, tabsets) */
+    --macos-dot-red:    var(--sol-red);
+    --macos-dot-yellow: var(--sol-yellow);
+    --macos-dot-green:  var(--sol-green);
+
+    /* Terminal */
+    --terminal-header-bg: #0b4352; /* Slightly lighter than base02, giving depth to dark terminal chrome */
+
+    /* Cabling panel (deeper than base03 for electric-panel effect) */
+    --cabling-panel-bg:    #001f27;
+    --cabling-cyan-hover:  #1a8080; /* Darker cyan endpoint hover gradient stop */
+    --cabling-green-pin:   #3d5000; /* Darker green gradient stop for connected pin */
+
+    /* Lever slot / handle */
+    --lever-slot-bg:           #02161b; /* Deep socket well, darker than cabling-panel-bg */
+    --lever-on-gradient-mid:   #6a8000; /* Mid green gradient stop on powered handle */
+    --lever-on-gradient-dark:  #3d5000; /* Dark green gradient stop on powered handle */
+
+    /* Lever handle positions in px — single source of truth shared with lever.js */
+    --lever-top-on:  18px;
+    --lever-top-off: 82px;
+
+    /* Inspector token badge */
+    --inspector-color: var(--sol-base01); /* Overridden per-token by JS */
+
+    /* Spark animation — initial bright flash uses lightest Solarized color */
+    --spark-initial: var(--sol-base3);
 }
 
 /* Explicit Dark Theme Overrides */
