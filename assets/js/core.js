@@ -133,7 +133,7 @@ export const utils = {
 /**
  * 📊 Lit un tableau Markdown compilé et le transforme en tableau d'objets JS.
  */
-export function parseTableData(selector) {
+export function parseTable(selector) {
   const table = document.querySelector(selector);
   if (!table) return [];
   const headers = Array.from(table.querySelectorAll("th")).map(th => th.textContent.trim());
@@ -178,7 +178,7 @@ export function renderTemplate(elementOrSelector, data = {}) {
 /**
  * Moteur 2 : Génère une liste d'éléments à partir d'un modèle (Ex: puces de résultats)
  */
-export function renderListTemplate(containerSelector, templateSelector, listData = []) {
+export function renderList(containerSelector, templateSelector, listData = []) {
   const container = document.querySelector(containerSelector);
   const tplElement = document.querySelector(templateSelector);
   
@@ -200,7 +200,7 @@ export function renderListTemplate(containerSelector, templateSelector, listData
 /**
  * Orchestrateur : Utilise nos moteurs génériques pour cet exercice
  */
-export function renderFeedbackUI(panelSelector, state, listData = []) {
+export function renderFeedback(panelSelector, state, listData = []) {
   const panel = document.querySelector(panelSelector);
   if (!panel) return;
 
@@ -293,7 +293,7 @@ export function renderFeedbackUI(panelSelector, state, listData = []) {
  *
  * @param {string} tabsetSelector  CSS selector for the panel-tabset root.
  */
-export function initTabIcons(tabsetSelector) {
+export function mountTabIcons(tabsetSelector) {
   const panes = document.querySelectorAll(`${tabsetSelector} .tab-pane`);
   const links = document.querySelectorAll(`${tabsetSelector} .nav-link`);
 
@@ -343,7 +343,7 @@ export function initTabIcons(tabsetSelector) {
  * @param {Function} onChange        Called with the mapped value on tab change.
  * @returns {{ destroy: Function }}
  */
-export function createTabsetWatcher(tabsetSelector, labelMap, onChange) {
+export function watchTabset(tabsetSelector, labelMap, onChange) {
   const tabset = document.querySelector(tabsetSelector);
   if (tabset) {
     const links = tabset.querySelectorAll(".nav-link");
@@ -419,7 +419,7 @@ export function createTabsetWatcher(tabsetSelector, labelMap, onChange) {
  * - `data-target` → CSS selector for the parent `.panel-tabset`
  * - `data-icon`   → Bootstrap icon name without `bi-` prefix (optional)
  */
-export function initTabActions() {
+export function mountTabActions() {
   document.querySelectorAll('.tab-actions').forEach(container => {
     // 1. Locate the target tabset
     const tabset = container.closest('.panel-tabset') || 

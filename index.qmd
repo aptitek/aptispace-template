@@ -2,9 +2,8 @@
 
 ```{ojs}
 //| echo: false
-// 📦 Imports centralisés pour tout le bloc
-import { createWordCloud } from "./assets/js/networks.js"
-import { createBar, createLine, createFunnel, createPiramid } from "./assets/js/plots.js"
+import { createWordCloud } from "./assets/js/graph.js"
+import { createBar, createLine, createFunnel, createPyramid } from "./assets/js/plots.js"
 import { getThemeColor } from "./assets/js/core.js"
 ```
 
@@ -50,7 +49,7 @@ Ordinale [Qualitative]{.badge .bg-info .float-end}
 ```{ojs}
 //| echo: false
 renderOrdinale = {
-  createPiramid("plot-ordinale", {
+  createPyramid("plot-ordinale", {
     text: ["Rang 3", "Rang 2", "Rang 1"],
     values: [20, 30, 50]
   }, {
@@ -161,9 +160,9 @@ Valeurs décimales mesurables sur une échelle infinie. Il existe un nombre infi
 ::: {.card .card-window .mb-4}
 ```{ojs}
 //| echo: false
-import { parseTableData, renderFeedbackUI } from "./assets/js/core.js"
-import { createCabling } from "./assets/js/networks.js"
-import { createLever } from "./assets/js/custom/lever.js"
+import { parseTable, renderFeedback } from "./assets/js/core.js"
+import { createCabling } from "./assets/js/sim/cabling.js"
+import { createLever } from "./assets/js/sim/lever.js"
 
 ```
 
@@ -277,7 +276,7 @@ viewof powerOn = createLever("#power-lever", invalidation)
 //| echo: false
 
 // A. Chargement et déduction des listes
-leftItems = parseTableData("#cabling-data table")
+leftItems = parseTable("#cabling-data table")
 rightItems = Array.from(new Set(leftItems.map(item => item.match))).map(id => ({
   id: id,
   label: id.charAt(0).toUpperCase() + id.slice(1)
@@ -286,7 +285,7 @@ rightItems = Array.from(new Set(leftItems.map(item => item.match))).map(id => ({
 // B. Cycle de vie du moteur graphique
 engine = {
   const m = createCabling("#cabling-canvas", leftItems, rightItems, (state) => {
-    if(state.score < leftItems.length) renderFeedbackUI("#cabling-feedback-panel", { status: "hidden" });
+    if(state.score < leftItems.length) renderFeedback("#cabling-feedback-panel", { status: "hidden" });
   });
   invalidation.then(() => m.destroy());
   return m;
@@ -304,7 +303,7 @@ uiLogic = {
   } else {
     // Levier OFF → masquer les résultats, enlever les étincelles et la validation (garder les câbles)
     engine.clearValidation();
-    renderFeedbackUI("#cabling-feedback-panel", { status: "hidden" });
+    renderFeedback("#cabling-feedback-panel", { status: "hidden" });
     return;
   }
 
@@ -327,7 +326,7 @@ uiLogic = {
   }
 
   // Distribution vers l'interface via core.js
-  renderFeedbackUI("#cabling-feedback-panel", state, listData);
+  renderFeedback("#cabling-feedback-panel", state, listData);
 }
 
 ```
@@ -345,15 +344,15 @@ uiLogic = {
 
 ```{ojs}
 //| echo: false
-import { renderTemplate, renderListTemplate } from "./assets/js/core.js"
-import { createTabsetWatcher } from "./assets/js/custom/card.js"
+import { renderTemplate } from "./assets/js/core.js"
+import { watchTabset } from "./assets/js/core.js"
 
 // Reactive value — driven by the tab watcher below
 mutable dataType = "int32"
 
 // Icon injection + MutationObserver + value sync — all handled by core.js
 _ramTabWatcher = {
-  const w = createTabsetWatcher(
+  const w = watchTabset(
     ".ram-tabset",
     { "bool": "bool", "int8": "int8", "int32": "int32", "float64": "float64", "string": "string" },
     (val) => { mutable dataType = val; }
@@ -475,13 +474,13 @@ viewof rawInput = {
 
 ```{ojs}
 //| echo: false
-import { getRamData, renderRam } from "./assets/js/custom/ram.js";
+import * as memory from "./assets/js/sim/memory.js";
 
 // 1. Logique de conversion réactive
-ramData = getRamData(rawInput, dataType)
+ramData = memory.encode(rawInput, dataType)
 
 // 2. Déclenchement réactif de l'affichage (Effet de bord OJS)
-updateRamUI = renderRam(ramData)
+updateRamUI = memory.render(ramData)
 ```
 
 ## Stockage Colonnaire vs Ligne (RAM)
@@ -532,17 +531,17 @@ Le stockage **Orienté Colonne** est le standard de la Data Science moderne (Dat
 
 ```{ojs}
 //| echo: false
-import { createRamStorageGraph } from "./assets/js/networks.js"
-import { initTabActions } from "./assets/js/custom/card.js"
+import { createStorageGraph } from "./assets/js/sim/storage.js"
+import { mountTabActions } from "./assets/js/core.js"
 
 // 0. Inject tab action buttons into nav bars (must run before graph init)
-initTabActions()
+mountTabActions()
 
 // 1. Détecteur réactif du Tabset de stockage RAM
 mutable storageMode = "ligne"
 
 _ramStorageTabWatcher = {
-  const w = createTabsetWatcher(
+  const w = watchTabset(
     ".ram-storage-tabset",
     { "Stockage en Ligne": "ligne", "Stockage en Colonne": "colonne" },
     (val) => { mutable storageMode = val; }
@@ -552,10 +551,10 @@ _ramStorageTabWatcher = {
 }
 
 // 2. Extraction dynamique des données depuis la table Markdown
-ramTableData = parseTableData("#ram-data-source table")
+ramTableData = parseTable("#ram-data-source table")
 
 renderRamGraph = {
-  const graph = createRamStorageGraph("ram-graph-container", storageMode, 'Salaire', ramTableData);
+  const graph = createStorageGraph("ram-graph-container", storageMode, 'Salaire', ramTableData);
   invalidation.then(() => { if (graph && graph.destroy) graph.destroy(); });
   return html`<span class="d-none"></span>`;
 }
@@ -705,17 +704,17 @@ Tout en haut de la pyramide, les registres internes du cœur traitent les donné
 ::::::::
 ```{ojs}
 //| echo: false
-import { initMoboSvg, renderMobo } from "./assets/js/custom/mobo.js";
-import { bindSvgToTabset } from "./assets/js/custom/dynamic-svg.js";
+import * as mb from "./assets/js/sim/motherboard.js";
+import * as svg from "./assets/js/sim/svg.js";
 
 // 1. Initialisation dynamique de la carte mère vectorielle (Inline SVG)
-initMobo = initMoboSvg("#motherboard-view")
+initMobo = mb.init("#motherboard-view")
 
-// 2. Détecteur réactif du Tabset de la carte mère (géré via card.js)
+// 2. Détecteur réactif du Tabset de la carte mère (géré via core.js)
 mutable hardwareState = "ssd"
 
 _moboTabWatcher = {
-  const w = createTabsetWatcher(
+  const w = watchTabset(
     ".mobo-tabset",
     { "SSD": "ssd", "RAM": "ram", "Cache L3": "l3", "Caches L2 & L1": "l2_l1", "Registres": "cpu_reg" },
     (val) => { mutable hardwareState = val; }
@@ -729,7 +728,7 @@ updateMotherboardUI = {
   initMobo; // Attente inlining SVG
 
   // Applique les styles et l'interactivité dynamique
-  bindSvgToTabset("#motherboard-view", ".mobo-tabset", {
+  svg.bind("#motherboard-view", ".mobo-tabset", {
     "part-ssd": "SSD",
     "part-ram": "RAM",
     "cpu-l3": "Cache L3",
@@ -740,7 +739,7 @@ updateMotherboardUI = {
     "register": "Registres"
   });
 
-  renderMobo(hardwareState);
+  mb.render(hardwareState);
 }
 ```
 :::::::
@@ -766,7 +765,7 @@ Test diagnostic pour valider le moteur générique de machine à états.
 
 ```{ojs}
 //| echo: false
-import { renderStateMachineGraph } from "./assets/js/networks.js"
+import { createStateMachine } from "./assets/js/sim/state-machine.js"
 import { StateMachine } from "./assets/js/core.js"
 
 testSmGraph = {
@@ -789,17 +788,13 @@ testSmGraph = {
 
   // Helper pour réinitialiser le graphe à l'état de repos (sans nœud actif, nœud A surbrillé en "entry")
   const resetGraph = () => {
-    nodes.forEach(n => {
-      n.status = n.id === "A" ? "entry" : "default";
-    });
-    links.forEach(l => {
-      l.status = "default";
-    });
+    nodes.forEach(n => { n.status = n.id === "A" ? "entry" : "default"; });
+    links.forEach(l => { l.status = "default"; });
     graph.graphData({ nodes, links });
   };
 
   // 2. Initialiser le renderer de graphe
-  const graph = renderStateMachineGraph("#test-sm-graph", graphData, {
+  const graph = createStateMachine("#test-sm-graph", graphData, {
     width: 600,
     height: 300,
     nodeRadius: 20,
@@ -941,12 +936,8 @@ testSmGraph = {
   // Nettoyage complet à l'invalidation d'Observable (KISS/SRP-compliant)
   invalidation.then(() => {
     sm.stop();
-    if (btn) {
-      btn.removeEventListener("click", handleToggle);
-    }
-    if (graph && graph.destroy) {
-      graph.destroy();
-    }
+    if (btn) btn.removeEventListener("click", handleToggle);
+    if (graph && graph.destroy) graph.destroy();
   });
 
   return graph;
@@ -986,12 +977,12 @@ Flux de Tokens (Capsules)
 ::::::::
 :::::::: {.card-body .p-0 #token-inspector-details}
 
-| Propriété      | Valeur                                                                                                                                                                                                                                                                                                  |
-| :------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Contenu**    | [**{{text}}**]{.font-code .px-2 .py-1 .rounded .inspector-token-badge} |
-| **Index**      | [**{{index}}**]{.text-body-secondary .font-code .small}                                                                                                                                                                                                                                                          |
-| **ID / Label** | [**{{label}}**]{.font-code .inspector-token-label} |
-| **Fragment**   | [{{fragmentText}}]{.badge class="{{badgeClass}}"}                                                                                                                                                                                                                                                       |
+| Propriété      | Valeur                                                                                     |
+| :------------- | :----------------------------------------------------------------------------------------- |
+| **Contenu**    | [**{{text}}**]{.font-code .px-2 .py-1 .rounded .inspector-token-badge}                    |
+| **Index**      | [**{{index}}**]{.text-body-secondary .font-code .small}                                    |
+| **ID / Label** | [**{{label}}**]{.font-code .inspector-token-label}                                         |
+| **Fragment**   | [{{fragmentText}}]{.badge class="{{badgeClass}}"}                                          |
 
 : {.table .table-sm .table-borderless .mb-0}
 
@@ -1014,7 +1005,7 @@ viewof customTextInput = {
 
 ```{ojs}
 //| echo: false
-import { createLabeledText } from "./assets/js/custom/text.js"
+import { createStream } from "./assets/js/sim/tokenizer.js"
 
 tokenWidget = {
   // Wait until the container exists in the DOM to avoid race conditions
@@ -1037,7 +1028,7 @@ tokenWidget = {
     });
   }
 
-  const widget = createLabeledText(container || "#test-token-stream", {
+  const widget = createStream(container || "#test-token-stream", {
     text: "L'IA comprend-elle le mot anticonstitutionnellement ? 🤔",
     onTokenClick: (tok, idx) => {
       const d = document.querySelector("#token-inspector-details");

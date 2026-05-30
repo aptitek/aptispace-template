@@ -180,5 +180,3 @@ export function createPyramid(divId, data, options = {}) {
   Plotly.newPlot(divId, [trace], layout, config);
 }
 
-// Alias for spelling compatibility
-export const createPiramid = createPyramid;

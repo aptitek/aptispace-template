@@ -2,9 +2,8 @@
 // index.js - Le Point d'Entrée Global
 // ==========================================
 import { theme, utils } from "./core.js";
-import * as org from "./org.js";
 import * as plots from "./plots.js";
-import * as networks from "./networks.js";
+import * as graph from "./graph.js";
 
 export { theme };
 
@@ -268,14 +267,12 @@ export const ui = {
     return container;
   },
 
-  org,
   plots,
-  networks,
-  
+  graph,
+
   // Alias directs à la racine
-  ...org,
   ...plots,
-  ...networks,
+  ...graph,
   
   // Rétrocompatibilité avec ui.atom.* et ui.mol.*
   get atom() { return ui; },
